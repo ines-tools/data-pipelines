@@ -129,7 +129,7 @@ def main():
         print("existing_wind_onshore")
 
         ## ONSHORE FUTURE
-        technologies = ["wind-on-SP335-HH100","wind-on-SP335-HH150","wind-on-SP277-HH100","wind-on-SP277-HH150","wind-on-SP198-HH100","wind-on-SP198-HH150"]
+        technologies = ["wind-on-SP335-HH100","wind-on-SP335-HH150","wind-on-SP277-HH100","wind-on-SP277-HH150","wind-on-SP199-HH100","wind-on-SP199-HH150"]
         for tech in technologies:
             for poly in availability[tech].columns:
                 if poly in potential_wind_on.index:

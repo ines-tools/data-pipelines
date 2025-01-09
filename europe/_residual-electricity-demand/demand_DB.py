@@ -5,6 +5,7 @@ import sys
 from openpyxl import load_workbook
 import numpy as np
 import json 
+import datetime
 
 def add_entity(db_map : DatabaseMapping, class_name : str, name : str, ent_description = None) -> None:
     _, error = db_map.add_entity_item(name=name, entity_class_name=class_name,description=ent_description)
@@ -29,10 +30,10 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
 
 def main():
     url_db_out = sys.argv[1]
-    electricity_demand_1995 = pd.read_csv(sys.argv[2],index_col=0)
-    electricity_demand_2008 = pd.read_csv(sys.argv[3],index_col=0)
-    electricity_demand_2009 = pd.read_csv(sys.argv[4],index_col=0)
+    electricity_demand = pd.read_csv(sys.argv[2],index_col=0)
 
+    # Just for now in order to avoid a heavy DB
+    index_filter = [str(i) for i in pd.date_range("1995-01-01 00:00:00","1995-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2008-01-01 00:00:00","2008-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2009-01-01 00:00:00","2009-12-31 23:00:00",freq="1h").tolist()]
     with DatabaseMapping(url_db_out) as db_map:
 
         ## Empty the database
@@ -45,14 +46,14 @@ def main():
         add_alternative(db_map,"Base")
         
         add_entity(db_map,"commodity","elec")
-        for country in electricity_demand_1995.columns:    
+        for country in electricity_demand.columns:    
 
             add_entity(db_map,"region",country)
             add_parameter_value(db_map,"region","type","Base",(country,),"onshore")
             add_parameter_value(db_map,"region","GIS_level","Base",(country,),"PECD1")
             add_relationship(db_map,"node",("elec",country))
-            demand_v = electricity_demand_1995[country].tolist() + electricity_demand_2008[country].tolist() + electricity_demand_2009[country].tolist()
-            demand_i = electricity_demand_1995.index.tolist() + electricity_demand_2008.index.tolist() + electricity_demand_2009.index.tolist()
+            demand_v = electricity_demand.loc[index_filter,country].tolist() 
+            demand_i = electricity_demand.loc[index_filter,:].index.tolist() 
             value_de = {"type":"time_series","data":dict(zip(demand_i,demand_v))}
             add_parameter_value(db_map,"node","flow_profile","Base",("elec",country),value_de)
              

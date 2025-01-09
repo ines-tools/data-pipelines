@@ -1,0 +1,309 @@
+# Configurate your own model
+# countries : ["AL","DE","HU","MK","SE","AT","DK","IE","MT","SI","BA","EE","IT","NL","SK","BE","ES","LT","NO","TR","BG","FI","LU","PL","UA","CH","FR","LV","PT","UK","CY","GR","MD","RO","XK","CZ","HR","ME","RS"]
+model :
+    type : existing # greenfied
+    start : "2018-01-01T00:00:00"
+    end   : "2019-01-01T00:00:00"
+    operations_resolution : "1h"
+    planning_resolution : "365D"
+timeline:
+  study_year : "2030"
+  historical_alt : 
+    CY_1995 :
+      start : "1995-01-01T00:00:00"
+      end : "1995-12-31T23:00:00"
+    CY_2008 :
+      start : "2008-01-01T00:00:00"
+      end : "2008-12-31T23:00:00"
+    CY_2009 :
+      start : "2009-01-01T00:00:00"
+      end : "2009-12-31T23:00:00"
+clustering :
+  activate : True
+  number_clusters : 12
+  number_periods : 24
+global_constraints:
+  co2_budget:
+    "2030": 724950
+    "2040": 161100
+    "2050": 0.0
+  renewable_target:
+    "2030": 42.5
+    "2040": 42.5
+    "2050": 42.5  
+
+# Define Europe as country, then, the remaining countries are modeled following requirements
+countries : 
+  ES : 
+    onshore:  "PECD1"
+    offshore: "OFF2"
+  FR :
+    onshore:  "PECD1"
+    offshore: "OFF2"
+
+# Sectors optimized
+commodity: 
+  elec: 
+    status: True
+  CH4: 
+    status: False
+  H2: 
+    status: False
+  CO2: 
+    status: False
+  bio: 
+    status: False
+  HC: 
+    status: False
+  NH3: 
+    status: False
+  MeOH: 
+    status: False
+  fossil-CH4: 
+    status: False
+  fossil-HC: 
+    status: False
+  crude: 
+    status: False
+  coal: 
+    status: False
+  U-92: 
+    status: False
+  waste: 
+    status: False
+  heat: 
+    status: False
+  DH: 
+    status: False
+
+transmission: 
+  elec: 
+    status: True
+  CH4: 
+    status: False
+  H2: 
+    status: False
+  CO2: 
+    status: False
+
+storage:
+  large-battery :
+    status: True
+    investment_method : "no_limits"
+  LNG-tank :
+    status: False 
+    investment_method : "no_limits"
+  CH4-geo-formation : 
+    status: False 
+    investment_method : "cumulative_limits"
+  H2-tank : 
+    status: False 
+    investment_method : "no_limits"
+  H2-geo-formation :
+    status: False 
+    investment_method : "cumulative_limits"
+  CO2-tank : 
+    status: False 
+    investment_method : "no_limits"
+  CO2-geo-formation :
+    status: False 
+    investment_method : "cumulative_limits"
+  liquids-bunker : 
+    status: False 
+    investment_method : "no_limits"
+  LT-hot-water-tank:
+    status: False 
+    investment_method : "no_limits"
+  heat-storage:
+    status: False
+    investment_method : "no_limits"
+
+
+# Technologies definition
+technology:
+  oil-eng: 
+    rename : "oil-eng"
+    status: True
+    investment_method: "no_limits"
+    renewable : False
+    site : onshore
+  SCPC:
+    rename : "SCPC"
+    status: True
+    investment_method: "not_allowed"
+    renewable : False
+    site : onshore
+  SCPC+CC:
+    rename : "SCPC+CC"
+    status: False
+    investment_method: "no_limits"
+    renewable : False
+    site : onshore
+  OCGT:
+    rename : "OCGT"
+    status: False
+    investment_method: "no_limits"
+    renewable : False
+    site : onshore
+  OCGT+CC:
+    rename : "OCGT+CC"
+    status: False
+    investment_method: "no_limits"
+    renewable : False
+    site : onshore
+  CCGT:
+    rename : "CCGT"
+    status: True
+    investment_method: "no_limits"
+    renewable : False
+    site : onshore
+  CCGT+CC:
+    rename : "CCGT+CC"
+    status: True
+    investment_method: "no_limits"
+    renewable : False
+    site : onshore
+  OCGT-H2:
+    rename : "OCGT-H2"
+    status: False
+    investment_method: "no_limits"
+    renewable : False
+    site : onshore
+  CCGT-H2:
+    rename : "CCGT-H2"
+    status: False
+    investment_method: "no_limits"
+    renewable : False
+    site : onshore
+  wasteST:
+    rename : "wasteST"
+    status: True
+    investment_method: "not_allowed"
+    renewable : False
+    site : onshore
+  bioST:
+    rename : "bioST"
+    status: True
+    investment_method: "no_limits"
+    renewable : True
+    site : onshore
+  bioST+CC:
+    rename : "bioST+CC"
+    status: False
+    investment_method: "no_limits"
+    renewable : True
+    site : onshore
+  geothermal:
+    rename : "geothermal"
+    status: False
+    investment_method: "cumulative_limits"
+    renewable : True
+    site : onshore
+  nuclear-3:
+    rename : "nuclear-3"
+    status: True
+    investment_method: "no_limits"
+    renewable : False
+    site : onshore
+  nuclear-4:
+    rename : "nuclear-4"
+    status: False
+    investment_method: "no_limits"
+    renewable : False
+    site : onshore
+  wind-on-existing:
+    rename : "wind-on-existing"
+    status: True
+    investment_method: "not_allowed"
+    renewable : True
+    site : onshore
+  wind-off-existing:
+    rename : "wind-off-existing"
+    status: True
+    investment_method: "not_allowed"
+    renewable : True
+    site : offshore
+  wind-on-SP335-HH100:
+    rename : "wind-on-SP335-HH100"
+    status: False
+    investment_method: "no_limits"
+    renewable : True
+    site : onshore
+  wind-on-SP335-HH150:
+    rename : "wind-on-SP335-HH150"
+    status: False
+    investment_method: "no_limits"
+    renewable : True
+    site : onshore
+  wind-on-SP277-HH100:
+    rename : "wind-on-SP277-HH100"
+    status: False
+    investment_method: "no_limits"
+    renewable : True
+    site : onshore 
+  wind-on-SP277-HH150: 
+    rename : "wind-on-SP277-HH150"
+    status: False
+    investment_method: "no_limits"
+    renewable : True
+    site : onshore
+  wind-on-SP198-HH100:
+    rename : "wind-on-future"
+    status: True
+    investment_method: "no_limits"
+    renewable : True
+    site : onshore
+  wind-on-SP198-HH150:
+    rename : "wind-on-SP198-HH150"
+    status: False
+    investment_method: "no_limits"
+    renewable : True
+    site : offshore
+  wind-off-FB-SP316-HH155:
+    rename : "wind-off-FB-SP316-HH155"
+    status: False
+    investment_method: "no_limits"
+    renewable : True
+    site : offshore
+  wind-off-FB-SP370-HH155:
+    rename : "wind-off-future"
+    status: True
+    investment_method: "no_limits"
+    renewable : True
+    site : offshore
+  solar-PV-no-tracking:
+    rename : "solar-PV"
+    status: True
+    investment_method: "no_limits"
+    renewable : True
+    site : onshore
+  solar-PV-rooftop:
+    rename : "solar-PV-rooftop"
+    status: False
+    investment_method: "no_limits"
+    renewable : True
+    site : onshore
+  solar-PV-tracking:
+    rename : "solar-PV-tracking"
+    status: False
+    investment_method: "no_limits"
+    renewable : True
+    site : onshore
+  solar-CSP:
+    rename : "solar-CSP"
+    status: False
+    investment_method: "no_limits"
+    renewable : True
+    site : onshore
+  fuelcell:
+    rename : "fuelcell"
+    status: True
+    investment_method: "no_limits"
+    renewable : False
+    site : onshore
+  hydro-turbine:
+    rename : "hydro-turbine"
+    status: True
+    investment_method: "not_allowed"
+    renewable : True
+    site : onshore
