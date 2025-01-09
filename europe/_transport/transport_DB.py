@@ -3,7 +3,7 @@ from spinedb_api import DatabaseMapping
 import sys
 import pandas as pd
 import json
-
+import os 
 def add_entity(db_map : DatabaseMapping, class_name : str, element_names : tuple) -> None:
     _, error = db_map.add_entity_item(entity_byname=element_names, entity_class_name=class_name)
     if error is not None:
@@ -25,14 +25,16 @@ def main(url_db_out,data):
     return 1
     
 if __name__ == "__main__":
-    breakpoint()
+
     # Spine Inputs
     url_db_out = sys.argv[1]
 
     data = {}
-    files = json.load(open(sys.argv[2],"r"))["resources"]
-    for file_dict in files:
-        file = file_dict["path"]
+    path = "../../../Transport"
+    files = [os.path.join(path,filename) for filename in os.listdir(path)]
+
+    print("Loading all the CSV files")
+    for file in files:
         elements = file.split("\\")[-1].split("_")
         data_type = "hourly" if elements[3] == "profile" else "weekly"
         data[(elements[0],elements[1],elements[2],data_type)] = pd.read_csv(file,index_col=0)
