@@ -31,13 +31,13 @@ def process_single_parameter(sheet, config_file, target_db, entity_name, entity_
         add_parameter_value(target_db, entity_name, param_name, "Base", entity_byname, multiplier*cell_value)
 
 def process_map_parameter(sheet, config_file, target_db, entity_name, entity_byname, param_name, multiplier=1.0):
-    map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": {}}
+    map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": {}}
     source_param_name = config_file[entity_name][param_name]
     for source_param in [i for i in sheet.index if source_param_name in i]:
         origin_name,param_alternative = source_param.split("_")
         cell_value = sheet.at[source_param]
         if isinstance(cell_value, (float, int)) and pd.notna(cell_value):
-            map_param["data"][int(param_alternative)] = round(cell_value * multiplier, 2)
+            map_param["data"][f"y{param_alternative}"] = round(cell_value * multiplier, 2)
     if len(map_param["data"]) > 1:
         add_parameter_value(target_db, entity_name, param_name, "Base", entity_byname, map_param)
 

@@ -42,7 +42,7 @@ def process_units(target_db, sheet):
             add_entity(target_db, "commodity__to_node", (node_u,node_l))
 
     for unit_name in sheet.index.unique():
-        params ={"planning_years" : sheet.loc[unit_name,"year"].to_list(),
+        params ={"planning_years" : ["y"+str(i) for i in sheet.loc[unit_name,"year"].to_list()],
                  "elec_conv": sheet.loc[unit_name,"conversion_rate_elec_pu"].values,
                  "heat_conv": sheet.loc[unit_name,"conversion_rate_heat_pu"].values,
                  "co2_conv":sheet.loc[unit_name,"CO2_captured_pu"].values,
@@ -69,7 +69,7 @@ def process_units(target_db, sheet):
         add_entity(target_db, entity_name, entity_byname)
         for param_name in ["investment_cost", "fixed_cost","operational_cost"]:
             if sum(params[param_name]) > 0:
-                map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": dict(zip(params["planning_years"],params[param_name]))}
+                map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": dict(zip(params["planning_years"],params[param_name]))}
                 add_parameter_value(target_db, entity_name, param_name, "Base", entity_byname, map_param)
 
         from_node = sheet.loc[unit_name,"from_node"].tolist()[0]
@@ -110,7 +110,7 @@ def process_units(target_db, sheet):
 def process_storages(target_db, sheet):
 
     for sto_name in sheet.index.unique():
-        params ={"planning_years": sheet.loc[sto_name,"year"].to_list(),
+        params ={"planning_years": ["y"+str(i) for i in sheet.loc[sto_name,"year"].to_list()],
                 "investment_cost": (sheet.loc[sto_name,"CAPEX_energy_MEUR_GWh"]*1e3).round(1).to_list(),
                  "fixed_cost": (sheet.loc[sto_name,"FOM_energy_EUR_GWh_y"]/1e3).round(1).to_list(),
                  "hours_ratio": sheet.loc[sto_name,"energy_to_power_ratio_h"].to_list()[0],
@@ -126,7 +126,7 @@ def process_storages(target_db, sheet):
         add_parameter_value(target_db, entity_name, "losses_day", "Base", entity_byname, params["losses_day"])
 
         for param_name in ["investment_cost", "fixed_cost",]:
-            map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": dict(zip(params["planning_years"],params[param_name]))}
+            map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": dict(zip(params["planning_years"],params[param_name]))}
             add_parameter_value(target_db, entity_name, param_name, "Base", entity_byname, map_param)
 
         entity_name = "storage_connection"
