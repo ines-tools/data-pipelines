@@ -180,6 +180,13 @@ def spatial_transformation(db_source, config, sector):
                                     spatial_data[entity_class][source_parameter][entity_name][target_poly] = value_   
     return spatial_data
 
+def add_timeline(db_source : DatabaseMapping,config : dict):
+    for year in config["user"]["model"]["planning_years"]:
+        add_entity(db_source, "period", f"y{year}")
+        # duration
+        # startime
+    # temporality
+
 def add_nodes(db_map : DatabaseMapping, db_com : DatabaseMapping, config : dict) -> None:
     
     for entity_class in config["sys"]["commodities"]["entities"]:
@@ -210,6 +217,44 @@ def add_nodes(db_map : DatabaseMapping, db_com : DatabaseMapping, config : dict)
                             value_param = multiplier*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:multiplier*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
                             add_parameter_value(db_map,entity_class_target,param_target,"Base",(entity_target_name,),value_param)
 
+def add_electricity_demand(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+    db_name = "elec_demand"
+    start_time = time_lib.time()
+    region_params = spatial_transformation(db_source, config, db_name)
+    print(f"Time Calculating Aggregation: {time_lib.time()-start_time} s")
+
+    print("ADDING ELEC DEMAND TIME SERIES")
+    for entity_class in config["sys"][db_name]["entities"]:
+        entities = db_source.get_entity_items(entity_class_name = entity_class)
+        
+        for entity in entities:
+            entity_name = entity["name"]
+            entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
+            entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
+            entity_target_names   = []
+            status = False 
+
+            for poly in config["onshore_polygons"]:
+                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on")
+
+                if definition_condition == True:
+                    for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
+                        
+                        # Default Parameters
+                        if entity_class in config["sys"][db_name]["parameters"]["default"]:
+                            if entity_class_target in config["sys"][db_name]["parameters"]["default"][entity_class]:
+                                for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
+                                    entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_items[2]])
+                                    add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
+                                    
+                        # Regional Parameter
+                        entity_class_region = f"{entity_class}__region"
+                        if entity_class_region in config["sys"][db_name]["parameters"]["dynamic"]:
+                            dynamic_params = config["sys"][db_name]["parameters"]["dynamic"][entity_class_region].get(entity_class_target, {})
+                            for param_source, param_values in dynamic_params.items():
+                                entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
+                                add_parameter_value(db_map,entity_class_target,param_values[0],"Base",entity_target_name,region_params[entity_class][param_source][entity_name][poly])
+                                            
 def add_power_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
 
     db_name = "power_sector"
@@ -423,6 +468,11 @@ def main():
         
         # Base alternative
         add_alternative(db_map,"Base")
+
+        # Timeline Structure
+        add_timeline(db_map,config)
+        print("timeline_added")
+        db_map.commit_session("timeline_added")
 
         # Nodes involved
         add_nodes(db_map,db_com,config)

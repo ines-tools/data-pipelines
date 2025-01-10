@@ -7,6 +7,20 @@ commodities:
       node:
         co2_content: [co2_content,1.0]
         commodity_price: [commodity_price,1.0]
+# Electricity Demand
+elec_demand:
+  entities:
+    commodity:
+      node: null
+  parameters:
+    default:
+      commodity:
+        node:
+          - [flow_scaling_method,scale_to_annual,[[1]]]
+    dynamic:
+      commodity:
+        node:
+          flow_profile: [flow_profile,[[1]],[population,{}],null,PECD1]
 
 # Power Sector DB including Transmission in Target Resolution
 power_sector:

@@ -32,18 +32,18 @@ def add_tech_parameters(target_db,industry,node,sheets):
     entity_name = "technology__to_commodity"
     entity_byname = (industry,node)
     df = sheets["ind_process_routes_capex"]
-    value_param = {year:df[(df.Industry==industry)][year].tolist()[0] for year in ["2030","2040","2050"]}
-    if value_param["2030"] > 0.0:
-        map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": value_param}
+    value_param = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0] for year in ["2030","2040","2050"]}
+    if value_param["y2030"] > 0.0:
+        map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
         add_parameter_value(target_db, entity_name, "investment_cost", "Base", entity_byname, map_param)
 
     # fom
     entity_name = "technology__to_commodity"
     entity_byname = (industry,node)
     df = sheets["ind_process_routes_fom"]
-    value_param = {year:df[(df.Industry==industry)][year].tolist()[0] for year in ["2030","2040","2050"]}
-    if value_param["2030"] > 0.0:
-        map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": value_param}
+    value_param = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0] for year in ["2030","2040","2050"]}
+    if value_param["y2030"] > 0.0:
+        map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
         add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, map_param)
 
     # co2_captured
@@ -51,9 +51,9 @@ def add_tech_parameters(target_db,industry,node,sheets):
     entity_byname = (node,industry,"CO2")
     add_entity(target_db, entity_name, entity_byname)
     df = sheets["ind_process_routes_co2_capture"]
-    value_param = {year:df[(df.Industry==industry)][year].tolist()[0] for year in ["2030","2040","2050"]}
-    if value_param["2030"] > 0.0:
-        map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": value_param}
+    value_param = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0] for year in ["2030","2040","2050"]}
+    if value_param["y2030"] > 0.0:
+        map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
         add_parameter_value(target_db, entity_name, "CO2_captured", "Base", entity_byname, map_param)
 
 def conversion_sectors(target_db,sheet,com_sheet):
@@ -77,12 +77,12 @@ def conversion_sectors(target_db,sheet,com_sheet):
         except:
             pass
 
-        value_dict = {year:sheet.at[i,year] for year in ["2030","2040","2050"]}
+        value_dict = {f"y{year}":sheet.at[i,year] for year in ["2030","2040","2050"]}
         entity_name = "commodity__technology__commodity"
         entity_byname = (sheet.at[i,"from_node"],sheet.at[i,"Industry"],sheet.at[i,"to_node"])
-        if value_dict["2030"] > 0.0:
+        if value_dict["y2030"] > 0.0:
             add_entity(target_db, entity_name, entity_byname)
-            map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": value_dict}
+            map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_dict}
             add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, map_param)
             entity_name = "commodity__to_technology"
             entity_byname = (sheet.at[i,"from_node"],sheet.at[i,"Industry"])
@@ -102,7 +102,7 @@ def capacity_sectors(target_db,sheet):
         entity_name = "technology__region"
         entity_byname = (sheet.at[i,"Industry"],sheet.at[i,"nuts3"])
         add_entity(target_db, entity_name, entity_byname)
-        add_parameter_value(target_db, entity_name, "units_existing", "Base", entity_byname, sheet.at[i,"2018"])
+        add_parameter_value(target_db, entity_name, "units_existing", "Base", entity_byname, {"type": "map", "index_type": "str", "index_name": "period", "data": {"y2030":sheet.at[i,"2018"]}})
 
 def demand_sectors(target_db,sheet):
 
@@ -119,9 +119,9 @@ def demand_sectors(target_db,sheet):
         entity_byname = (sheet.at[i,"to_node"],sheet.at[i,"nuts3"])
         add_entity(target_db, entity_name, entity_byname)
         map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": {}}
-        map_param["data"]["2030"] = float(sheet.at[i,"2030"])
-        map_param["data"]["2050"] = float(sheet.at[i,"2050"])
-        map_param["data"]["2040"] = (map_param["data"]["2030"] + map_param["data"]["2050"])/2
+        map_param["data"]["y2030"] = float(sheet.at[i,"2030"])
+        map_param["data"]["y2050"] = float(sheet.at[i,"2050"])
+        map_param["data"]["y2040"] = (map_param["data"]["y2030"] + map_param["data"]["y2050"])/2
         add_parameter_value(target_db, entity_name, "annual_demand", "Base", entity_byname, map_param)
                
 
