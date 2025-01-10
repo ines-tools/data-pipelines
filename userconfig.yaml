@@ -6,8 +6,8 @@ model :
     end   : "2019-01-01T00:00:00"
     operations_resolution : "1h"
     planning_resolution : "365D"
+    planning_years : ["2030","2040","2050"]
 timeline:
-  study_year : "2030"
   historical_alt : 
     CY_1995 :
       start : "1995-01-01T00:00:00"
@@ -247,13 +247,13 @@ technology:
     investment_method: "no_limits"
     renewable : True
     site : onshore
-  wind-on-SP198-HH100:
+  wind-on-SP199-HH100:
     rename : "wind-on-future"
     status: True
     investment_method: "no_limits"
     renewable : True
     site : onshore
-  wind-on-SP198-HH150:
+  wind-on-SP199-HH150:
     rename : "wind-on-SP198-HH150"
     status: False
     investment_method: "no_limits"

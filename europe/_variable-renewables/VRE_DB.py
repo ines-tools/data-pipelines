@@ -125,7 +125,8 @@ def main():
 
                 existing = round(float(existing_wind_on.at[poly]*1e3),1)
                 add_entity(db_map,"technology__region",(tech,poly))
-                add_parameter_value(db_map,"technology__region","units_existing","Base",(tech,poly),existing)                
+                map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":existing}}
+                add_parameter_value(db_map,"technology__region","units_existing","Base",(tech,poly),map_existing)                
         print("existing_wind_onshore")
 
         ## ONSHORE FUTURE
@@ -148,7 +149,8 @@ def main():
 
                     existing = round(float(share[tech]*existing_solar_PV.at[poly]*1e3),1)
                     add_entity(db_map,"technology__region",(tech,poly))
-                    add_parameter_value(db_map,"technology__region","units_existing","Base",(tech,poly),existing)  
+                    map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":existing}}
+                    add_parameter_value(db_map,"technology__region","units_existing","Base",(tech,poly),map_existing) 
         print("Solar-PV")
 
         ## OFFSHORE TECHNOLOGY
@@ -161,7 +163,8 @@ def main():
 
                 existing = round(float(existing_wind_off.at[poly]*1e3),1)
                 add_entity(db_map,"technology__region",(tech,poly))
-                add_parameter_value(db_map,"technology__region","units_existing","Base",(tech,poly),existing)    
+                map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":existing}}
+                add_parameter_value(db_map,"technology__region","units_existing","Base",(tech,poly),map_existing)   
         print("existing_wind_offshore")
 
         ### OFFSHORE FUTURE

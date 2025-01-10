@@ -70,7 +70,8 @@ def main():
                     add_parameter_value(db_map,"region__transmission__commodity__region","connection_type","Base",entity_byname,power_links.at[l,"Type"]) 
 
                     value_existing = round(float(power_links.at[l,"Capacity (MW)"]),1)
-                    add_parameter_value(db_map,"region__transmission__commodity__region","links_existing","Base",entity_byname,float(value_existing))
+                    map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":float(value_existing)}}
+                    add_parameter_value(db_map,"region__transmission__commodity__region","links_existing","Base",entity_byname,map_existing)
 
                     value_potentials = round(float(power_links.at[l,"Potentials (MW)"]),1)
                     value_capex = round(float(power_links.at[l,"CAPEX (M€/MW/Km)"]*power_links.at[l,"Length (Km)"]*1e6),1) # estimate

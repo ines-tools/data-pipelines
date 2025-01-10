@@ -41,14 +41,14 @@ def process_map_parameter(sheet, config_file, target_db, entity_name, entity_byn
     if len(map_param["data"]) > 1:
         add_parameter_value(target_db, entity_name, param_name, "Base", entity_byname, map_param)
 
-def process_commodity_data(sheet, config_file, target_db):
+'''def process_commodity_data(sheet, config_file, target_db):
     for commodity_name in sheet.index:
         entity_name = "commodity"
         entity_byname = (commodity_name,)
         add_entity(target_db, entity_name, entity_byname)
         process_single_parameter(sheet.T[commodity_name], config_file, target_db, entity_name, entity_byname, "co2_content")
         multiplier = 3.6 if commodity_name != "CO2" else 1.0
-        process_map_parameter(sheet.T[commodity_name], config_file, target_db, entity_name, entity_byname, "commodity_price",multiplier)
+        process_map_parameter(sheet.T[commodity_name], config_file, target_db, entity_name, entity_byname, "commodity_price",multiplier)'''
 
 def process_storage_data(sheet, config_file, target_db,commodities):
     for storage_name in sheet.index:
@@ -70,6 +70,7 @@ def process_storage_data(sheet, config_file, target_db,commodities):
 def process_units(sheet, config_file, target_db, commodities, technologies_excluded):
 
     co2_content = {"CH4":0.2,"HC":0.25,"coal":0.37,"waste":0.13,"bio":0.35}
+    
     for unit_name in sheet.index:
 
         to_node = sheet.to_node.at[unit_name]
@@ -79,6 +80,10 @@ def process_units(sheet, config_file, target_db, commodities, technologies_exclu
             add_entity(target_db, entity_name, entity_byname)
             process_single_parameter(sheet.T[unit_name], config_file, target_db, entity_name, entity_byname, "lifetime")
 
+            try:
+                add_entity(target_db, "commodity", (to_node,))
+            except:
+                pass
             entity_name = "technology__to_commodity"
             entity_byname = (unit_name, to_node)
             add_entity(target_db, entity_name, (unit_name, to_node))
@@ -88,6 +93,10 @@ def process_units(sheet, config_file, target_db, commodities, technologies_exclu
 
             from_node = sheet.from_node.at[unit_name]
             if isinstance(from_node,str):
+                try:
+                    add_entity(target_db, "commodity", (from_node,))
+                except:
+                    pass
                 entity_name = "commodity__to_technology"
                 entity_byname = (from_node, unit_name)
                 add_entity(target_db, entity_name, entity_byname)
@@ -96,6 +105,10 @@ def process_units(sheet, config_file, target_db, commodities, technologies_exclu
                 add_entity(target_db, entity_name, entity_byname)
                 process_map_parameter(sheet.T[unit_name], config_file, target_db, entity_name, entity_byname,"conversion_rate")
                 if "+CC" in unit_name:
+                    try:
+                        add_entity(target_db, "commodity", ("CO2",))
+                    except:
+                        pass
                     entity_name = "technology__to_commodity"
                     entity_byname = (unit_name,"CO2")
                     add_entity(target_db, entity_name, entity_byname)
@@ -119,7 +132,6 @@ def process_all_sectors(tech_wb, config_file, target_db, sector_commodity):
 
     ################ COMMODITIES
     sheet = tech_wb["commodity"]
-    process_commodity_data(sheet,config_file,target_db)
     
     for sector,commodities in sector_commodity.items():
 
@@ -148,7 +160,8 @@ def existing_data(target_db,existing_tech):
             for tech in existing_tech.columns:
                 if round(float(existing_tech.at[country,tech]),1 > 0.0):
                     add_entity(target_db,"technology__region",(tech,country))
-                    add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),round(float(existing_tech.at[country,tech]),1))    
+                    map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(float(existing_tech.at[country,tech]),1)}}
+                    add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_existing)    
 
 
 def main():

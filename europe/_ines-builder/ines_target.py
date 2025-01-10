@@ -86,7 +86,27 @@ def ines_aggregrate(db_source : DatabaseMapping,transformer_df : pd.DataFrame,ta
                     value_ = {"type":"time_series","data":dict(zip(keys,vals))}
                 else:
                     prev_vals = np.fromiter(value_["data"].values(), dtype=float)
-                    value_ = {"type":"time_series","data":dict(zip(keys,prev_vals + vals))}                 
+                    value_ = {"type":"time_series","data":dict(zip(keys,prev_vals + vals))}  
+            elif parameter_value["type"] == "map":
+                param_map = json.loads(parameter_value["value"].decode("utf-8"))["data"]
+                if not value_:
+                    value_ = {"type":"map","index_type":"str","index_name":"period","data":{}}
+                    for key, item in param_map.items():
+                        if isinstance(item,float):
+                            value_["data"][key] = multiplier*item
+                        else: # time_series
+                            keys = list(param_map["data"][key].keys())
+                            vals = multiplier*np.fromiter(param_map["data"][key].values(), dtype=float)
+                            value_["data"][key] = {"type":"time_series","data":dict(zip(keys,vals))}
+                else:
+                    for key, item in param_map.items():
+                        if isinstance(item,float):
+                            value_["data"][key] += multiplier*item
+                        else: # time_series
+                            prev_vals = np.fromiter(value_["data"][key].values(), dtype=float)
+                            keys = list(param_map["data"][key].keys())
+                            vals = multiplier*np.fromiter(param_map["data"][key].values(), dtype=float)
+                            value_["data"][key] = {"type":"time_series","data":dict(zip(keys,prev_vals+vals))}
             elif parameter_value["type"] == "float":
                 value_ = value_ + multiplier*parameter_value["parsed_value"] if value_ else multiplier*parameter_value["parsed_value"]
             # ADD MORE Parameter Types HERE            
@@ -142,7 +162,17 @@ def spatial_transformation(db_source, config, sector):
                                             param_value = json.loads(parameter_value["value"].decode("utf-8"))["data"]
                                             keys = list(param_value.keys())
                                             vals = np.fromiter(param_value.values(), dtype=float)
-                                            value_ = {"type":"time_series","data":dict(zip(keys,vals))}               
+                                            value_ = {"type":"time_series","data":dict(zip(keys,vals))}     
+                                        elif parameter_value["type"] == "map":
+                                            param_map = json.loads(parameter_value["value"].decode("utf-8"))["data"]
+                                            value_ = {"type":"map","index_type":"str","index_name":"period","data":{}}
+                                            for key, item in param_map.items():
+                                                if isinstance(item,float):
+                                                    value_["data"][key] = item
+                                                else: # time_series
+                                                    keys = list(param_map["data"][key].keys())
+                                                    vals = np.fromiter(param_map["data"][key].values(), dtype=float)
+                                                    value_["data"][key] = {"type":"time_series","data":dict(zip(keys,vals))}       
                                         elif parameter_value["type"] == "float":
                                             value_ = parameter_value["parsed_value"]
                                     elif defaults != None:
@@ -177,8 +207,8 @@ def add_nodes(db_map : DatabaseMapping, db_com : DatabaseMapping, config : dict)
                         multiplier = param_list[param_source][1]
                         value_ = db_com.get_parameter_value_item(entity_class_name="commodity",entity_byname=(entity_name,),parameter_definition_name=param_source,alternative_name="Base")
                         if value_:
-                            value_param = value_["parsed_value"] if value_["type"] != "map" else dict(json.loads(value_["value"])["data"])[config["user"]["timeline"]["study_year"]]
-                            add_parameter_value(db_map,entity_class_target,param_target,"Base",(entity_target_name,),multiplier*value_param)
+                            value_param = multiplier*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:multiplier*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                            add_parameter_value(db_map,entity_class_target,param_target,"Base",(entity_target_name,),value_param)
 
 def add_power_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
 
@@ -236,15 +266,14 @@ def add_power_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
                                     entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_list[param_source][2]])
                                     value_ = db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name=param_source,alternative_name="Base")
                                     if value_:
-                                        value_param = value_["parsed_value"] if value_["type"] != "map" else json.loads(value_["value"])["data"][config["user"]["timeline"]["study_year"]]
-                                        add_parameter_value(db_map,entity_class_target,param_list[param_source][0],"Base",entity_target_name,param_list[param_source][1]*value_param)
+                                        value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                        add_parameter_value(db_map,entity_class_target,param_list[param_source][0],"Base",entity_target_name,value_param)
                         
                         # Regional Parameter
                         entity_class_region = f"{entity_class}__region"
                         if entity_class_region in config["sys"][db_name]["parameters"]["dynamic"]:
                             dynamic_params = config["sys"][db_name]["parameters"]["dynamic"][entity_class_region].get(entity_class_target, {})
                             for param_source, param_values in dynamic_params.items():
-                                print(entity_class_region,entity_class_target,param_source)
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
                                 add_parameter_value(db_map,entity_class_target,param_values[0],"Base",entity_target_name,region_params[entity_class][param_source][entity_name][poly])
                             
@@ -300,8 +329,8 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                                     entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_list[param_source][2]])
                                     value_ = db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name=param_source,alternative_name="Base")
                                     if value_:
-                                        value_param = value_["parsed_value"] if value_["type"] != "map" else json.loads(value_["value"])["data"][config["user"]["timeline"]["study_year"]]
-                                        add_parameter_value(db_map,entity_class_target,param_list[param_source][0],"Base",entity_target_name,param_list[param_source][1]*value_param) 
+                                        value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                        add_parameter_value(db_map,entity_class_target,param_list[param_source][0],"Base",entity_target_name,value_param) 
                         # Regional Parameter
                         entity_class_region = f"{entity_class}__region"
                         if entity_class_region in config["sys"]["vre"]["parameters"]["dynamic"]:
@@ -348,8 +377,8 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
                                 entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_list[param_source][2]])
                                 value_ = db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name=param_source,alternative_name="Base")
                                 if value_:
-                                    value_param = value_["parsed_value"] if value_["type"] != "map" else json.loads(value_["value"])["data"][config["user"]["timeline"]["study_year"]]
-                                    add_parameter_value(db_map,entity_class_target,param_list[param_source][0],"Base",entity_target_name,param_list[param_source][1]*value_param)
+                                    value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                    add_parameter_value(db_map,entity_class_target,param_list[param_source][0],"Base",entity_target_name,value_param)
                         
 
 def main():
@@ -360,10 +389,7 @@ def main():
     url_db_tra = sys.argv[5]
     url_db_hyd = sys.argv[6]
     url_db_dem = sys.argv[7]
-    url_db_hea = sys.argv[8]
-    url_db_veh = sys.argv[9]
-    url_db_bio = sys.argv[10]
-    url_db_ind = sys.argv[11]
+
 
     db_com = DatabaseMapping(url_db_com)
     db_pow = DatabaseMapping(url_db_pow)
@@ -371,10 +397,7 @@ def main():
     db_tra = DatabaseMapping(url_db_tra)
     db_hyd = DatabaseMapping(url_db_hyd)
     db_dem = DatabaseMapping(url_db_dem)
-    db_hea = DatabaseMapping(url_db_hea)
-    db_veh = DatabaseMapping(url_db_veh)
-    db_bio = DatabaseMapping(url_db_bio)
-    db_ind = DatabaseMapping(url_db_ind)
+
     
     with open("ines_structure.json", 'r') as f:
         ines_spec = json.load(f)
@@ -418,9 +441,9 @@ def main():
         db_map.commit_session("vre_added")
 
         # Power Transmission Representation
-        '''add_power_transmission(db_map,db_tra,config)
+        add_power_transmission(db_map,db_tra,config)
         print("power_transmission_added")
-        db_map.commit_session("power_transmission_added")'''
+        db_map.commit_session("power_transmission_added")
 
 
 
