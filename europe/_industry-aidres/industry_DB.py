@@ -125,7 +125,6 @@ def demand_sectors(target_db,sheet):
         add_parameter_value(target_db, entity_name, "annual_demand", "Base", entity_byname, map_param)
                
 
-
 def main():
 
     # Spine Inputs
