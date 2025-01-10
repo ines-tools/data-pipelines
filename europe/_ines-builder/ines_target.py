@@ -177,12 +177,14 @@ def spatial_transformation(db_source, config, sector):
                                             value_ = parameter_value["parsed_value"]
                                     elif defaults != None:
                                         value_ = defaults
+                                    else:
+                                        value_ = None
                                     spatial_data[entity_class][source_parameter][entity_name][target_poly] = value_   
     return spatial_data
 
 def add_timeline(db_source : DatabaseMapping,config : dict):
     for year in config["user"]["model"]["planning_years"]:
-        add_entity(db_source, "period", f"y{year}")
+        add_entity(db_source, "period", ("y"+year,))
         # duration
         # startime
     # temporality
@@ -246,7 +248,7 @@ def add_electricity_demand(db_map : DatabaseMapping, db_source : DatabaseMapping
                                 for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
                                     entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_items[2]])
                                     add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
-                                    
+
                         # Regional Parameter
                         entity_class_region = f"{entity_class}__region"
                         if entity_class_region in config["sys"][db_name]["parameters"]["dynamic"]:
@@ -385,6 +387,53 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
                                 add_parameter_value(db_map,entity_class_target,param_values[0],"Base",entity_target_name,region_params[entity_class][param_source][entity_name][poly])
 
+def add_hydro(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+
+    db_name = "hydro_systems"
+    print("ADDING HYDRO_SYSTEMS")
+    for entity_class in config["sys"][db_name]["entities"]:
+        entities = db_source.get_entity_items(entity_class_name = entity_class)
+        for entity in entities:
+            entity_name = entity["name"]
+            entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
+            entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
+            entity_target_names   = []
+
+            # entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on")
+            
+            if entity_names[-1] in config["onshore_polygons"]:
+                for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
+                    if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
+                        for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
+                            entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in entity_target_building])
+                            add_entity(db_map,entity_class_target,entity_target_name)
+
+                    # Default Parameters
+                    if entity_class in config["sys"][db_name]["parameters"]["default"]:
+                        if entity_class_target in config["sys"][db_name]["parameters"]["default"][entity_class]:
+                            for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
+                                entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_items[2]])
+                                add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
+                    
+                    # Fixed Parameters
+                    if entity_class in config["sys"][db_name]["parameters"]["fixed"]:
+                        if entity_class_target in config["sys"][db_name]["parameters"]["fixed"][entity_class]:
+                            param_list = config["sys"][db_name]["parameters"]["fixed"][entity_class][entity_class_target]
+                            for param_source in param_list:
+                                entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_list[param_source][2]])
+                                value_ = db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name=param_source,alternative_name="Base")
+                                if value_:
+                                    if value_["type"] == "map": 
+                                        value_param = {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                    elif value_["type"] == "time_series":
+                                        param_map = json.loads(value_["value"].decode("utf-8"))["data"]
+                                        keys = list(param_map.keys())
+                                        vals = param_list[param_source][1]*np.fromiter(param_map.values(), dtype=float)
+                                        value_param = {"type":"time_series","data":dict(zip(keys,vals))}
+                                    else:
+                                        value_param = param_list[param_source][1]*value_["parsed_value"] 
+                                    add_parameter_value(db_map,entity_class_target,param_list[param_source][0],"Base",entity_target_name,value_param)
+                        
 def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
 
     db_name = "power_transmission"
@@ -479,23 +528,30 @@ def main():
         print("nodes_added")
         db_map.commit_session("nodes_added")
 
+        # Electricity Demand
+        add_electricity_demand(db_map,db_dem,config)
+        print("electricity_demand_added")
+        db_map.commit_session("electricity_demand_added")
+
         # Power Sector Representation
         add_power_sector(db_map,db_pow,config)
         print("power_sector_added")
         db_map.commit_session("power_sector_added")
-
 
         # Power vre Representation
         add_vre_sector(db_map,db_vre,config)
         print("vre_added")
         db_map.commit_session("vre_added")
 
+        # Hydro Systems
+        add_hydro(db_map,db_hyd,config)
+        print("hydro_systems_added")
+        db_map.commit_session("hydro_systems_added")
+
         # Power Transmission Representation
         add_power_transmission(db_map,db_tra,config)
         print("power_transmission_added")
         db_map.commit_session("power_transmission_added")
-
-
 
 if __name__ == "__main__":
     main()

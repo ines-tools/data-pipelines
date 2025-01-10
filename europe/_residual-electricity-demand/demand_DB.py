@@ -51,11 +51,11 @@ def main():
             add_entity(db_map,"region",country)
             add_parameter_value(db_map,"region","type","Base",(country,),"onshore")
             add_parameter_value(db_map,"region","GIS_level","Base",(country,),"PECD1")
-            add_relationship(db_map,"node",("elec",country))
+            add_relationship(db_map,"commodity__region",("elec",country))
             demand_v = electricity_demand.loc[index_filter,country].tolist() 
             demand_i = electricity_demand.loc[index_filter,:].index.tolist() 
             value_de = {"type":"time_series","data":dict(zip(demand_i,demand_v))}
-            add_parameter_value(db_map,"node","flow_profile","Base",("elec",country),value_de)
+            add_parameter_value(db_map,"commodity__region","flow_profile","Base",("elec",country),value_de)
              
         print("Demand loaded")
 

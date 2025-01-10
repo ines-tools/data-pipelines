@@ -127,7 +127,7 @@ def process_all_sectors(tech_wb, config_file, target_db, sector_commodity):
         "wind-on-SP335-HH100", "wind-on-SP335-HH150", "wind-on-SP277-HH100", "wind-on-SP277-HH150",
         "wind-on-SP198-HH100", "wind-on-SP198-HH150", "solar-PV-no-tracking", "solar-PV-rooftop",
         "solar-PV-tracking", "wind-off-FB-SP316-HH155", "wind-off-FB-SP370-HH155", "wind-on-existing",
-        "wind-off-existing"
+        "wind-off-existing","hydro-turbine"
     ]
 
     ################ COMMODITIES
@@ -146,22 +146,22 @@ def process_all_sectors(tech_wb, config_file, target_db, sector_commodity):
 def existing_data(target_db,existing_tech):
 
     for country in existing_tech.index:    
-            try:
-                add_entity(target_db,"region",(country,))
-                add_parameter_value(target_db,"region","type","Base",(country,),"onshore")
-                add_parameter_value(target_db,"region","GIS_level","Base",(country,),"PECD1")
-            except:
-                pass
-            try:
-                add_entity(target_db,"node",("elec",country))
-            except:
-                pass
+        try:
+            add_entity(target_db,"region",(country,))
+            add_parameter_value(target_db,"region","type","Base",(country,),"onshore")
+            add_parameter_value(target_db,"region","GIS_level","Base",(country,),"PECD1")
+        except:
+            pass
+        try:
+            add_entity(target_db,"node",("elec",country))
+        except:
+            pass
 
-            for tech in existing_tech.columns:
-                if round(float(existing_tech.at[country,tech]),1 > 0.0):
-                    add_entity(target_db,"technology__region",(tech,country))
-                    map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(float(existing_tech.at[country,tech]),1)}}
-                    add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_existing)    
+        for tech in existing_tech.columns:
+            if round(float(existing_tech.at[country,tech]),1 > 0.0) and tech != "hydro-turbine":
+                add_entity(target_db,"technology__region",(tech,country))
+                map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(float(existing_tech.at[country,tech]),1)}}
+                add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_existing)    
 
 
 def main():

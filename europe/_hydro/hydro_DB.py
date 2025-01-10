@@ -34,32 +34,38 @@ def process_parameters(target_db, sheet):
     entity_name = "reservoir"
     entity_byname = ("reservoir",)
     add_entity(target_db, entity_name, entity_byname)
+    
     for country in sheet.index:
         param_source = ["initial capacity (MWh)","maximum capacity (MWh)","minimum capacity  (MWh)","maximum discharge  (MWh)","minimum discharge  (MWh)","maximum ramping in 1 hour(MWh)","maximum ramping in 4 hours(MWh)"]
-        param_target = ["initial_capacity","maximum_capacity","minimum_capacity","maximum_discharge","minimum_discharge","maximum_ramp","maximum_ramp_4"]
+        param_target = ["initial_capacity","capacity","minimum_capacity","maximum_discharge","minimum_discharge","maximum_ramp","maximum_ramp_4"]
         params =dict(zip(param_target,param_source))
         add_entity(target_db, "region", (country,))
         
-        entity_name = "technology__commodity__region"
+        entity_name = "technology__to_commodity__region"
         entity_byname = ("hydro-turbine","elec",country)
         add_entity(target_db, entity_name, entity_byname)
         for parameter in ["maximum_ramp","maximum_ramp_4"]:
             add_parameter_value(target_db, entity_name, parameter, "Base", entity_byname, float(sheet.at[country,params[parameter]]))
-        
+        # Hard-coding the variable cost of hydro turbines
+        map_value = {"type": "map", "index_type": "str", "index_name": "period", "data": {"y2030":3.03,"y2040":3.03,"y2050":3.03}}
+        add_parameter_value(target_db, entity_name, "operational_cost", "Base", entity_byname, map_value)
+        map_value = {"type": "map", "index_type": "str", "index_name": "period", "data": {"y2030":65120.0,"y2040":65120.0,"y2050":65120.0}}
+        add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, map_value)
         
         entity_name = "reservoir__region"
         entity_byname = ("reservoir",country)
         add_entity(target_db, entity_name, entity_byname)
-        for parameter in ["initial_capacity","minimum_capacity","maximum_capacity"]:
-            add_parameter_value(target_db, entity_name, parameter, "Base", entity_byname, float(sheet.at[country,params[parameter]]))
+        for parameter in ["initial_capacity","minimum_capacity","capacity"]:
+            value_param = float(sheet.at[country,params[parameter]]) if parameter != "minimum_capacity" else round(float(sheet.at[country,params[parameter]])/float(sheet.at[country,params["capacity"]]),3)
+            add_parameter_value(target_db, entity_name, parameter, "Base", entity_byname, value_param)
         
-        entity_name = "reservoir__technology__region"
+        entity_name = "reservoir__to_technology__region"
         entity_byname = ("reservoir","hydro-turbine",country)
         add_entity(target_db, entity_name, entity_byname)
         for parameter in ["minimum_discharge","maximum_discharge"]:
             add_parameter_value(target_db, entity_name, parameter, "Base", entity_byname, float(sheet.at[country,params[parameter]]))
         
-        entity_name = "reservoir__technology__commodity__region"
+        entity_name = "reservoir__to_technology__to_commodity__region"
         entity_byname = ("reservoir","hydro-turbine","elec",country)
         add_entity(target_db, entity_name, entity_byname)
         eff1 = float(sheet.at[country,"efficiency 1"])
@@ -85,7 +91,7 @@ def ror_parameters(target_db, sheet):
             add_entity(target_db, "region", (country,))
         except:
             pass
-        entity_name = "technology__commodity__region"
+        entity_name = "technology__to_commodity__region"
         entity_byname = ("RoR","elec",country)
         add_entity(target_db, entity_name, entity_byname)
 
