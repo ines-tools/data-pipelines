@@ -83,7 +83,7 @@ def ror_parameters(target_db, sheet):
     entity_byname = ("RoR",)
     add_entity(target_db, entity_name, entity_byname)
 
-    time_index = [pd.Timestamp(i).isoformat() for i in sheet.index]
+    time_index = [pd.Timestamp(i).tz_convert(None).isoformat() for i in sheet.index if not (pd.Timestamp(i).month == 2 and pd.Timestamp(i).day == 29)]
     for column in sheet.columns:
 
         country = column[:2]
@@ -95,20 +95,20 @@ def ror_parameters(target_db, sheet):
         entity_byname = ("RoR","elec",country)
         add_entity(target_db, entity_name, entity_byname)
 
-        param_map = {"type": "time_series", "data": dict(zip(time_index,sheet[column].values))}
+        param_map = {"type":"map","index_type":"date_time","index_name":"t","data":dict(zip(time_index,sheet[column].values.round(1)))}
         add_parameter_value(target_db, entity_name, "profile_fix", "Base", entity_byname, param_map)
 
 
 def inflow_parameters(target_db, sheet):
 
-    time_index = [pd.Timestamp(i).isoformat() for i in sheet.index]
+    time_index = [pd.Timestamp(i).tz_convert(None).isoformat() for i in sheet.index if not (pd.Timestamp(i).month == 2 and pd.Timestamp(i).day == 29)]
     for column in sheet.columns:
 
         country = column[:2]
         entity_name = "reservoir__region"
         entity_byname = ("reservoir",country)
 
-        param_map = {"type": "time_series", "data": dict(zip(time_index,sheet[column].values))}
+        param_map = {"type":"map","index_type":"date_time","index_name":"t","data":dict(zip(time_index,sheet[column].values.round(1)))}
         add_parameter_value(target_db, entity_name, "inflow", "Base", entity_byname, param_map)
 
 

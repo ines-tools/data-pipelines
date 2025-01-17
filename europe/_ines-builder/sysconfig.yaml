@@ -67,12 +67,15 @@ power_sector:
       storage:
         node:
           - [node_type,storage,[[1]]]
+          - [storage_capacity,1.0,[[1]]]
           - [storage_limit_method,upper_limit,[[1]]]
           - [storage_retirement_method,economic_retirement,[[1]]]   
       storage_connection:
         link:
-          - [capacity,1.0,[[1,2]]]
           - [retirement_method,economic_retirement,[[1,2]]]   
+        node__link__node:
+          - [capacity,1.0,[[1],[1,2],[2]]]
+          - [capacity,1.0,[[2],[1,2],[1]]]
     fixed:
       technology__to_commodity:
         unit__to_node:
@@ -90,8 +93,8 @@ power_sector:
         link:
           investment_cost: [investment_cost,1.0,[[1,2]]]
           fixed_cost: [fixed_cost,1.0,[[1,2]]]
-          operational_cost: [operational_cost,1.0,[[1,2]]]
         node__link__node:
+          operational_cost: [operational_cost,1.0,[[2],[1,2],[1]]]
           efficiency_in: [efficiency,1.0,[[2],[1,2],[1]]]
           efficiency_out: [efficiency,1.0,[[1],[1,2],[2]]]
     dynamic:

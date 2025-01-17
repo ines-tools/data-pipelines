@@ -25,8 +25,8 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
 def time_index(year) -> list:
     time_list = {}
     pd_range = pd.date_range(str(int(year))+"-01-01 00:00:00",str(int(year))+"-12-31 23:00:00",freq="h")
-    time_list["standard"] = [i.strftime('%Y-%m-%d %H:%M:%S') for i in pd_range]
-    time_list["iso"]  = [i.isoformat() for i in pd_range]
+    time_list["standard"] = [i.strftime('%Y-%m-%d %H:%M:%S') for i in pd_range if not (i.month==2 and i.day==29)]
+    time_list["iso"]  = [i.isoformat() for i in pd_range if not (i.month==2 and i.day==29)]
     return time_list["standard"], time_list["iso"]
 
 def read_excel_data(file_name, sheet_name, index_col, column):
@@ -35,8 +35,6 @@ def read_excel_data(file_name, sheet_name, index_col, column):
 def add_region(db_map, poly, region_type, gis_level):
     try:
         add_entity(db_map, "region", (poly,))
-        add_parameter_value(db_map, "region", "type", "Base", (poly,), region_type)
-        add_parameter_value(db_map, "region", "GIS_level", "Base", (poly,), gis_level)
     except Exception as e:
         pass#print(f"Error adding region {poly}: {e}")
 
@@ -47,7 +45,8 @@ def add_technology_relationship(db_map, tech_type, tech, poly, potential, availa
     except Exception as e:
         pass#print(f"Error adding technology relationship {tech_type} for {poly}: {e}")
 
-    profile = {"type": "time_series", "data": dict(zip(CY_index["iso"], availability.loc[CY_index["standard"], poly].round(3).tolist()))}
+    profile = {"type":"map","index_type":"date_time","index_name":"t","data":dict(zip(CY_index["iso"], availability.loc[CY_index["standard"], poly].round(3).tolist()))}
+    # profile = {"type": "time_series", "data": availability.loc[CY_index["standard"], poly].round(3).tolist(), "index": {"start": "2018-01-01T00:00:00", "resolution": "1h", "ignore_year": True}}
     add_entity(db_map, "technology__to_commodity__region", (tech, "elec",poly))
     add_parameter_value(db_map, "technology__to_commodity__region", "profile_limit_upper", "Base", (tech, "elec",poly), profile)
 

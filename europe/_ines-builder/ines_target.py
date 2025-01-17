@@ -64,7 +64,7 @@ def user_entity_condition(config,entity_class_elements,entity_names,poly,poly_ty
 def ines_aggregrate(db_source : DatabaseMapping,transformer_df : pd.DataFrame,target_poly : str ,entity_class : tuple,entity_names : tuple,alternative : str,source_parameter : str,weight : str,defaults = None) -> dict:
 
     # db_source : Spine DB
-    # transforme : dataframes
+    # transformer : dataframes
     # target/source_poly : spatial resolution name
     # weight : conversion factor 
     # defaults : default value implemented
@@ -88,16 +88,17 @@ def ines_aggregrate(db_source : DatabaseMapping,transformer_df : pd.DataFrame,ta
                     prev_vals = np.fromiter(value_["data"].values(), dtype=float)
                     value_ = {"type":"time_series","data":dict(zip(keys,prev_vals + vals))}  
             elif parameter_value["type"] == "map":
-                param_map = json.loads(parameter_value["value"].decode("utf-8"))["data"]
+                param_dict = json.loads(parameter_value["value"].decode("utf-8"))
+                param_map = param_dict["data"]
                 if not value_:
-                    value_ = {"type":"map","index_type":"str","index_name":"period","data":{}}
+                    value_ = {"type":"map","index_type":param_dict["index_type"],"index_name":param_dict["index_name"],"data":{}}
                     for key, item in param_map.items():
                         if isinstance(item,float):
                             value_["data"][key] = multiplier*item
                         else: # time_series
                             keys = list(param_map["data"][key].keys())
                             vals = multiplier*np.fromiter(param_map["data"][key].values(), dtype=float)
-                            value_["data"][key] = {"type":"time_series","data":dict(zip(keys,vals))}
+                            value_["data"][key] = {"type":"time_series","data":dict(zip(keys,vals.round(3)))}
                 else:
                     for key, item in param_map.items():
                         if isinstance(item,float):
@@ -106,7 +107,7 @@ def ines_aggregrate(db_source : DatabaseMapping,transformer_df : pd.DataFrame,ta
                             prev_vals = np.fromiter(value_["data"][key].values(), dtype=float)
                             keys = list(param_map["data"][key].keys())
                             vals = multiplier*np.fromiter(param_map["data"][key].values(), dtype=float)
-                            value_["data"][key] = {"type":"time_series","data":dict(zip(keys,prev_vals+vals))}
+                            value_["data"][key] = {"type":"time_series","data":dict(zip(keys,(prev_vals+vals).round(3)))}
             elif parameter_value["type"] == "float":
                 value_ = value_ + multiplier*parameter_value["parsed_value"] if value_ else multiplier*parameter_value["parsed_value"]
             # ADD MORE Parameter Types HERE            
@@ -164,8 +165,9 @@ def spatial_transformation(db_source, config, sector):
                                             vals = np.fromiter(param_value.values(), dtype=float)
                                             value_ = {"type":"time_series","data":dict(zip(keys,vals))}     
                                         elif parameter_value["type"] == "map":
-                                            param_map = json.loads(parameter_value["value"].decode("utf-8"))["data"]
-                                            value_ = {"type":"map","index_type":"str","index_name":"period","data":{}}
+                                            param_dict = json.loads(parameter_value["value"].decode("utf-8"))
+                                            param_map = param_dict["data"]
+                                            value_ = {"type":"map","index_type":param_dict["index_type"],"index_name":param_dict["index_name"],"data":{}}
                                             for key, item in param_map.items():
                                                 if isinstance(item,float):
                                                     value_["data"][key] = item
@@ -182,12 +184,25 @@ def spatial_transformation(db_source, config, sector):
                                     spatial_data[entity_class][source_parameter][entity_name][target_poly] = value_   
     return spatial_data
 
-def add_timeline(db_source : DatabaseMapping,config : dict):
+def add_timeline(db_map : DatabaseMapping,config : dict):
+
+    add_entity(db_map, "solve_pattern", ("capacity_planning",))
+    duration_dict = {"type": "array","value_type": "duration","data": []}
+    period_dict = {"type": "array","value_type": "str","data": []}
     for year in config["user"]["model"]["planning_years"]:
-        add_entity(db_source, "period", ("y"+year,))
-        # duration
-        # startime
+        add_entity(db_map, "period", ("y"+year,))
+        add_parameter_value(db_map,"period","years_represented","Base",("y"+year,),10.0)
+        add_parameter_value(db_map,"period","start_time","Base",("y"+year,),{"type":"date_time","data":f"{year if int(year) != 2040 else str(int(year)+1)}-01-01T00:00:00"})
+        duration_dict["data"].append("y"+year)
+        period_dict["data"].append(config["user"]["model"]["planning_resolution"])
+
     # temporality
+    wy_dict = {"type": "array","value_type": "date_time","data": [config["user"]["timeline"]["historical_alt"][i]["start"] for i in config["user"]["timeline"]["historical_alt"]]}
+    add_entity(db_map, "solve_pattern", ("capacity_planning",))
+    add_parameter_value(db_map,"solve_pattern","time_resolution","Base",("capacity_planning",),{"type":"duration","data":config["user"]["model"]["operations_resolution"]})
+    add_parameter_value(db_map,"solve_pattern","duration","Base",("capacity_planning",),duration_dict)
+    add_parameter_value(db_map,"solve_pattern","period","Base",("capacity_planning",),period_dict)
+    add_parameter_value(db_map,"solve_pattern","start_time","Base",("capacity_planning",),wy_dict)
 
 def add_nodes(db_map : DatabaseMapping, db_com : DatabaseMapping, config : dict) -> None:
     
@@ -332,7 +347,7 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
     print("ADDING VRE ELEMENTS")
     for entity_class in config["sys"]["vre"]["entities"]:
         entities = db_source.get_entity_items(entity_class_name = entity_class)
-        print(f"{entity_class} turn")
+        # print(f"{entity_class} turn")
         for entity in entities:
             entity_name = entity["name"]
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
@@ -424,7 +439,8 @@ def add_hydro(db_map : DatabaseMapping, db_source : DatabaseMapping, config : di
                                 value_ = db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name=param_source,alternative_name="Base")
                                 if value_:
                                     if value_["type"] == "map": 
-                                        value_param = {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                        param_map = json.loads(value_["value"])
+                                        value_param = {"type":"map","index_type":param_map["index_type"],"index_name":param_map["index_name"],"data":{key:param_list[param_source][1]*item for key,item in dict(param_map["data"]).items()}}
                                     elif value_["type"] == "time_series":
                                         param_map = json.loads(value_["value"].decode("utf-8"))["data"]
                                         keys = list(param_map.keys())
@@ -474,7 +490,16 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
                                     value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
                                     add_parameter_value(db_map,entity_class_target,param_list[param_source][0],"Base",entity_target_name,value_param)
                         
+def add_policy_constraints(db_map : DatabaseMapping, config : dict):
 
+    co2_budget = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":config["user"]["global_constraints"]["co2_budget"][year] for year in config["user"]["global_constraints"]["co2_budget"]}}
+    # Atmosphere entity is created
+    entity_name = "node"
+    entity_byname = ("atmosphere",)
+    add_entity(db_map,entity_name,entity_byname)
+    add_parameter_value(db_map,"node","node_type","Base",("atmosphere",),"storage")
+    add_parameter_value(db_map,"node","storage_capacity","Base",("atmosphere",),co2_budget)
+        
 def main():
     url_db_out = sys.argv[1]
     url_db_com = sys.argv[2]
@@ -514,7 +539,7 @@ def main():
         add_superclass_subclass(db_map,"unit_flow","unit__to_node")
         print("ines_map_added")
         db_map.commit_session("ines_map_added")
-        
+
         # Base alternative
         add_alternative(db_map,"Base")
 
@@ -552,6 +577,11 @@ def main():
         add_power_transmission(db_map,db_tra,config)
         print("power_transmission_added")
         db_map.commit_session("power_transmission_added")
+
+        # Policy Constraints
+        add_policy_constraints(db_map,config)
+        print("policy_constraints")
+        db_map.commit_session("policy_constraints")
 
 if __name__ == "__main__":
     main()
