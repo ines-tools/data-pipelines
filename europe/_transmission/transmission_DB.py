@@ -42,7 +42,7 @@ def main():
         transmission_type = "HV"
         add_entity(db_map,"transmission",(transmission_type,))
         add_entity(db_map,"commodity",("elec",))
-        add_parameter_value(db_map,"transmission","lifetime","Base",(transmission_type,),float(50.0))
+        
 
         # Electricity transmission
         for from_node in power_links["From_node"].unique():
@@ -78,6 +78,7 @@ def main():
                     if  value_potentials > 0.0 or value_capex > 0.0:
                         add_parameter_value(db_map,"region__transmission__commodity__region","links_potentials","Base",entity_byname,float(value_existing)+(float(value_potentials)))
                         add_parameter_value(db_map,"region__transmission__commodity__region","investment_cost","Base",entity_byname,float(value_capex)) 
+                        add_parameter_value(db_map,"region__transmission__commodity__region","lifetime","Base",entity_byname,float(power_links.at[l,"Lifetime"]))
 
         print("Tranmission loaded")
         db_map.commit_session("transmission_added")

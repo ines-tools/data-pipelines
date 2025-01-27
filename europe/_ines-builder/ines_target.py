@@ -186,7 +186,6 @@ def spatial_transformation(db_source, config, sector):
 
 def add_timeline(db_map : DatabaseMapping,config : dict):
 
-    add_entity(db_map, "solve_pattern", ("capacity_planning",))
     duration_dict = {"type": "array","value_type": "duration","data": []}
     period_dict = {"type": "array","value_type": "str","data": []}
     for year in config["user"]["model"]["planning_years"]:

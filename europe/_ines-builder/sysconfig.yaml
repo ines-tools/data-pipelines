@@ -89,10 +89,12 @@ power_sector:
       storage:
         node:
           investment_cost: [storage_investment_cost,1.0,[[1]]]
+          lifetime: [storage_lifetime,1.0,[[1]]]
       storage_connection:
         link:
           investment_cost: [investment_cost,1.0,[[1,2]]]
           fixed_cost: [fixed_cost,1.0,[[1,2]]]
+          lifetime: [lifetime,1.0,[[1,2]]]
         node__link__node:
           operational_cost: [operational_cost,1.0,[[2],[1,2],[1]]]
           efficiency_in: [efficiency,1.0,[[2],[1,2],[1]]]
@@ -226,6 +228,7 @@ power_transmission:
       region__transmission__commodity__region:
         link:
           investment_cost: [investment_cost,1.0,[[1,3,4]]]
+          lifetime: [lifetime,1.0,[[1,3,4]]]
           links_existing: [links_existing,1.0,[[1,3,4]]]
           links_potentials: [links_max_cumulative,1.0,[[1,3,4]]]
 

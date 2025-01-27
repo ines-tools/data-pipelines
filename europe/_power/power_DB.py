@@ -57,12 +57,13 @@ def process_storage_data(sheet, config_file, target_db,commodities):
             entity_name = "storage"
             entity_byname = (storage_name,)
             add_entity(target_db, entity_name, entity_byname)
-            process_single_parameter(sheet.T[storage_name], config_file, target_db, entity_name, entity_byname, "lifetime", )
+            process_single_parameter(sheet.T[storage_name], config_file, target_db, entity_name, entity_byname, "lifetime",)
             process_map_parameter(sheet.T[storage_name], config_file, target_db, entity_name, entity_byname, "investment_cost", multiplier=1e6)
             
             entity_name = "storage_connection"
             entity_byname = (storage_name, connected_to)
             add_entity(target_db, entity_name, entity_byname)
+            process_single_parameter(sheet.T[storage_name], config_file, target_db, entity_name, entity_byname, "lifetime",)
             for param_name in ["investment_cost", "fixed_cost", "operational_cost", "efficiency_in", "efficiency_out"]:
                 multiplier = 1e6 if param_name == "investment_cost" else 1
                 process_map_parameter(sheet.T[storage_name], config_file, target_db, entity_name, entity_byname, param_name, multiplier)
@@ -177,7 +178,8 @@ def main():
                                             "fixed_cost":"fom",
                                             "operational_cost":"vom",
                                             "efficiency_in":"charge-efficiency",
-                                            "efficiency_out":"discharge-efficiency"},
+                                            "efficiency_out":"discharge-efficiency",
+                                            "lifetime": "lifetime"},
                     "commodity":{"co2_content":"CO2_content",
                                  "commodity_price":"price"},
                     "technology":{"lifetime":"Lifetime"},
