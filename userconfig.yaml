@@ -1,12 +1,16 @@
 # Configurate your own model
 # countries : ["AL","DE","HU","MK","SE","AT","DK","IE","MT","SI","BA","EE","IT","NL","SK","BE","ES","LT","NO","TR","BG","FI","LU","PL","UA","CH","FR","LV","PT","UK","CY","GR","MD","RO","XK","CZ","HR","ME","RS"]
 model :
-    type : existing # greenfied
+    type :  brownfield # greenfied
     start : "2018-01-01T00:00:00"
     end   : "2019-01-01T00:00:00"
     operations_resolution : "1h"
     planning_resolution : "365D"
-    planning_years : ["2030","2040","2050"]
+    planning_years: 
+      "2030": "2030-01-01T00:00:00"
+      "2040": "2040-01-01T00:00:00"
+      "2050": "2050-01-01T00:00:00"
+    years_represented: 10
 timeline:
   historical_alt : 
     CY_1995 :

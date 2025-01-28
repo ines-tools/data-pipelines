@@ -186,20 +186,19 @@ def spatial_transformation(db_source, config, sector):
 
 def add_timeline(db_map : DatabaseMapping,config : dict):
 
-    duration_dict = {"type": "array","value_type": "duration","data": []}
     period_dict = {"type": "array","value_type": "str","data": []}
     for year in config["user"]["model"]["planning_years"]:
         add_entity(db_map, "period", ("y"+year,))
-        add_parameter_value(db_map,"period","years_represented","Base",("y"+year,),10.0)
-        add_parameter_value(db_map,"period","start_time","Base",("y"+year,),{"type":"date_time","data":f"{year if int(year) != 2040 else str(int(year)+1)}-01-01T00:00:00"})
-        duration_dict["data"].append("y"+year)
-        period_dict["data"].append(config["user"]["model"]["planning_resolution"])
+        add_parameter_value(db_map,"period","years_represented","Base",("y"+year,),1.0)
+        add_parameter_value(db_map,"period","start_time","Base",("y"+year,),{"type":"date_time","data":config["user"]["model"]["planning_years"][year]})
+    
+    period_dict["data"].append("y2030")
 
     # temporality
     wy_dict = {"type": "array","value_type": "date_time","data": [config["user"]["timeline"]["historical_alt"][i]["start"] for i in config["user"]["timeline"]["historical_alt"]]}
     add_entity(db_map, "solve_pattern", ("capacity_planning",))
     add_parameter_value(db_map,"solve_pattern","time_resolution","Base",("capacity_planning",),{"type":"duration","data":config["user"]["model"]["operations_resolution"]})
-    add_parameter_value(db_map,"solve_pattern","duration","Base",("capacity_planning",),duration_dict)
+    add_parameter_value(db_map,"solve_pattern","duration","Base",("capacity_planning",),config["user"]["model"]["planning_resolution"])
     add_parameter_value(db_map,"solve_pattern","period","Base",("capacity_planning",),period_dict)
     add_parameter_value(db_map,"solve_pattern","start_time","Base",("capacity_planning",),wy_dict)
 
