@@ -135,7 +135,7 @@ vre:
         unit: 
           - [retirement_method,economic_retirement,[[1]]]
       technology__to_commodity:
-        unit__to_node: 
+        unit__to_node:
           - [capacity,1.0,[[1],[2]]]
     fixed:
       technology__to_commodity:
