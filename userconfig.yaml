@@ -56,13 +56,13 @@ commodity:
   CO2: 
     status: False
   bio: 
-    status: False
+    status: True
   HC: 
-    status: False
+    status: True
   NH3: 
     status: False
   MeOH: 
-    status: False
+    status: True
   fossil-CH4: 
     status: False
   fossil-HC: 
@@ -74,10 +74,6 @@ commodity:
   U-92: 
     status: False
   waste: 
-    status: False
-  heat: 
-    status: False
-  DH: 
     status: False
 
 transmission: 
@@ -311,3 +307,6 @@ technology:
     investment_method: "not_allowed"
     renewable : True
     site : onshore
+  # biomass production
+  biomass-gen:
+    status : True

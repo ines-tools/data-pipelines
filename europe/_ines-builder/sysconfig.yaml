@@ -7,6 +7,7 @@ commodities:
       node:
         co2_content: [co2_content,1.0]
         commodity_price: [commodity_price,1.0]
+
 # Electricity Demand
 elec_demand:
   entities:
@@ -25,6 +26,9 @@ elec_demand:
 # Power Sector DB including Transmission in Target Resolution
 power_sector:
   entities:
+    commodity:
+      node:
+        - [[1]]
     technology:
       unit:
         - [[1]]
@@ -61,9 +65,6 @@ power_sector:
       technology:
         unit: 
           - [retirement_method,economic_retirement,[[1]]]
-      technology__to_commodity:
-        unit__to_node: 
-          - [capacity,1.0,[[1],[2]]]
       storage:
         node:
           - [node_type,storage,[[1]]]
@@ -79,6 +80,7 @@ power_sector:
     fixed:
       technology__to_commodity:
         unit__to_node:
+          capacity: [capacity,1.0,[[1],[2]]]
           investment_cost: [investment_cost,1.0,[[1],[2]]]
           fixed_cost: [fixed_cost,1.0,[[1],[2]]]
           operational_cost: [other_operational_cost,1.0,[[1],[2]]]
@@ -232,8 +234,78 @@ power_transmission:
           links_existing: [links_existing,1.0,[[1,3,4]]]
           links_potentials: [links_max_cumulative,1.0,[[1,3,4]]]
 
+# Industrial sector map
+industrial_sector:
+  entities:
+    commodity:
+      node:
+        - [[1]]
+    technology:
+      unit: 
+        - [[1]]
+    technology__to_commodity:
+      unit__to_node:
+        - [[1],[2]]
+    commodity__to_technology:
+      node__to_unit:
+        - [[1],[2]]
+    commodity__to_technology__to_commodity:
+      unit_flow__unit_flow:
+        - [[2],[3],[1],[2]]
+    technology__to_commodity__to_commodity:
+      unit_flow__unit_flow:
+        - [[1],[3],[1],[2]]
+  parameters:
+    user: null
+    default:
+      technology:
+        unit: 
+          - [retirement_method,economic_retirement,[[1]]]
+    fixed:
+      technology:
+        unit:
+          lifetime: [lifetime,1.0,[[1]]]
+      technology__to_commodity: 
+        unit__to_node:
+          capacity: [capacity,1.0,[[1],[2]]]
+          investment_cost: [investment_cost,1.0,[[1],[2]]]
+          fixed_cost: [fixed_cost,1.0,[[1],[2]]]
+      commodity__to_technology__to_commodity:
+        unit_flow__unit_flow:
+          conversion_rate: [equality_ratio,1.0,[[2],[3],[1],[2]]]
+      technology__to_commodity__to_commodity:
+        unit_flow__unit_flow:
+          CO2_captured: [equality_ratio,1.0,[[1],[3],[1],[2]]]
+    dynamic:
+      technology__region:
+        unit:
+          units_existing: [units_existing,[[1]],[area,{}],0.0,NUTS3]
+      commodity__region:
+        node:
+          demand: [flow_profile,[[1]],[population,{}],null,NUTS3]
 
+# Biomass Production
+biomass_production:
+  entities:
+    commodity:
+      node: 
+        - [[1]]
+    technology:
+      unit:
+        - [[1]]
+    technology__to_commodity:
+      unit__to_node:
+        - [[1],[2]]
+      set:
+        - [[1,2]]
+      set__unit_flow:
+        - [[1,2],[1],[2]]
+  parameters:
+    dynamic:
+      technology__to_commodity__region:
+        unit__to_node:
+          operational_cost: [other_operational_cost,[[1],[2]],[area,{}],null,PECD1]
+        set:
+          average_hourly_production: [flow_max_cumulative,[[1,2]],[area,{}],null,PECD1]
 
-# CO2 node is hard-coded
-  # unit_flow__unit_flow:
-  #  co2_capture: [equality_ratio,1.0,[[[1],[2]],[[1],["CO2"]]]] 
+          

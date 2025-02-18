@@ -53,8 +53,8 @@ def add_tech_parameters(target_db,industry,node,sheets):
         entity_name = "technology__to_commodity"
         entity_byname = (industry,"CO2")
         add_entity(target_db, entity_name, entity_byname)
-        entity_name = "commodity__to_technology__to_commodity"
-        entity_byname = (node,industry,"CO2")
+        entity_name = "technology__to_commodity__to_commodity"
+        entity_byname = (industry,node,"CO2")
         add_entity(target_db, entity_name, entity_byname)
         map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
         add_parameter_value(target_db, entity_name, "CO2_captured", "Base", entity_byname, map_param)
@@ -75,6 +75,7 @@ def conversion_sectors(target_db,sheet,com_sheet):
             entity_name = "technology__to_commodity"
             entity_byname = (sheet.at[i,"Industry"],sheet.at[i,"to_node"])
             add_entity(target_db, entity_name, entity_byname)
+            add_parameter_value(target_db, entity_name, "capacity", "Base", entity_byname,1.0)
             add_tech_parameters(target_db,sheet.at[i,"Industry"],sheet.at[i,"to_node"],com_sheet)
         except:
             pass
@@ -121,7 +122,7 @@ def demand_sectors(target_db,sheet):
         entity_byname = (sheet.at[i,"to_node"],sheet.at[i,"nuts3"])
         add_entity(target_db, entity_name, entity_byname)
         multiplier = 1000.0/8760.0 if sheet.at[i,"unit"] == "kt_yr" else 1/8760.0
-        map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": {}}
+        map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": {"y2030":None,"y2040":None,"y2050":None}}
         map_param["data"]["y2030"] = multiplier*float(sheet.at[i,"2030"])
         map_param["data"]["y2050"] = multiplier*float(sheet.at[i,"2050"])
         map_param["data"]["y2040"] = (map_param["data"]["y2030"] + map_param["data"]["y2050"])/2
@@ -151,14 +152,12 @@ def main():
         conversion_sectors(target_db,ind_df["ind_process_routes_sec"],ind_df)
         target_db.commit_session("conversion added")
         print("conversion added")
-        capacity_sectors(target_db,ind_df["ind_production_2018_nuts3"])
+        capacity_sectors(target_db,ind_df["ind_production_2018_nuts1"])
         target_db.commit_session("capacity added")
         print("capacity added")
-        demand_sectors(target_db,ind_df["ind_production_30_50_nuts3"])
+        demand_sectors(target_db,ind_df["ind_production_30_50_nuts1"])
         target_db.commit_session("demand added")
         print("demand added")
         
-
-
 if __name__ == "__main__":
     main()

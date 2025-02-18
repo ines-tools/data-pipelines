@@ -88,6 +88,7 @@ def process_units(sheet, config_file, target_db, commodities, technologies_exclu
             entity_name = "technology__to_commodity"
             entity_byname = (unit_name, to_node)
             add_entity(target_db, entity_name, (unit_name, to_node))
+            add_parameter_value(target_db,entity_name,"capacity","Base",entity_byname,1.0)
             for param_name in ["investment_cost", "fixed_cost", "operational_cost"]:
                 multiplier = 1e6 if param_name == "investment_cost" else 1
                 process_map_parameter(sheet.T[unit_name], config_file, target_db, entity_name, entity_byname, param_name, multiplier)
