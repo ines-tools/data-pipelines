@@ -1,9 +1,6 @@
 # Commodities DB
 commodities:
-  entities:
-    commodity: node 
-  parameters:
-    commodity: 
+  commodity: 
       node:
         co2_content: [co2_content,1.0]
         commodity_price: [commodity_price,1.0]
@@ -204,6 +201,7 @@ hydro_systems:
           operational_cost: [other_operational_cost,1.0,[[1,3],[2,3]]]
           fixed_cost: [fixed_cost,1.0,[[1,3],[2,3]]]
           profile_fix: [profile_fix,1.0,[[1,3],[2,3]]]
+          capacity: [capacity,1.0,[[1,3],[2,3]]]
       reservoir__to_technology__to_commodity__region:
         unit_flow__unit_flow:
           efficiency: [equality_ratio,1.0,[[2,4],[3,4],[1,4],[2,4]]]
