@@ -8,9 +8,9 @@ model :
     planning_resolution : "365D"
     planning_years: 
       "2030": "2030-01-01T00:00:00"
-      "2040": "2040-01-01T00:00:00"
+      "2040": "2041-01-01T00:00:00"
       "2050": "2050-01-01T00:00:00"
-    years_represented: 10
+    years_represented: 1
 timeline:
   historical_alt : 
     CY_1995 :

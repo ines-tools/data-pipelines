@@ -199,8 +199,7 @@ def add_timeline(db_map : DatabaseMapping,config : dict):
         add_entity(db_map, "period", ("y"+year,))
         add_parameter_value(db_map,"period","years_represented","Base",("y"+year,),1.0)
         add_parameter_value(db_map,"period","start_time","Base",("y"+year,),{"type":"date_time","data":config["user"]["model"]["planning_years"][year]})
-    
-    period_dict["data"].append("y2030")
+        period_dict["data"].append("y"+year)
 
     # temporality
     wy_dict = {"type": "array","value_type": "date_time","data": [config["user"]["timeline"]["historical_alt"][i]["start"] for i in config["user"]["timeline"]["historical_alt"]]}
@@ -687,15 +686,15 @@ def main():
         print("power_sector_added")
         db_map.commit_session("power_sector_added")
 
-        # Power VRE Representation
-        '''add_vre_sector(db_map,db_vre,config)
-        print("vre_added")
-        db_map.commit_session("vre_added")'''
-
         # Hydro Systems
         add_hydro(db_map,db_hyd,config)
         print("hydro_systems_added")
         db_map.commit_session("hydro_systems_added")
+        
+        # Power VRE Representation
+        add_vre_sector(db_map,db_vre,config)
+        print("vre_added")
+        db_map.commit_session("vre_added")
 
         # Power Transmission Representation
         add_power_transmission(db_map,db_tra,config)
@@ -717,7 +716,7 @@ def main():
         print("biomass_sector_added")
         db_map.commit_session("biomass_sector_added")
 
-        # Nodes involved
+        # Commodity Nodes parameters
         add_nodes(db_map,db_com,config)
         print("nodes_added")
         db_map.commit_session("nodes_added")
