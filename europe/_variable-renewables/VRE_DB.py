@@ -115,10 +115,10 @@ def main():
             add_parameter_value(db_map,"technology","lifetime","Base",(tech,),float(vre_cost.at[tech,"lifetime"]))
 
         ## ONSHORE EXISTING
+            
         for poly in existing_wind_on.index:
             tech = "wind-on-existing"
             if existing_wind_on.round(2).at[poly] > 0 and poly in availability[tech].columns:
-
                 add_region(db_map, poly, "onshore", "PECD2")
                 add_technology_relationship(db_map, "wind-on", tech, poly, potential_wind_on.at[poly] - (existing_wind_on.at[poly] if poly in existing_wind_on.index else 0.0), availability[tech], CY_index)
 

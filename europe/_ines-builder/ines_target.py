@@ -90,29 +90,18 @@ def ines_aggregrate(db_source : DatabaseMapping,transformer_df : pd.DataFrame,ta
                         values_[parameter_value["alternative_name"]]  = {"type":"time_series","data":dict(zip(keys,prev_vals + vals))}  
                 elif parameter_value["type"] == "map":
                     param_dict = json.loads(parameter_value["value"].decode("utf-8"))
-                    param_map = param_dict["data"]
-                    if not values_.get(parameter_value["alternative_name"],{}):
-                        values_[parameter_value["alternative_name"]] = {"type":"map","index_type":param_dict["index_type"],"index_name":param_dict["index_name"],"data":{}}
-                        for key, item in param_map.items():
-                            if isinstance(item,float):
-                                values_[parameter_value["alternative_name"]]["data"][key] = multiplier*item
-                            else: # time_series
-                                keys = list(param_map["data"][key].keys())
-                                vals = multiplier*np.fromiter(param_map["data"][key].values(), dtype=float)
-                                values_[parameter_value["alternative_name"]]["data"][key] = {"type":"time_series","data":dict(zip(keys,vals.round(3)))}
-                    else:
-                        for key, item in param_map.items():
-                            if isinstance(item,float):
-                                values_[parameter_value["alternative_name"]]["data"][key] += multiplier*item
-                            else: # time_series
-                                prev_vals = np.fromiter(values_[parameter_value["alternative_name"]]["data"][key].values(), dtype=float)
-                                keys = list(param_map["data"][key].keys())
-                                vals = multiplier*np.fromiter(param_map["data"][key].values(), dtype=float)
-                                values_[parameter_value["alternative_name"]]["data"][key] = {"type":"time_series","data":dict(zip(keys,(prev_vals+vals).round(3)))}
+                    if "type" not in param_dict["data"]:
+                        param_value = param_dict["data"]
+                        keys = list(param_value.keys())
+                        vals = multiplier*np.fromiter(param_value.values(), dtype=float)
+                        if not values_.get(parameter_value["alternative_name"],{}):
+                            values_[parameter_value["alternative_name"]] = {"type":"map","index_type":param_dict["index_type"],"index_name":param_dict["index_name"],"data":dict(zip(keys,vals))}
+                        else:
+                            prev_vals = np.fromiter(values_[parameter_value["alternative_name"]]["data"].values(), dtype=float)
+                            values_[parameter_value["alternative_name"]] = {"type":"map","index_type":param_dict["index_type"],"index_name":param_dict["index_name"],"data":dict(zip(keys,prev_vals + vals))}
                 elif parameter_value["type"] == "float":
                     values_[parameter_value["alternative_name"]] = values_[parameter_value["alternative_name"]] + multiplier*parameter_value["parsed_value"] if values_.get(parameter_value["alternative_name"],{}) else multiplier*parameter_value["parsed_value"]
                 # ADD MORE Parameter Types HERE            
-                values_[parameter_value["alternative_name"]] 
     return values_
         
 def spatial_transformation(db_source, config, sector):
@@ -172,15 +161,11 @@ def spatial_transformation(db_source, config, sector):
                                                 value_ = {"type":"time_series","data":dict(zip(keys,vals))}     
                                             elif parameter_value["type"] == "map":
                                                 param_dict = json.loads(parameter_value["value"].decode("utf-8"))
-                                                param_map = param_dict["data"]
-                                                value_ = {"type":"map","index_type":param_dict["index_type"],"index_name":param_dict["index_name"],"data":{}}
-                                                for key, item in param_map.items():
-                                                    if isinstance(item,float):
-                                                        value_["data"][key] = item
-                                                    else: # time_series
-                                                        keys = list(param_map["data"][key].keys())
-                                                        vals = np.fromiter(param_map["data"][key].values(), dtype=float)
-                                                        value_["data"][key] = {"type":"time_series","data":dict(zip(keys,vals))}       
+                                                if "type" not in param_dict["data"]:
+                                                    param_value = param_dict["data"]
+                                                    keys = list(param_value.keys())
+                                                    vals = np.fromiter(param_value.values(), dtype=float)
+                                                    value_ = {"type":"map","index_type":param_dict["index_type"],"index_name":param_dict["index_name"],"data":dict(zip(keys,vals))}     
                                             elif parameter_value["type"] == "float":
                                                 value_ = parameter_value["parsed_value"]
                                             spatial_data[entity_class][source_parameter][entity_name][target_poly][parameter_value["alternative_name"]] = value_
@@ -292,7 +277,7 @@ def add_power_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
                 # checking hard-coding conditions
                 if "technology" in entity_class_elements and definition_condition == True:
                     for index_in_class in [i for i in range(len(entity_class_elements)) if entity_class_elements[i]=="technology"]:
-                        if sum(sum(region_params["technology"]["units_existing"][entity_names[index_in_class]][poly][alternative]["data"].values())for alternative in region_params["technology"]["units_existing"][entity_names[index_in_class]][poly]) == 0.0 and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
+                        if sum(sum(region_params["technology"]["units_existing"][entity_names[index_in_class]][poly][alternative]["data"].values()) for alternative in region_params["technology"]["units_existing"][entity_names[index_in_class]][poly]) == 0.0 and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
                             definition_condition *= False
 
                 if definition_condition == True:
@@ -363,11 +348,13 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
 
                 # checking hard-coding conditions
                 if "technology" in entity_class_elements and definition_condition == True:
-                    if region_params["technology"]["units_existing"][entity_names[entity_class_elements.index("technology")]][poly] == 0.0 and config["user"]["technology"][entity_names[entity_class_elements.index("technology")]]["investment_method"] == "not_allowed":
-                        definition_condition *= False
+                    for index_in_class in [i for i in range(len(entity_class_elements)) if entity_class_elements[i]=="technology"]:
+                        if sum(sum(region_params["technology"]["units_existing"][entity_names[index_in_class]][poly][alternative]["data"].values()) for alternative in region_params["technology"]["units_existing"][entity_names[index_in_class]][poly]) == 0.0 and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
+                            definition_condition *= False
                     if not region_params["technology__to_commodity"]["profile_limit_upper"][entity_names[entity_class_elements.index("technology")]+"__elec"][poly]:
                         definition_condition *= False
 
+                print(entity_name, definition_condition)
                 if definition_condition == True:
                     for entity_class_target in config["sys"]["vre"]["entities"][entity_class]:
                         # Entity Definitions
@@ -403,7 +390,6 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                         if entity_class_region in config["sys"]["vre"]["parameters"]["dynamic"]:
                             dynamic_params = config["sys"]["vre"]["parameters"]["dynamic"][entity_class_region].get(entity_class_target, {})
                             for param_source, param_values in dynamic_params.items():
-                                print(entity_class_region,entity_class_target,param_source)
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
                                 for alternative in region_params[entity_class][param_source][entity_name][poly]:
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])

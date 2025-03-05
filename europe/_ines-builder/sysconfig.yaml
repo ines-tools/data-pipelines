@@ -75,6 +75,9 @@ power_sector:
           - [capacity,1.0,[[1],[1,2],[2]]]
           - [capacity,1.0,[[2],[1,2],[1]]]
     fixed:
+      technology:
+        unit:
+          lifetime: [lifetime,1.0,[[1]]]
       technology__to_commodity:
         unit__to_node:
           capacity: [capacity,1.0,[[1],[2]]]
@@ -137,6 +140,9 @@ vre:
         unit__to_node:
           - [capacity,1.0,[[1],[2]]]
     fixed:
+      technology:
+        unit:
+          lifetime: [lifetime,1.0,[[1]]]
       technology__to_commodity:
         unit__to_node:
           investment_cost: [investment_cost,1.0,[[1],[2]]]
