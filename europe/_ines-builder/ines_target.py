@@ -657,7 +657,7 @@ def main():
         add_superclass_subclass(db_map,"unit_flow","unit__to_node")
         print("ines_map_added")
         db_map.commit_session("ines_map_added")
-
+        
         # Base alternative
         add_alternative(db_map,"Base")
 
