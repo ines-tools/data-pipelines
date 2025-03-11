@@ -152,10 +152,10 @@ def main():
         conversion_sectors(target_db,ind_df["ind_process_routes_sec"],ind_df)
         target_db.commit_session("conversion added")
         print("conversion added")
-        capacity_sectors(target_db,ind_df["ind_production_2018_nuts1"])
+        capacity_sectors(target_db,ind_df["ind_production_2018_nuts3"])
         target_db.commit_session("capacity added")
         print("capacity added")
-        demand_sectors(target_db,ind_df["ind_production_30_50_nuts1"])
+        demand_sectors(target_db,ind_df["ind_production_30_50_nuts3"])
         target_db.commit_session("demand added")
         print("demand added")
         
