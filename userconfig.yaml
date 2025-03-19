@@ -67,6 +67,8 @@ commodity:
     status: False
   fossil-HC: 
     status: False
+  global-H2: 
+    status: False
   crude: 
     status: False
   coal: 

@@ -64,13 +64,6 @@
             false
         ],
         [
-            "tool",
-            [],
-            null,
-            280378333982893,
-            false
-        ],
-        [
             "unit",
             [],
             null,
@@ -158,16 +151,6 @@
             true
         ],
         [
-            "tool__set",
-            [
-                "tool",
-                "set"
-            ],
-            null,
-            null,
-            true
-        ],
-        [
             "unit__to_node",
             [
                 "unit",
@@ -179,10 +162,7 @@
         ],
         [
             "unit_flow",
-            [
-                "unit",
-                "node"
-            ],
+            [],
             null,
             null,
             true
@@ -234,11 +214,11 @@
     "parameter_value_lists": [
         [
             "boolean",
-            "true"
+            true
         ],
         [
             "boolean",
-            "false"
+            false
         ],
         [
             "capacity_margin_method",
@@ -357,6 +337,10 @@
             "bus_branch"
         ],
         [
+            "node_type",
+            "balance_within_period"
+        ],
+        [
             "profile_method",
             "upper_limit"
         ],
@@ -450,7 +434,11 @@
         ],
         [
             "stochastic_scope",
-            "set_based_override"
+            "single_set"
+        ],
+        [
+            "stochastic_scope",
+            "multiple_sets"
         ],
         [
             "storage_binding_method",
@@ -647,6 +635,18 @@
         [
             "unit_startup_method",
             "trajectory"
+        ],
+        [
+            "unit_startup_method",
+            "linear_with_tiers"
+        ],
+        [
+            "unit_startup_method",
+            "integer_with_tiers"
+        ],
+        [
+            "unit_startup_method",
+            "trajectory_with_tiers"
         ]
     ],
     "parameter_definitions": [
@@ -758,7 +758,7 @@
         [
             "link",
             "is_non_synchronous",
-            "false",
+            false,
             "boolean",
             "Chooses whether the link connects the two nodes synchronously or not."
         ],
@@ -837,7 +837,7 @@
             "operational_cost_forecasts",
             null,
             null,
-            "[CUR/MWh] Variable operational cost forecasts either through forecast time series (1st dimension forecast name, 2nd dimension time series) or updating forecasts (1st dimension forecast name, 2nd dimension analysis time, 3rd time series)."
+            "[CUR/MWh] Variable operational cost forecasts either through forecast time series (1st dimension forecast name, 2nd time series) or updating forecasts (1st dimension forecast name, 2nd analysis time, 3rd time series)."
         ],
         [
             "link",
@@ -963,7 +963,7 @@
             "flow_profile_forecasts",
             null,
             null,
-            "[MWh or ratio] Inflow is positive and outflow (demand) is negative. Time series, constant or array of periods."
+            "[MWh or ratio] Inflow forecasts either through forecast time series (1st dimension forecast name, 2nd time series) or updating forecasts (1st dimension forecast name, 2nd analysis time, 3rd time series)."
         ],
         [
             "node",
@@ -992,6 +992,20 @@
             null,
             null,
             "[CUR/MWh] Penalty for adding energy to the node. Constant or array of periods."
+        ],
+        [
+            "node",
+            "spill_lower_limit",
+            null,
+            null,
+            "[MW] Minimum spill (removed from model scope). Time series, constant or array of periods."
+        ],
+        [
+            "node",
+            "spill_upper_limit",
+            null,
+            null,
+            "[MW] Maximum spill (removed from model scope). Time series, constant or array of periods."
         ],
         [
             "node",
@@ -1135,6 +1149,13 @@
         ],
         [
             "node",
+            "storage_state_fix_forecasts",
+            null,
+            null,
+            "[p.u.] Storage state fix forecasts either through forecast time series (1st dimension forecast name, 2nd dimension time series) or updating forecasts (1st dimension forecast name, 2nd dimension analysis time, 3rd time series)."
+        ],
+        [
+            "node",
             "storage_state_fix_method",
             null,
             "storage_fix_method",
@@ -1149,10 +1170,24 @@
         ],
         [
             "node",
+            "storage_state_lower_limit_forecasts",
+            null,
+            null,
+            "[p.u.] Storage state lower limit forecasts either through forecast time series (1st dimension forecast name, 2nd dimension time series) or updating forecasts (1st dimension forecast name, 2nd dimension analysis time, 3rd time series)."
+        ],
+        [
+            "node",
             "storage_state_upper_limit",
             null,
             null,
             "[p.u.] Maximum limit for the state of the storage. Time series, constant or array of periods."
+        ],
+        [
+            "node",
+            "storage_state_upper_limit_forecasts",
+            null,
+            null,
+            "[p.u.] Storage state upper limit forecasts either through forecast time series (1st dimension forecast name, 2nd dimension time series) or updating forecasts (1st dimension forecast name, 2nd dimension analysis time, 3rd time series)."
         ],
         [
             "node",
@@ -1180,13 +1215,13 @@
             "storage_state_value_forecasts",
             null,
             null,
-            "[CUR/MWh] Storage state value forecasts either through forecast time series (1st dimension forecast name, 2nd dimension time series) or updating forecasts (1st dimension forecast name, 2nd dimension analysis time, 3rd time series)."
+            "[CUR/MWh] Storage state value forecasts either through forecast time series (1st dimension forecast name, 2nd time series) or updating forecasts (1st dimension forecast name, 2nd analysis time, 3rd time series)."
         ],
         [
             "node",
             "storage_state_value_method",
             null,
-            null,
+            "storage_state_value_method",
             "How to include value of storage state in the objective function. end_of_solve: the last timestep of the solve will get storage_state_value. all_timesteps will apply the storage value to each timestep in the model horizon."
         ],
         [
@@ -1355,7 +1390,7 @@
             "reserve_requirement_forecasts",
             null,
             null,
-            "[MW] Reserve requirement forecasts either through forecast time series (1st dimension forecast name, 2nd dimension time series) or updating forecasts (1st dimension forecast name, 2nd dimension analysis time, 3rd time series)."
+            "[MW] Reserve requirement forecasts either through forecast time series (1st dimension forecast name, 2nd time series) or updating forecasts (1st dimension forecast name, 2nd analysis time, 3rd time series)."
         ],
         [
             "node__reserve",
@@ -1409,7 +1444,7 @@
         [
             "node__to_unit",
             "is_non_synchronous",
-            "false",
+            false,
             "boolean",
             "Chooses whether the unit is synchronously connected to this node."
         ],
@@ -1432,7 +1467,7 @@
             "other_operational_cost_forecasts",
             null,
             null,
-            "[CUR/MWh] Variable operational cost forecasts either through forecast time series (1st dimension forecast name, 2nd dimension time series) or updating forecasts (1st dimension forecast name, 2nd dimension analysis time, 3rd time series)."
+            "[CUR/MWh] Variable operational cost forecasts either through forecast time series (1st dimension forecast name, 2nd time series) or updating forecasts (1st dimension forecast name, 2nd analysis time, 3rd time series)."
         ],
         [
             "node__to_unit",
@@ -1520,13 +1555,6 @@
         ],
         [
             "period",
-            "duration",
-            null,
-            null,
-            "[Duration] of the period. Needs to use Duration parameter type."
-        ],
-        [
-            "period",
             "start_time",
             null,
             null,
@@ -1580,6 +1608,13 @@
             null,
             null,
             "[CUR/ton] CO2 price for a set of nodes. Constant, array of periods or time series."
+        ],
+        [
+            "set",
+            "co2_price_forecasts",
+            null,
+            null,
+            "[CUR/ton] CO2 price forecasts either through forecast time series (1st dimension forecast name, 2nd dimension time series) or updating forecasts (1st dimension forecast name, 2nd dimension analysis time, 3rd time series)."
         ],
         [
             "set",
@@ -1782,7 +1817,7 @@
             "duration",
             null,
             null,
-            "Duration of the model. In case no duration has been provided, the model will extend to the end of the last period."
+            "Duration (from start_time). Array of duration needs to be matched with an array of start_times to pick multiple sequences from the timeline. In case no duration has been provided, the model will extend to the end of the timeline. Duration or array of durations."
         ],
         [
             "solve_pattern",
@@ -1824,14 +1859,7 @@
             "start_time",
             null,
             null,
-            "Start time for the model. If no start time has been provided, the model will start from the beginning of the first period."
-        ],
-        [
-            "solve_pattern",
-            "stochastic_forecasts_in_use",
-            null,
-            null,
-            "Experimental. [forecast_names] Which forecast branches will be included in the model. If no value, then all are included (if stochastic_scope allows). Array of strings."
+            "Start time (from timeline). Array of start_times will need to be matched with an array of durations to pick multiple sequences from the timeline. If no start time has been provided, the model will start from the beginning of the timeline. Date_time or an array of date_times."
         ],
         [
             "solve_pattern",
@@ -1968,6 +1996,13 @@
         ],
         [
             "unit",
+            "cooling_time_to_tiers",
+            null,
+            null,
+            "[minutes] Time to cool to the startup tier from shutdown."
+        ],
+        [
+            "unit",
             "efficiency",
             null,
             null,
@@ -1978,7 +2013,7 @@
             "efficiency_forecasts",
             null,
             null,
-            "[p.u.] Efficiency forecasts either through forecast time series (1st dimension forecast name, 2nd dimension time series) or updating forecasts (1st dimension forecast name, 2nd dimension analysis time, 3rd time series)."
+            "[p.u.] Efficiency forecasts either through forecast time series (1st dimension forecast name, 2nd time series) or updating forecasts (1st dimension forecast name, 2nd analysis time, 3rd time series)."
         ],
         [
             "unit",
@@ -2059,10 +2094,31 @@
         ],
         [
             "unit",
+            "startup_co2_emission",
+            null,
+            null,
+            "[ton of CO2] Additional CO2 emissions from one full startup (do not include emissions already included in fuel use)."
+        ],
+        [
+            "unit",
+            "startup_co2_emission_tiers",
+            null,
+            null,
+            "[ton of CO2] Additional CO2 emissions from one full startup started from the tier temperature (do not include emissions already included in fuel use)."
+        ],
+        [
+            "unit",
             "startup_cost",
             null,
             null,
             "[CUR/p.u.] Cost of one full startup. Constant or array of periods."
+        ],
+        [
+            "unit",
+            "startup_cost_tiers",
+            null,
+            null,
+            "[CUR/p.u.] Cost of one full startup for tiers of cooldown. Array of tiers starting from 0, whic is 'hot' start and uses no cooling time."
         ],
         [
             "unit",
@@ -2221,7 +2277,7 @@
         [
             "unit__to_node",
             "is_non_synchronous",
-            "false",
+            false,
             "boolean",
             "Chooses whether the unit is synchronously connected to this node."
         ],

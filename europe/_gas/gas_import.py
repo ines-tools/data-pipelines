@@ -59,6 +59,7 @@ def tech_production(target_db,sheet):
         tech = row.iloc[0]
         to_node = row.iloc[1]
         currency = row.iloc[12]
+        add_parameter_value(target_db,"technology__to_commodity","capacity","Base",(tech,to_node),1.0)
         if pd.notna(currency):
             inflation_factor = math.prod([1+value_*1e-2 for value_ in inflation.loc[currency+1:,"HICP"].tolist()])
             print(tech, currency, inflation_factor)
@@ -83,6 +84,7 @@ def tech_storage(target_db,sheet):
     years = [f"y{year}" for year in ["2030","2040","2050"]]
     for tech in sheet.storage.unique():
         add_entity(target_db,"storage",(tech,))
+        add_parameter_value(target_db,"storage","capacity","Base",(tech,),1.0)
         df = sheet[sheet.storage == tech]
         to_node = df.iloc[:,1].tolist()[0]
         add_entity(target_db,"storage_connection",(tech,to_node))
@@ -187,9 +189,7 @@ def ch4_storage(target_db,sheet):
         with_cost = row.iloc[7]
 
         add_entity(target_db,"storage__region",(tech,country))
-        
-        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity*1e6,1) for year in ["2030"]}}
-        add_parameter_value(target_db,"storage__region","capacity","Base",(tech,country),map_cap)
+        add_parameter_value(target_db,"storage__region","capacity","Base",(tech,country),round(capacity*1e6,1))
         
         add_entity(target_db,"storage_connection__region",(tech,com,country))
         add_parameter_value(target_db,"storage_connection__region","capacity_in","Base",(tech,com,country),round(capacity_in*1000/24,1))
@@ -298,7 +298,6 @@ def h2_storage(target_db,sheet):
         add_entity(target_db,"storage__region",(tech,country))
         map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity,1)  for year in ["2030"]}}
         add_parameter_value(target_db,"storage__region","storages_existing","Base",(tech,country),map_cap)
-        add_parameter_value(target_db,"storage__region","capacity","Base",(tech,country),1.0)
         map_sto_pot = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(capacity_2030,1),"y2040":round(capacity_2040,1),"y2050":round(capacity_2050,1)}}
         add_parameter_value(target_db,"storage__region","potentials","Base",(tech,country),map_sto_pot)
         
@@ -308,7 +307,7 @@ def h2_storage(target_db,sheet):
         map_load_pot = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(load_2030,1),"y2040":round(load_2040,1),"y2050":round(load_2050,1)}}
         add_parameter_value(target_db,"storage_connection__region","potentials_in","Base",(tech,com,country),map_load_pot)
         
-        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(load,1)  for year in ["2030"]}}
+        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(power,1)  for year in ["2030"]}}
         add_parameter_value(target_db,"storage_connection__region","links_existing_out","Base",(tech,com,country),map_cap)
         map_power_pot = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(power_2030,1),"y2040":round(power_2040,1),"y2050":round(power_2050,1)}}
         add_parameter_value(target_db,"storage_connection__region","potentials_out","Base",(tech,com,country),map_power_pot)
@@ -351,7 +350,7 @@ def h2_network(target_db,sheet):
             map_inv = {"type":"map","index_type":"str","index_name":"period",
                         "data":{"y2030":inv_30,"y2040":inv_40,"y2050":inv_40}}
             add_parameter_value(target_db,"pipeline","investment_cost","Base",(from_country,com,to_country),map_inv)
-    
+            add_parameter_value(target_db,"pipeline","lifetime","Base",(from_country,com,to_country),40.0)
     try:
         target_db.commit_session("Added H2 network")
     except DBAPIError as e:
