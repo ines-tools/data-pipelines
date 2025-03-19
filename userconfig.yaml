@@ -50,19 +50,19 @@ commodity:
   elec: 
     status: True
   CH4: 
-    status: False
+    status: True
   H2: 
-    status: False
+    status: True
   CO2: 
-    status: False
+    status: True
   bio: 
     status: True
   HC: 
-    status: True
+    status: False
   NH3: 
     status: False
   MeOH: 
-    status: True
+    status: False
   fossil-CH4: 
     status: False
   fossil-HC: 
@@ -80,9 +80,9 @@ transmission:
   elec: 
     status: True
   CH4: 
-    status: False
+    status: True
   H2: 
-    status: False
+    status: True
   CO2: 
     status: False
 
@@ -90,21 +90,15 @@ storage:
   large-battery :
     status: True
     investment_method : "no_limits"
-  LNG-tank :
-    status: False 
-    investment_method : "no_limits"
   CH4-geo-formation : 
-    status: False 
-    investment_method : "cumulative_limits"
+    status: True 
+    investment_method : "not_allowed"
   H2-tank : 
     status: False 
     investment_method : "no_limits"
-  H2-geo-formation :
-    status: False 
+  salt-cavern :
+    status: True 
     investment_method : "cumulative_limits"
-  CO2-tank : 
-    status: False 
-    investment_method : "no_limits"
   CO2-geo-formation :
     status: False 
     investment_method : "cumulative_limits"
@@ -126,187 +120,229 @@ technology:
     status: True
     investment_method: "no_limits"
     renewable : False
-    site : onshore
   SCPC:
     rename : "SCPC"
     status: True
     investment_method: "not_allowed"
     renewable : False
-    site : onshore
   SCPC+CC:
     rename : "SCPC+CC"
     status: False
     investment_method: "no_limits"
     renewable : False
-    site : onshore
   OCGT:
     rename : "OCGT"
     status: False
     investment_method: "no_limits"
     renewable : False
-    site : onshore
   OCGT+CC:
     rename : "OCGT+CC"
     status: False
     investment_method: "no_limits"
     renewable : False
-    site : onshore
   CCGT:
     rename : "CCGT"
     status: True
     investment_method: "no_limits"
     renewable : False
-    site : onshore
   CCGT+CC:
     rename : "CCGT+CC"
     status: True
     investment_method: "no_limits"
     renewable : False
-    site : onshore
   OCGT-H2:
     rename : "OCGT-H2"
     status: False
     investment_method: "no_limits"
     renewable : False
-    site : onshore
   CCGT-H2:
     rename : "CCGT-H2"
     status: False
     investment_method: "no_limits"
     renewable : False
-    site : onshore
   wasteST:
     rename : "wasteST"
     status: True
     investment_method: "not_allowed"
     renewable : False
-    site : onshore
   bioST:
     rename : "bioST"
     status: True
     investment_method: "no_limits"
     renewable : True
-    site : onshore
   bioST+CC:
     rename : "bioST+CC"
     status: False
     investment_method: "no_limits"
     renewable : True
-    site : onshore
   geothermal:
     rename : "geothermal"
     status: False
     investment_method: "cumulative_limits"
     renewable : True
-    site : onshore
   nuclear-3:
     rename : "nuclear-3"
     status: True
     investment_method: "no_limits"
     renewable : False
-    site : onshore
   nuclear-4:
     rename : "nuclear-4"
     status: False
     investment_method: "no_limits"
     renewable : False
-    site : onshore
   wind-on-existing:
     rename : "wind-on-existing"
     status: True
     investment_method: "not_allowed"
     renewable : True
-    site : onshore
   wind-off-existing:
     rename : "wind-off-existing"
     status: True
     investment_method: "not_allowed"
     renewable : True
-    site : offshore
   wind-on-SP335-HH100:
     rename : "wind-on-SP335-HH100"
     status: False
     investment_method: "no_limits"
     renewable : True
-    site : onshore
   wind-on-SP335-HH150:
     rename : "wind-on-SP335-HH150"
     status: False
     investment_method: "no_limits"
     renewable : True
-    site : onshore
   wind-on-SP277-HH100:
     rename : "wind-on-SP277-HH100"
     status: False
     investment_method: "no_limits"
     renewable : True
-    site : onshore 
   wind-on-SP277-HH150: 
     rename : "wind-on-SP277-HH150"
     status: False
     investment_method: "no_limits"
     renewable : True
-    site : onshore
   wind-on-SP199-HH100:
     rename : "wind-on-future"
     status: True
     investment_method: "no_limits"
     renewable : True
-    site : onshore
   wind-on-SP199-HH150:
     rename : "wind-on-SP198-HH150"
     status: False
     investment_method: "no_limits"
     renewable : True
-    site : offshore
   wind-off-FB-SP316-HH155:
     rename : "wind-off-FB-SP316-HH155"
     status: False
     investment_method: "no_limits"
     renewable : True
-    site : offshore
   wind-off-FB-SP370-HH155:
     rename : "wind-off-future"
     status: True
     investment_method: "no_limits"
     renewable : True
-    site : offshore
   solar-PV-no-tracking:
     rename : "solar-PV"
     status: True
     investment_method: "no_limits"
     renewable : True
-    site : onshore
   solar-PV-rooftop:
     rename : "solar-PV-rooftop"
     status: False
     investment_method: "no_limits"
     renewable : True
-    site : onshore
   solar-PV-tracking:
     rename : "solar-PV-tracking"
     status: False
     investment_method: "no_limits"
     renewable : True
-    site : onshore
   solar-CSP:
     rename : "solar-CSP"
     status: False
     investment_method: "no_limits"
     renewable : True
-    site : onshore
   fuelcell:
     rename : "fuelcell"
     status: True
     investment_method: "no_limits"
     renewable : False
-    site : onshore
   hydro-turbine:
     rename : "hydro-turbine"
     status: True
     investment_method: "not_allowed"
     renewable : True
-    site : onshore
   # biomass production
   biomass-gen:
     status : True
+  # gas production
+  SMR: 
+    status: True
+    investment_method: "no_limits"
+  SMR+CC:
+    status: True
+    investment_method: "no_limits"
+  PEM: 
+    status: True
+    investment_method: "no_limits"
+  AEC: 
+    status: False
+    investment_method: "no_limits"
+  SOEC: 
+    status: False
+    investment_method: "no_limits"
+  gas-pyrolysis: 
+    status: True
+    investment_method: "no_limits"
+  methanation: 
+    status: True
+    investment_method: "no_limits"
+  bio-diges-up: 
+    status: True
+    investment_method: "no_limits"
+  bio-diges-up+CC: 
+    status: False
+    investment_method: "no_limits"
+  bio-diges-metha: 
+    status: True
+    investment_method: "no_limits"
+  bio-gasif-metha: 
+    status: True
+    investment_method: "no_limits"
+  bio-gasif-metha+CC: 
+    status: False
+    investment_method: "no_limits"
+  DAC: 
+    status: True
+    investment_method: "no_limits"
+  LNG-terminal:
+    status: True
+    investment_method: "not_allowed"
+  gas-extraction: 
+    status: True
+    investment_method: "not_allowed"
+  CH4-import-DZ: 
+    status: True
+    investment_method: "not_allowed"
+  CH4-import-LY: 
+    status: True
+    investment_method: "not_allowed"
+  CH4-import-DZ: 
+    status: True
+    investment_method: "not_allowed"
+  CH4-import-MA: 
+    status: True
+    investment_method: "not_allowed"
+  CH4-import-BL: 
+    status: True
+    investment_method: "not_allowed"
+  CH4-import-RU: 
+    status: True
+    investment_method: "not_allowed"
+  H2-import-DZ: 
+    status: True
+    investment_method: "not_allowed"
+  LH2-terminal: 
+    status: True
+    investment_method: "not_allowed"
+
+
+

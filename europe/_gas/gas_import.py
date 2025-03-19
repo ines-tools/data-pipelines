@@ -86,6 +86,8 @@ def tech_storage(target_db,sheet):
         df = sheet[sheet.storage == tech]
         to_node = df.iloc[:,1].tolist()[0]
         add_entity(target_db,"storage_connection",(tech,to_node))
+        add_parameter_value(target_db,"storage_connection","capacity_in","Base",(tech,to_node),1.0)
+        add_parameter_value(target_db,"storage_connection","capacity_out","Base",(tech,to_node),1.0)
 
         energy_capex   = (1e6*df.iloc[:,3]).values
         energy_fom     = df.iloc[:,4].values
@@ -106,8 +108,9 @@ def tech_storage(target_db,sheet):
             map_fom  = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(years,inflation_factor*energy_fom))}
             add_parameter_value(target_db,"storage","fixed_cost","Base",(tech,),map_fom)
         if pd.notna(power_vom[0]):
-            map_vom  = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(years,inflation_factor*power_vom))}
-            add_parameter_value(target_db,"storage_connection","operational_cost","Base",(tech,to_node),map_vom)
+            map_vom  = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(years,inflation_factor*power_vom/2.0))}
+            add_parameter_value(target_db,"storage_connection","operational_cost_in","Base",(tech,to_node),map_vom)
+            add_parameter_value(target_db,"storage_connection","operational_cost_out","Base",(tech,to_node),map_vom)
         if pd.notna(efficiency_in[0]):
             map_in  = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(years,efficiency_in))}
             add_parameter_value(target_db,"storage_connection","efficiency_in","Base",(tech,to_node),map_in)
@@ -116,8 +119,10 @@ def tech_storage(target_db,sheet):
             add_parameter_value(target_db,"storage_connection","efficiency_out","Base",(tech,to_node),map_out)
         if pd.notna(lifetime):
             add_parameter_value(target_db,"storage","lifetime","Base",(tech,),lifetime)
-        if pd.notna(hours_ratio):
-            add_parameter_value(target_db,"storage_connection","hours_ratio","Base",(tech,to_node),hours_ratio)
+            '''add_parameter_value(target_db,"storage_connection","lifetime","Base",(tech+"-from",),lifetime)
+            add_parameter_value(target_db,"storage_connection","lifetime","Base",(tech+"-to",),lifetime)'''
+        '''if pd.notna(hours_ratio):
+            add_parameter_value(target_db,"storage_connection","hours_ratio","Base",(tech,to_node),hours_ratio)'''
     try:
         target_db.commit_session("tech storage")
     except DBAPIError as e:
@@ -161,6 +166,8 @@ def ch4_storage(target_db,sheet):
         try:
             add_entity(target_db,"storage",(tech,))
             add_entity(target_db,"storage_connection",(tech,com))
+            add_parameter_value(target_db,"storage_connection","efficiency_in","Base",(tech,com),1.0)
+            add_parameter_value(target_db,"storage_connection","efficiency_out","Base",(tech,com),1.0)
         except:
             pass
     
@@ -182,16 +189,13 @@ def ch4_storage(target_db,sheet):
         add_entity(target_db,"storage__region",(tech,country))
         
         map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity*1e6,1) for year in ["2030"]}}
-        add_parameter_value(target_db,"storage__region","storages_existing","Base",(tech,country),map_cap)
+        add_parameter_value(target_db,"storage__region","capacity","Base",(tech,country),map_cap)
+        
         add_entity(target_db,"storage_connection__region",(tech,com,country))
-        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity_in*1000/24,1) for year in ["2030"]}}
-        add_parameter_value(target_db,"storage_connection__region","links_existing_in","Base",(tech,com,country),map_cap)
-        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity_out*1000/24,1) for year in ["2030"]}}
-        add_parameter_value(target_db,"storage_connection__region","links_existing_out","Base",(tech,com,country),map_cap)
-        map_cost = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(inj_cost,2)  for year in ["2030","2040","2050"]}}
-        add_parameter_value(target_db,"storage_connection__region","operational_cost_in","Base",(tech,com,country),map_cost)
-        map_cost = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(with_cost,2)  for year in ["2030","2040","2050"]}}
-        add_parameter_value(target_db,"storage_connection__region","operational_cost_out","Base",(tech,com,country),map_cost)
+        add_parameter_value(target_db,"storage_connection__region","capacity_in","Base",(tech,com,country),round(capacity_in*1000/24,1))
+        add_parameter_value(target_db,"storage_connection__region","capacity_out","Base",(tech,com,country),round(capacity_out*1000/24,1))
+        add_parameter_value(target_db,"storage_connection__region","operational_cost_in","Base",(tech,com,country),round(inj_cost,2))
+        add_parameter_value(target_db,"storage_connection__region","operational_cost_out","Base",(tech,com,country),round(with_cost,2))
 
 
     try:
@@ -279,24 +283,35 @@ def h2_storage(target_db,sheet):
         tech = row.iloc[0]
         country = row.iloc[1]
         capacity = row.iloc[2]
-        capacity_out = row.iloc[3]
-        capacity_in = row.iloc[4]
-        potentials = row.iloc[5]
-        potentials_out = row.iloc[6]
-        potentials_in = row.iloc[7]
+        capacity_2030 = row.iloc[3]
+        capacity_2040 = row.iloc[4]
+        capacity_2050 = row.iloc[5]
+        power = row.iloc[6]
+        power_2030 = row.iloc[7]
+        power_2040 = row.iloc[8]
+        power_2050 = row.iloc[9]
+        load = row.iloc[10]
+        load_2030 = row.iloc[11]
+        load_2040 = row.iloc[12]
+        load_2050 = row.iloc[13]
 
         add_entity(target_db,"storage__region",(tech,country))
-        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity*1000/24,1)  for year in ["2030"]}}
+        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity,1)  for year in ["2030"]}}
         add_parameter_value(target_db,"storage__region","storages_existing","Base",(tech,country),map_cap)
-        add_parameter_value(target_db,"storage__region","potentials","Base",(tech,country),round((potentials+capacity)*1000/241))
+        add_parameter_value(target_db,"storage__region","capacity","Base",(tech,country),1.0)
+        map_sto_pot = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(capacity_2030,1),"y2040":round(capacity_2040,1),"y2050":round(capacity_2050,1)}}
+        add_parameter_value(target_db,"storage__region","potentials","Base",(tech,country),map_sto_pot)
+        
         add_entity(target_db,"storage_connection__region",(tech,com,country))
-        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity_in*1000/24,1)  for year in ["2030"]}}
+        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(load,1)  for year in ["2030"]}}
         add_parameter_value(target_db,"storage_connection__region","links_existing_in","Base",(tech,com,country),map_cap)
-        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity_out*1000/24,1)  for year in ["2030"]}}
+        map_load_pot = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(load_2030,1),"y2040":round(load_2040,1),"y2050":round(load_2050,1)}}
+        add_parameter_value(target_db,"storage_connection__region","potentials_in","Base",(tech,com,country),map_load_pot)
+        
+        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(load,1)  for year in ["2030"]}}
         add_parameter_value(target_db,"storage_connection__region","links_existing_out","Base",(tech,com,country),map_cap)
-        add_parameter_value(target_db,"storage_connection__region","potentials_in","Base",(tech,com,country),round(potentials_in,2))
-        add_parameter_value(target_db,"storage_connection__region","potentials_out","Base",(tech,com,country),round(potentials_out,2))
-
+        map_power_pot = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(power_2030,1),"y2040":round(power_2040,1),"y2050":round(power_2050,1)}}
+        add_parameter_value(target_db,"storage_connection__region","potentials_out","Base",(tech,com,country),map_power_pot)
     try:
         target_db.commit_session("Added H2 storage")
     except DBAPIError as e:

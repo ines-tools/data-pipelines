@@ -309,4 +309,138 @@ biomass_production:
         set:
           average_hourly_production: [flow_max_cumulative,[[1,2]],[area,{}],null,PECD1]
 
+# gas sector modelling
+gas_sector:
+  entities:
+    commodity:
+      node:
+        - [[1]]
+    technology:
+      unit:
+        - [[1]]
+    commodity__to_technology:
+      node__to_unit: 
+        - [[1],[2]]
+    technology__to_commodity:
+      unit__to_node: 
+        - [[1],[2]]
+    commodity__to_technology__to_commodity: 
+      unit_flow__unit_flow:
+        - [[2],[3],[1],[2]]
+    storage:
+      node: 
+        - [[1]]
+    storage_connection:
+      link: 
+        - [[1,2]]
+        - [[2,1]]
+      node__link__node: 
+        - [[1],[1,2],[2]]
+        - [[2],[2,1],[1]]
+  parameters:
+    user:
+      technology:
+        unit:
+          investment_method: [technology,investment_method,[[1]],[[1]]]
+      storage:
+        node:
+          storage_investment_method: [storage,investment_method,[[1]],[[1]]]
+      storage_connection:
+        link:
+          investment_method: [storage,investment_method,[[1]],[[1,2]]]
+    default:
+      technology:
+        unit: 
+          - [retirement_method,economic_retirement,[[1]]]
+      technology__to_commodity:
+        unit__to_node:
+          - [capacity,1.0,[[1],[2]]]
+      storage:
+        node:
+          - [node_type,storage,[[1]]]
+          - [storage_limit_method,upper_limit,[[1]]]
+          - [storage_retirement_method,economic_retirement,[[1]]]   
+      storage_connection:
+        link:
+          - [retirement_method,economic_retirement,[[1,2]]] 
+          - [retirement_method,economic_retirement,[[2,1]]]  
+    fixed:
+      technology:
+        unit:
+          lifetime: [lifetime,1.0,[[1]]]
+      technology__to_commodity:
+        unit__to_node:
+          investment_cost: [investment_cost,1.0,[[1],[2]]]
+          fixed_cost: [fixed_cost,1.0,[[1],[2]]]
+          operational_cost: [other_operational_cost,1.0,[[1],[2]]]
+      commodity__to_technology__to_commodity:
+        unit_flow__unit_flow:
+          conversion_rate: [equality_ratio,1.0,[[2],[3],[1],[2]]]
+      storage:
+        node:
+          investment_cost: [storage_investment_cost,1.0,[[1]]]
+          fixed_cost: [storage_fixed_cost,1.0,[[1]]]
+          lifetime: [storage_lifetime,1.0,[[1]]]
+      storage_connection:
+        link:
+          investment_cost: [investment_cost,1.0,[[1,2]]]
+          lifetime: [lifetime,1.0,[[1,2]]]
+        node__link__node:
+          capacity_in: [capacity,1.0,[[2],[2,1],[1]]]
+          capacity_out: [capacity,1.0,[[1],[1,2],[2]]]  
+          operational_cost_in: [operational_cost,1.0,[[2],[2,1],[1]]]
+          operational_cost_out: [operational_cost,1.0,[[1],[1,2],[2]]]
+          efficiency_in: [efficiency,1.0,[[2],[2,1],[1]]]
+          efficiency_out: [efficiency,1.0,[[1],[1,2],[2]]]
+    dynamic:
+      technology__region:
+        unit:
+          units_existing: [units_existing,[[1]],[area,{}],0.0,PECD1]
+      technology__to_commodity_region:
+        unit__to_node:
+          operational_cost: [other_operational_cost,[[1],[2]],[area,{}],null,PECD1]
+      storage__region:
+        node:
+          storages_existing: [storages_existing,[[1]],[area,{}],null,PECD1]
+          potentials: [storages_max_cumulative,[[1]],[area,{}],null,PECD1]
+      storage_connection__region:
+        link:
+          links_existing_in: [links_existing,[[2,1]],[area,{}],null,PECD1]
+          links_existing_out: [links_existing,[[1,2]],[area,{}],null,PECD1]
+          potentials_in: [links_max_cumulative,[[2,1]],[area,{}],null,PECD1]
+          potentials_out: [links_max_cumulative,[[1,2]],[area,{}],null,PECD1]
+        node__link__node:
+          capacity_in: [capacity,[[2],[2,1],[1]],[area,{}],null,PECD1]
+          capacity_out: [capacity,[[1],[1,2],[2]],[area,{}],null,PECD1]
+          operational_cost_in: [operational_cost,[[2],[2,1],[1]],[area,{}],null,PECD1]
+          operational_cost_out: [operational_cost,[[1],[1,2],[2]],[area,{}],null,PECD1]
           
+# PENDING
+# potentials in dynamic
+
+# gas transmission map
+gas_transmission:
+  entities:
+    pipeline:
+      link:
+        - [[1,2,3]]
+      node__link__node:
+        - [[2,1],[1,2,3],[2,3]]
+  parameters:
+    user: null
+    default:
+      region__transmission__commodity__region:
+        link: 
+          - [retirement_method,economic_retirement,[[1,2,3]]]
+          - [investment_method,cumulative_limits,[[1,2,3]]]
+        node__link__node:
+          - [capacity,1.0,[[2,1],[1,2,3],[2,3]]]
+          - [efficiency,1.0,[[2,1],[1,2,3],[2,3]]]
+    fixed:
+      pipeline:
+        link:
+          investment_cost: [investment_cost,1.0,[[1,2,3]]]
+          operational_cost: [operational_cost,1.0,[[1,2,3]]]
+          lifetime: [lifetime,1.0,[[1,2,3]]]
+          links_existing: [links_existing,1.0,[[1,2,3]]]
+          potentials: [links_max_cumulative,1.0,[[1,2,3]]]

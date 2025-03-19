@@ -151,7 +151,7 @@ def process_region_data(target_db,path):
             else:
                 map_tech[tech]["data"] = pd.read_csv(os.path.join(path,f"COP_{tech}_{cy}.csv"),index_col=0)
 
-    demand_type = {"cooling_res":"res-cool","cooling_nonres":"nonres-cool","DHW_res":"res-DHW","DHW_nonres":"nonres-DHW","heating_res":"res-space","heating_nonres":"nonres-space"}
+    demand_type = {"cooling_res":"cool","cooling_nonres":"cool","DHW_res":"heat","DHW_nonres":"heat","heating_res":"heat","heating_nonres":"heat"}
     map_demand = {}
     for dem in demand_type:
         for cy in years:
@@ -169,7 +169,7 @@ def process_region_data(target_db,path):
             except:
                 pass
 
-            entity_name = "node__region"
+            entity_name = "commodity__region"
             entity_byname = (demand_type[dem],country)
             add_entity(target_db, entity_name, entity_byname)
             value_dem = map_demand[dem][country].values
