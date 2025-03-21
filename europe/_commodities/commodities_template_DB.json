@@ -1,0 +1,602 @@
+{
+    "entity_classes": [
+        [
+            "commodity",
+            [],
+            null,
+            281107043971139,
+            true
+        ]
+    ],
+    "entities": [
+        [
+            "commodity",
+            "CH4",
+            null
+        ],
+        [
+            "commodity",
+            "CO2",
+            null
+        ],
+        [
+            "commodity",
+            "DH",
+            null
+        ],
+        [
+            "commodity",
+            "H2",
+            null
+        ],
+        [
+            "commodity",
+            "HC",
+            null
+        ],
+        [
+            "commodity",
+            "MeOH",
+            null
+        ],
+        [
+            "commodity",
+            "NH3",
+            null
+        ],
+        [
+            "commodity",
+            "U-92",
+            null
+        ],
+        [
+            "commodity",
+            "bio",
+            null
+        ],
+        [
+            "commodity",
+            "coal",
+            null
+        ],
+        [
+            "commodity",
+            "crude",
+            null
+        ],
+        [
+            "commodity",
+            "elec",
+            null
+        ],
+        [
+            "commodity",
+            "fossil-CH4",
+            null
+        ],
+        [
+            "commodity",
+            "fossil-HC",
+            null
+        ],
+        [
+            "commodity",
+            "global-H2",
+            null
+        ],
+        [
+            "commodity",
+            "heat",
+            null
+        ],
+        [
+            "commodity",
+            "waste",
+            null
+        ]
+    ],
+    "entity_alternatives": [
+        [
+            "commodity",
+            [
+                "CH4"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "CO2"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "DH"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "H2"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "HC"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "MeOH"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "NH3"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "U-92"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "bio"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "coal"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "crude"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "elec"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "fossil-CH4"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "fossil-HC"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "global-H2"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "heat"
+            ],
+            "Base",
+            true
+        ],
+        [
+            "commodity",
+            [
+                "waste"
+            ],
+            "Base",
+            true
+        ]
+    ],
+    "parameter_definitions": [
+        [
+            "commodity",
+            "co2_content",
+            null,
+            null,
+            null
+        ],
+        [
+            "commodity",
+            "commodity_price",
+            null,
+            null,
+            null
+        ]
+    ],
+    "parameter_values": [
+        [
+            "commodity",
+            "CH4",
+            "co2_content",
+            0.2,
+            "Base"
+        ],
+        [
+            "commodity",
+            "CH4",
+            "commodity_price",
+            {
+                "index_type": "str",
+                "rank": 1,
+                "data": [
+                    [
+                        "y2030",
+                        22.68
+                    ],
+                    [
+                        "y2040",
+                        20.0
+                    ],
+                    [
+                        "y2050",
+                        18.0
+                    ]
+                ],
+                "index_name": "period",
+                "type": "map"
+            },
+            "Base"
+        ],
+        [
+            "commodity",
+            "CO2",
+            "co2_content",
+            -1.0,
+            "Base"
+        ],
+        [
+            "commodity",
+            "H2",
+            "commodity_price",
+            {
+                "index_type": "str",
+                "rank": 1,
+                "data": [
+                    [
+                        "y2030",
+                        63.36
+                    ],
+                    [
+                        "y2040",
+                        54.36
+                    ],
+                    [
+                        "y2050",
+                        54.36
+                    ]
+                ],
+                "index_name": "period",
+                "type": "map"
+            },
+            "Base"
+        ],
+        [
+            "commodity",
+            "HC",
+            "co2_content",
+            0.25,
+            "Base"
+        ],
+        [
+            "commodity",
+            "HC",
+            "commodity_price",
+            {
+                "index_type": "str",
+                "rank": 1,
+                "data": [
+                    [
+                        "y2030",
+                        42.12
+                    ],
+                    [
+                        "y2040",
+                        41.04
+                    ],
+                    [
+                        "y2050",
+                        39.6
+                    ]
+                ],
+                "index_name": "period",
+                "type": "map"
+            },
+            "Base"
+        ],
+        [
+            "commodity",
+            "U-92",
+            "commodity_price",
+            {
+                "index_type": "str",
+                "rank": 1,
+                "data": [
+                    [
+                        "y2030",
+                        6.12
+                    ],
+                    [
+                        "y2040",
+                        6.12
+                    ],
+                    [
+                        "y2050",
+                        6.12
+                    ]
+                ],
+                "index_name": "period",
+                "type": "map"
+            },
+            "Base"
+        ],
+        [
+            "commodity",
+            "bio",
+            "commodity_price",
+            {
+                "index_type": "str",
+                "rank": 1,
+                "data": [
+                    [
+                        "y2030",
+                        7.38
+                    ],
+                    [
+                        "y2040",
+                        7.38
+                    ],
+                    [
+                        "y2050",
+                        7.38
+                    ]
+                ],
+                "index_name": "period",
+                "type": "map"
+            },
+            "Base"
+        ],
+        [
+            "commodity",
+            "coal",
+            "co2_content",
+            0.37,
+            "Base"
+        ],
+        [
+            "commodity",
+            "coal",
+            "commodity_price",
+            {
+                "index_type": "str",
+                "rank": 1,
+                "data": [
+                    [
+                        "y2030",
+                        6.48
+                    ],
+                    [
+                        "y2040",
+                        5.76
+                    ],
+                    [
+                        "y2050",
+                        5.4
+                    ]
+                ],
+                "index_name": "period",
+                "type": "map"
+            },
+            "Base"
+        ],
+        [
+            "commodity",
+            "crude",
+            "co2_content",
+            0.42,
+            "Base"
+        ],
+        [
+            "commodity",
+            "crude",
+            "commodity_price",
+            {
+                "index_type": "str",
+                "rank": 1,
+                "data": [
+                    [
+                        "y2030",
+                        33.12
+                    ],
+                    [
+                        "y2040",
+                        32.04
+                    ],
+                    [
+                        "y2050",
+                        30.96
+                    ]
+                ],
+                "index_name": "period",
+                "type": "map"
+            },
+            "Base"
+        ],
+        [
+            "commodity",
+            "fossil-CH4",
+            "co2_content",
+            0.2,
+            "Base"
+        ],
+        [
+            "commodity",
+            "fossil-CH4",
+            "commodity_price",
+            {
+                "index_type": "str",
+                "rank": 1,
+                "data": [
+                    [
+                        "y2030",
+                        22.68
+                    ],
+                    [
+                        "y2040",
+                        20.52
+                    ],
+                    [
+                        "y2050",
+                        18.0
+                    ]
+                ],
+                "index_name": "period",
+                "type": "map"
+            },
+            "Base"
+        ],
+        [
+            "commodity",
+            "fossil-HC",
+            "co2_content",
+            0.25,
+            "Base"
+        ],
+        [
+            "commodity",
+            "fossil-HC",
+            "commodity_price",
+            {
+                "index_type": "str",
+                "rank": 1,
+                "data": [
+                    [
+                        "y2030",
+                        42.12
+                    ],
+                    [
+                        "y2040",
+                        41.04
+                    ],
+                    [
+                        "y2050",
+                        39.6
+                    ]
+                ],
+                "index_name": "period",
+                "type": "map"
+            },
+            "Base"
+        ],
+        [
+            "commodity",
+            "global-H2",
+            "commodity_price",
+            {
+                "index_type": "str",
+                "rank": 1,
+                "data": [
+                    [
+                        "y2030",
+                        63.36
+                    ],
+                    [
+                        "y2040",
+                        54.36
+                    ],
+                    [
+                        "y2050",
+                        54.36
+                    ]
+                ],
+                "index_name": "period",
+                "type": "map"
+            },
+            "Base"
+        ],
+        [
+            "commodity",
+            "waste",
+            "co2_content",
+            0.13,
+            "Base"
+        ],
+        [
+            "commodity",
+            "waste",
+            "commodity_price",
+            {
+                "index_type": "str",
+                "rank": 1,
+                "data": [
+                    [
+                        "y2030",
+                        13.68
+                    ],
+                    [
+                        "y2040",
+                        13.68
+                    ],
+                    [
+                        "y2050",
+                        13.68
+                    ]
+                ],
+                "index_name": "period",
+                "type": "map"
+            },
+            "Base"
+        ]
+    ],
+    "alternatives": [
+        [
+            "Base",
+            null
+        ]
+    ]
+}

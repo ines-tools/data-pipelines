@@ -2,6 +2,7 @@ import spinedb_api as api
 from spinedb_api import DatabaseMapping
 import sys
 import pandas as pd
+import numpy as np
 
 def add_entity(db_map : DatabaseMapping, class_name : str, element_names : tuple) -> None:
     _, error = db_map.add_entity_item(entity_byname=element_names, entity_class_name=class_name)
@@ -25,29 +26,32 @@ def add_tech_parameters(target_db,industry,node,sheets):
     entity_name = "technology"
     entity_byname = (industry,)
     df = sheets["ind_process_route_life"]
-    value_param = df[(df.Industry==industry)]["life"].tolist()[0]
-    add_parameter_value(target_db, entity_name, "lifetime", "Base", entity_byname, value_param)
+    value_life = df[(df.Industry==industry)]["life"].tolist()[0]
+    add_parameter_value(target_db, entity_name, "lifetime", "Base", entity_byname, value_life)
 
     # capex
     entity_name = "technology__to_commodity"
     entity_byname = (industry,node)
+    df = sheets["ind_process_routes_fom"]
+    value_fom = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0]*8760.0*value_life for year in ["2030","2040","2050"]}
     df = sheets["ind_process_routes_capex"]
-    value_param = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0]*8760.0 for year in ["2030","2040","2050"]}
+    value_capex = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0]*8760.0 for year in ["2030","2040","2050"]}
+    value_param = {f"y{year}":round(value_fom[f"y{year}"]+value_capex[f"y{year}"],1) for year in ["2030","2040","2050"]}
     if value_param["y2030"] > 0.0:
         map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
         add_parameter_value(target_db, entity_name, "investment_cost", "Base", entity_byname, map_param)
 
-    # fom
+    '''# fom
     entity_name = "technology__to_commodity"
     entity_byname = (industry,node)
     df = sheets["ind_process_routes_fom"]
     value_param = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0]*8760.0 for year in ["2030","2040","2050"]}
     if value_param["y2030"] > 0.0:
         map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
-        add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, map_param)
+        add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, map_param)'''
 
     # co2_captured
-    df = sheets["ind_process_routes_co2_capture"]
+    df = sheets["ind_process_routes_co2_capture"]   
     value_param = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0] for year in ["2030","2040","2050"]}
     if value_param["y2030"] > 0.0:
         entity_name = "technology__to_commodity"
@@ -57,7 +61,7 @@ def add_tech_parameters(target_db,industry,node,sheets):
         entity_byname = (industry,node,"CO2")
         add_entity(target_db, entity_name, entity_byname)
         map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
-        add_parameter_value(target_db, entity_name, "CO2_captured", "Base", entity_byname, map_param)
+        add_parameter_value(target_db, entity_name, "CO2_captured", "Base", entity_byname, np.array(list(value_param.values())).mean().round(3))
 
 def conversion_sectors(target_db,sheet,com_sheet):
 
@@ -78,15 +82,16 @@ def conversion_sectors(target_db,sheet,com_sheet):
             add_parameter_value(target_db, entity_name, "capacity", "Base", entity_byname,1.0)
             add_tech_parameters(target_db,sheet.at[i,"Industry"],sheet.at[i,"to_node"],com_sheet)
         except:
+            print("error conversion")
             pass
 
-        value_dict = {f"y{year}":sheet.at[i,year] for year in ["2030","2040","2050"]}
+        value_dict = {f"y{year}":1/sheet.at[i,year] for year in ["2030","2040","2050"]}
         entity_name = "commodity__to_technology__to_commodity"
         entity_byname = (sheet.at[i,"from_node"],sheet.at[i,"Industry"],sheet.at[i,"to_node"])
         if value_dict["y2030"] > 0.0:
             add_entity(target_db, entity_name, entity_byname)
             map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_dict}
-            add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, map_param)
+            add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, np.array(list(value_dict.values())).mean().round(3))
             entity_name = "commodity__to_technology"
             entity_byname = (sheet.at[i,"from_node"],sheet.at[i,"Industry"])
             add_entity(target_db, entity_name, entity_byname)

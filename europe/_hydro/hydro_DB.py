@@ -47,10 +47,8 @@ def process_parameters(target_db, sheet):
         for parameter in ["maximum_ramp","maximum_ramp_4"]:
             add_parameter_value(target_db, entity_name, parameter, "Base", entity_byname, float(sheet.at[country,params[parameter]]))
         # Hard-coding the variable cost of hydro turbines
-        map_value = {"type": "map", "index_type": "str", "index_name": "period", "data": {"y2030":3.03,"y2040":3.03,"y2050":3.03}}
-        add_parameter_value(target_db, entity_name, "operational_cost", "Base", entity_byname, map_value)
-        map_value = {"type": "map", "index_type": "str", "index_name": "period", "data": {"y2030":65120.0,"y2040":65120.0,"y2050":65120.0}}
-        add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, map_value)
+        add_parameter_value(target_db, entity_name, "operational_cost", "Base", entity_byname, 3.03)
+        # add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, 65120.0)
         
         entity_name = "reservoir__region"
         entity_byname = ("reservoir",country)

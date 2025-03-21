@@ -5,6 +5,7 @@ from sqlalchemy.exc import DBAPIError
 import yaml
 import pandas as pd
 import math 
+import numpy as np
 
 # Spine Inputs
 url_db_out = sys.argv[1]
@@ -46,8 +47,9 @@ def tech_conversion(target_db,sheet):
         except:
             pass
         add_entity(target_db, "commodity__to_technology__to_commodity", (from_node,tech,to_node))
-        map_conv = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":row.iloc[3],"y2040":row.iloc[4],"y2050":row.iloc[5]}}
-        add_parameter_value(target_db,"commodity__to_technology__to_commodity","conversion_rate","Base",(from_node,tech,to_node),map_conv)
+        if pd.notna(row.iloc[3]):
+            # map_conv = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":row.iloc[3],"y2040":row.iloc[4],"y2050":row.iloc[5]}}
+            add_parameter_value(target_db,"commodity__to_technology__to_commodity","conversion_rate","Base",(from_node,tech,to_node),np.array([row.iloc[3],row.iloc[4],row.iloc[5]]).mean().round(3))
     try:
         target_db.commit_session("Added tech conversion")
     except DBAPIError as e:
@@ -64,14 +66,14 @@ def tech_production(target_db,sheet):
             inflation_factor = math.prod([1+value_*1e-2 for value_ in inflation.loc[currency+1:,"HICP"].tolist()])
             print(tech, currency, inflation_factor)
         if pd.notna(row.iloc[2]):
-            map_inv  = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":1e6*inflation_factor*row.iloc[2],"y2040":1e6*inflation_factor*row.iloc[3],"y2050":1e6*inflation_factor*row.iloc[4]}}
+            map_inv  = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":1e6*inflation_factor*row.iloc[2]+inflation_factor*row.iloc[5]*row.iloc[11],"y2040":1e6*inflation_factor*row.iloc[3]+inflation_factor*row.iloc[6]*row.iloc[11],"y2050":1e6*inflation_factor*row.iloc[4]+inflation_factor*row.iloc[7]*row.iloc[11]}}
             add_parameter_value(target_db,"technology__to_commodity","investment_cost","Base",(tech,to_node),map_inv)
-        if pd.notna(row.iloc[5]):
+        '''if pd.notna(row.iloc[5]):
             map_fom  = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":inflation_factor*row.iloc[5],"y2040":inflation_factor*row.iloc[6],"y2050":inflation_factor*row.iloc[7]}}
-            add_parameter_value(target_db,"technology__to_commodity","fixed_cost","Base",(tech,to_node),map_fom)
+            add_parameter_value(target_db,"technology__to_commodity","fixed_cost","Base",(tech,to_node),map_fom)'''
         if pd.notna(row.iloc[8]):
-            map_vom  = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":inflation_factor*row.iloc[8],"y2040":inflation_factor*row.iloc[9],"y2050":inflation_factor*row.iloc[10]}}
-            add_parameter_value(target_db,"technology__to_commodity","operational_cost","Base",(tech,to_node),map_vom)
+            # map_vom  = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":inflation_factor*row.iloc[8],"y2040":inflation_factor*row.iloc[9],"y2050":inflation_factor*row.iloc[10]}}
+            add_parameter_value(target_db,"technology__to_commodity","operational_cost","Base",(tech,to_node),np.array([inflation_factor*row.iloc[j] for j in range(8,11)]).mean())
         if pd.notna(row.iloc[11]):
             add_parameter_value(target_db,"technology","lifetime","Base",(tech,),row.iloc[11])
     try:
@@ -94,31 +96,32 @@ def tech_storage(target_db,sheet):
         energy_capex   = (1e6*df.iloc[:,3]).values
         energy_fom     = df.iloc[:,4].values
         power_vom      = df.iloc[:,5].values 
-        efficiency_in  = df.iloc[:,6].tolist() 
-        efficiency_out = df.iloc[:,7].tolist() 
+        efficiency_in  = df.iloc[:,6].values 
+        efficiency_out = df.iloc[:,7].values
         lifetime       = df.iloc[:,8].tolist()[0]
+        energy_invest  = (1e6*df.iloc[:,3]).values + df.iloc[:,4].values*lifetime
         hours_ratio    = df.iloc[:,9].tolist()[0]
         currency       = df.iloc[:,10].tolist()[0]
 
         if pd.notna(currency):
             inflation_factor = math.prod([1+value_*1e-2 for value_ in inflation.loc[currency+1:,"HICP"].tolist()])
             print(tech, currency, inflation_factor)
-        if pd.notna(energy_capex[0]):
-            map_inv  = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(years,inflation_factor*energy_capex))}
+        if pd.notna(energy_invest[0]):
+            map_inv  = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(years,inflation_factor*energy_invest))}
             add_parameter_value(target_db,"storage","investment_cost","Base",(tech,),map_inv)
-        if pd.notna(energy_fom[0]):
+        '''if pd.notna(energy_fom[0]):
             map_fom  = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(years,inflation_factor*energy_fom))}
-            add_parameter_value(target_db,"storage","fixed_cost","Base",(tech,),map_fom)
+            add_parameter_value(target_db,"storage","fixed_cost","Base",(tech,),map_fom)'''
         if pd.notna(power_vom[0]):
-            map_vom  = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(years,inflation_factor*power_vom/2.0))}
-            add_parameter_value(target_db,"storage_connection","operational_cost_in","Base",(tech,to_node),map_vom)
-            add_parameter_value(target_db,"storage_connection","operational_cost_out","Base",(tech,to_node),map_vom)
+            # map_vom  = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(years,inflation_factor*power_vom/2.0))}
+            add_parameter_value(target_db,"storage_connection","operational_cost_in","Base",(tech,to_node),(inflation_factor*power_vom/2.0).mean())
+            add_parameter_value(target_db,"storage_connection","operational_cost_out","Base",(tech,to_node),(inflation_factor*power_vom/2.0).mean())
         if pd.notna(efficiency_in[0]):
             map_in  = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(years,efficiency_in))}
-            add_parameter_value(target_db,"storage_connection","efficiency_in","Base",(tech,to_node),map_in)
+            add_parameter_value(target_db,"storage_connection","efficiency_in","Base",(tech,to_node),efficiency_in.mean())
         if pd.notna(efficiency_out[0]):
             map_out  = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(years,efficiency_out))}
-            add_parameter_value(target_db,"storage_connection","efficiency_out","Base",(tech,to_node),map_out)
+            add_parameter_value(target_db,"storage_connection","efficiency_out","Base",(tech,to_node),efficiency_out.mean())
         if pd.notna(lifetime):
             add_parameter_value(target_db,"storage","lifetime","Base",(tech,),lifetime)
             '''add_parameter_value(target_db,"storage_connection","lifetime","Base",(tech+"-from",),lifetime)
@@ -154,8 +157,7 @@ def ch4_production(target_db,sheet):
         add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_cap)
         if pd.notna(cost) and cost != 0.0:
             add_entity(target_db,"technology__to_commodity__region",(tech,"CH4",country))
-            map_cost = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(cost,2)  for year in ["2030","2040","2050"]}}
-            add_parameter_value(target_db,"technology__to_commodity__region","operational_cost","Base",(tech,"CH4",country),map_cost)
+            add_parameter_value(target_db,"technology__to_commodity__region","operational_cost","Base",(tech,"CH4",country),round(cost,2))
     try:
         target_db.commit_session("Added CH4 production")
     except DBAPIError as e:
@@ -221,9 +223,9 @@ def ch4_network(target_db,sheet):
 
         add_entity(target_db,"pipeline",(from_country,com,to_country))
         map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity*1e3/24,1) for year in ["2030"]}}
-        add_parameter_value(target_db,"pipeline","links_existing","Base",(from_country,com,to_country),map_cap)
+        add_parameter_value(target_db,"pipeline","capacity","Base",(from_country,com,to_country),round(capacity*1e3/24,1))
         map_cost = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(operational_cost,2)  for year in ["2030","2040","2050"]}}
-        add_parameter_value(target_db,"pipeline","operational_cost","Base",(from_country,com,to_country),map_cost)
+        add_parameter_value(target_db,"pipeline","operational_cost","Base",(from_country,com,to_country),round(operational_cost,2))
     try:
         target_db.commit_session("Added CH4 network")
     except DBAPIError as e:
@@ -257,7 +259,7 @@ def h2_production(target_db,sheet):
         if pd.notna(cost) and cost != 0.0:
             add_entity(target_db,"technology__to_commodity__region",(tech,"H2",country))
             map_cost = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(cost,2)  for year in ["2030","2040","2050"]}}
-            add_parameter_value(target_db,"technology__to_commodity__region","operational_cost","Base",(tech,"H2",country),map_cost)
+            add_parameter_value(target_db,"technology__to_commodity__region","operational_cost","Base",(tech,"H2",country),round(cost,2))
     try:
         target_db.commit_session("Added H2 production")
     except DBAPIError as e:
@@ -296,9 +298,9 @@ def h2_storage(target_db,sheet):
         load_2050 = row.iloc[13]
 
         add_entity(target_db,"storage__region",(tech,country))
-        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity,1)  for year in ["2030"]}}
+        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity*1e3,1)  for year in ["2030"]}}
         add_parameter_value(target_db,"storage__region","storages_existing","Base",(tech,country),map_cap)
-        map_sto_pot = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(capacity_2030,1),"y2040":round(capacity_2040,1),"y2050":round(capacity_2050,1)}}
+        map_sto_pot = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(capacity_2030*1e3,1),"y2040":round(capacity_2040*1e3,1),"y2050":round(capacity_2050*1e3,1)}}
         add_parameter_value(target_db,"storage__region","potentials","Base",(tech,country),map_sto_pot)
         
         add_entity(target_db,"storage_connection__region",(tech,com,country))
@@ -338,9 +340,10 @@ def h2_network(target_db,sheet):
         add_entity(target_db,"pipeline",(from_country,com,to_country))
         map_cap = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(capacity*1e3/24,1)}}
         add_parameter_value(target_db,"pipeline","links_existing","Base",(from_country,com,to_country),map_cap)
+        add_parameter_value(target_db,"pipeline","capacity","Base",(from_country,com,to_country),1.0)
         if pd.notna(operational_cost):
             map_cost = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(operational_cost,1) for year in ["2030","2040","2050"]}}
-            add_parameter_value(target_db,"pipeline","operational_cost","Base",(from_country,com,to_country),map_cost)
+            add_parameter_value(target_db,"pipeline","operational_cost","Base",(from_country,com,to_country),round(operational_cost,1))
         if (potentials_30 + potentials_40) > 0.0:
             map_pot = {"type":"map","index_type":"str","index_name":"period",
                        "data":{"y2030":round((capacity+potentials_30)*1e3/24,1),"y2040":round((capacity+potentials_30+potentials_40)*1e3/24,1),"y2050":round((capacity+potentials_30+potentials_40)*1e3/24,1)}}

@@ -461,7 +461,6 @@ gas_pipelines:
           - [retirement_method,economic_retirement,[[1,2,3]]]
           - [investment_method,cumulative_limits,[[1,2,3]]]
         node__link__node:
-          - [capacity,1.0,[[2,1],[1,2,3],[2,3]]]
           - [efficiency,1.0,[[2,1],[1,2,3],[2,3]]]
     fixed:
       pipeline:
@@ -469,4 +468,5 @@ gas_pipelines:
           investment_cost: [investment_cost,1.0,[[1,2,3]]]
           lifetime: [lifetime,1.0,[[1,2,3]]]
           links_existing: [links_existing,1.0,[[1,2,3]]]
+          capacity: [capacity,1.0,[[1,2,3]]]
           links_potentials: [links_max_cumulative,1.0,[[1,2,3]]]
