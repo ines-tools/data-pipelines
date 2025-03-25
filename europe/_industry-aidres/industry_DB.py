@@ -22,6 +22,7 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
 
 def add_tech_parameters(target_db,industry,node,sheets):
 
+    planning_years =  ["2030","2040","2050"]
     # lifetime
     entity_name = "technology"
     entity_byname = (industry,)
@@ -32,27 +33,37 @@ def add_tech_parameters(target_db,industry,node,sheets):
     # capex
     entity_name = "technology__to_commodity"
     entity_byname = (industry,node)
-    df = sheets["ind_process_routes_fom"]
-    value_fom = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0]*8760.0*value_life for year in ["2030","2040","2050"]}
     df = sheets["ind_process_routes_capex"]
-    value_capex = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0]*8760.0 for year in ["2030","2040","2050"]}
-    value_param = {f"y{year}":round(value_fom[f"y{year}"]+value_capex[f"y{year}"],1) for year in ["2030","2040","2050"]}
-    if value_param["y2030"] > 0.0:
-        map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
-        add_parameter_value(target_db, entity_name, "investment_cost", "Base", entity_byname, map_param)
+    array_p = (df[(df.Industry==industry)][planning_years].values.flatten().round(2)*8760.0).tolist()
+    print(array_p)
+    param_type = "map" if not all(array_p[0] == i for i in array_p) else "float"
+    print(param_type,industry)
+    if array_p[0] > 0.0:
+        if param_type == "map":
+            value_param =  dict(zip([f"y{year}" for year in planning_years],array_p))
+            map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
+            add_parameter_value(target_db, entity_name, "investment_cost", "Base", entity_byname, map_param)
+        elif param_type == "float":
+            add_parameter_value(target_db, entity_name, "investment_cost", "Base", entity_byname, array_p[0])
 
-    '''# fom
+    # fom
     entity_name = "technology__to_commodity"
     entity_byname = (industry,node)
     df = sheets["ind_process_routes_fom"]
-    value_param = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0]*8760.0 for year in ["2030","2040","2050"]}
-    if value_param["y2030"] > 0.0:
-        map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
-        add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, map_param)'''
+    array_p = (df[(df.Industry==industry)][planning_years].values.flatten().round(2)*8760.0).tolist()
+    param_type = "map" if not all(array_p[0] == i for i in array_p) else "float"
+    if array_p[0] > 0.0:
+        if param_type == "map":
+            value_param =  dict(zip([f"y{year}" for year in planning_years],array_p))
+            map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
+            add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, map_param)
+        elif param_type == "float":
+            add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, array_p[0])
+
 
     # co2_captured
     df = sheets["ind_process_routes_co2_capture"]   
-    value_param = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0] for year in ["2030","2040","2050"]}
+    value_param = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0] for year in planning_years}
     if value_param["y2030"] > 0.0:
         entity_name = "technology__to_commodity"
         entity_byname = (industry,"CO2")

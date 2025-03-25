@@ -102,21 +102,22 @@ def main():
             tech_type = "wind-on" if "wind-on" in tech else ("wind-off" if "wind-off" in tech else "solar-PV")
             add_entity(db_map,"technology_type__technology",(tech_type,tech))
 
-            # Investment costs + Fixed costs 
+            # Investment costs
             map_icost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"capex_"+year])*1e6 + float(vre_cost.at[tech,"fom_"+year])*float(vre_cost.at[tech,"lifetime"]),1) for year in ["2030","2040","2050"] if vre_cost.at[tech,"capex_"+year] != 0.0}}
-            
-            # Assumption for vom costs
-            float_vcost = np.array([float(vre_cost.at[tech,"vom_"+year]) for year in ["2030","2040","2050"]]).mean()
+            # Fixed costs 
+            map_fcost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"fom_"+year]),1) for year in ["2030","2040","2050"] if vre_cost.at[tech,"capex_"+year] != 0.0}}
+            # Vom costs 
+            map_vcost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"vom_"+year]),1) for year in ["2030","2040","2050"] if vre_cost.at[tech,"capex_"+year] != 0.0}}
             
             if bool(map_icost["data"]):
                 add_parameter_value(db_map,"technology__to_commodity","investment_cost","Base",(tech,"elec"),map_icost)
             
             # Fixed cost
-            '''if bool(map_fcost["data"]):
-                add_parameter_value(db_map,"technology__to_commodity","fixed_cost","Base",(tech,"elec"),map_fcost)'''
+            if bool(map_fcost["data"]):
+                add_parameter_value(db_map,"technology__to_commodity","fixed_cost","Base",(tech,"elec"),map_fcost)
             
-            if float_vcost:
-                add_parameter_value(db_map,"technology__to_commodity","operational_cost","Base",(tech,"elec"),float_vcost)
+            if map_vcost:
+                add_parameter_value(db_map,"technology__to_commodity","operational_cost","Base",(tech,"elec"),map_vcost)
             add_parameter_value(db_map,"technology","lifetime","Base",(tech,),float(vre_cost.at[tech,"lifetime"]))
 
         ## ONSHORE EXISTING

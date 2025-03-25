@@ -722,9 +722,61 @@ def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, con
                             for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
                                 entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_items[2]])
                                 if param_items[0] == "investment_method": # Particular Case Screening Out
-                                    if not db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name="links_potentials",alternative_name="Base"):
+                                    if not db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name="potentials",alternative_name="Base"):
                                         param_items[1] = "not_allowed"
                                 add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
+                    
+                    # Fixed Parameters
+                    if entity_class in config["sys"][db_name]["parameters"]["fixed"]:
+                        if entity_class_target in config["sys"][db_name]["parameters"]["fixed"][entity_class]:
+                            param_list = config["sys"][db_name]["parameters"]["fixed"][entity_class][entity_class_target]
+                            for param_source in param_list:
+                                entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_list[param_source][2]])
+                                values_ = db_source.get_parameter_value_items(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name=param_source)
+                                if values_:
+                                    for value_ in values_:
+                                        value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                        add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)                       
+
+def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+
+    db_name = "transport_sector"
+    print(db_name,"WARNING: Source DB must be in the user-defined target resolution")
+    print("ADDING TRANSPORT")
+    for entity_class in config["sys"][db_name]["entities"]:
+        entities = db_source.get_entity_items(entity_class_name = entity_class)
+        
+        for entity in entities:
+            entity_name = entity["name"]
+            entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
+            entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
+
+            if entity_names[2] in config["onshore_polygons"] and config["user"]["commodity"][entity_names[0]]["status"] == True and config["user"]["vehicle"][entity_names[1]]["status"] == True:               
+                for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
+                    if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
+                        for entity_target_items in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
+                            entity_target_building, dict_condition = entity_target_items
+                            entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in entity_target_building])
+                            if not dict_condition:
+                                add_entity(db_map,entity_class_target,entity_target_name)
+                            else:
+                                for dict_parameter  in dict_condition:
+                                    value_condition = db_source.get_parameter_value_item(entity_class_name = entity, parameter_definition_name = dict_parameter, entity_byname = entity_names, alternative_name = "Base")
+                                    if value_condition["parsed_value"] == dict_condition[dict_parameter]:
+                                        add_entity(db_map,entity_class_target,entity_target_name)
+
+                    # Default Parameters
+                    if entity_class in config["sys"][db_name]["parameters"]["default"]:
+                        if entity_class_target in config["sys"][db_name]["parameters"]["default"][entity_class]:
+                            for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
+                                entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_items[2]])
+                                if not param_items[3]:
+                                    add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
+                                else:
+                                    for dict_parameter  in param_items[3]:
+                                        value_condition = db_source.get_parameter_value_item(entity_class_name = entity, parameter_definition_name = dict_parameter, entity_byname = entity_names, alternative_name = "Base")
+                                        if value_condition["parsed_value"] == param_items[3][dict_parameter]:
+                                            add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
                     
                     # Fixed Parameters
                     if entity_class in config["sys"][db_name]["parameters"]["fixed"]:
@@ -759,6 +811,7 @@ def main():
     url_db_ind = sys.argv[8]
     url_db_bio = sys.argv[9]
     url_db_gas = sys.argv[10]
+    url_db_veh = sys.argv[11]
 
 
     db_com = DatabaseMapping(url_db_com)
@@ -770,6 +823,7 @@ def main():
     db_ind = DatabaseMapping(url_db_ind)
     db_bio = DatabaseMapping(url_db_bio)
     db_gas = DatabaseMapping(url_db_gas)
+    db_veh = DatabaseMapping(url_db_veh)
 
     with open("ines_structure.json", 'r') as f:
         ines_spec = json.load(f)
@@ -845,6 +899,11 @@ def main():
         add_gas_pipelines(db_map,db_gas,config)
         print("gas_pipelines_added")
         db_map.commit_session("gas_pipelines_added")
+
+        # Transport Representation
+        add_transport(db_map,db_veh,config)
+        print("transport_added")
+        db_map.commit_session("transport_added")
 
         # Commodity Nodes parameters
         add_nodes(db_map,db_com,config)

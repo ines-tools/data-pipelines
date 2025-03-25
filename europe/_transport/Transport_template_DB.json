@@ -50,6 +50,13 @@
         ],
         [
             "commodity__vehicle__region",
+            "connected_vehicles",
+            null,
+            null,
+            null
+        ],
+        [
+            "commodity__vehicle__region",
             "efficiency_in",
             null,
             null,
@@ -71,14 +78,14 @@
         ],
         [
             "commodity__vehicle__region",
-            "energy_min",
+            "flow_profile",
             null,
             null,
             null
         ],
         [
             "commodity__vehicle__region",
-            "flow_profile",
+            "scale_demand",
             null,
             null,
             null
