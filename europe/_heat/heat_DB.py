@@ -38,14 +38,14 @@ def process_units(target_db, sheet):
     for node_u in nodes:
         add_entity(target_db, "commodity", (node_u,))
         for node_l in nodes[node_u]:
-            add_entity(target_db, "node", (node_l,))
-            add_entity(target_db, "commodity__to_node", (node_u,node_l))
+            add_entity(target_db, "end-use", (node_l,))
+            add_entity(target_db, "commodity__to_end-use", (node_u,node_l))
 
     for unit_name in sheet.index.unique():
         params ={"planning_years" : ["y"+str(i) for i in sheet.loc[unit_name,"year"].to_list()],
-                 "elec_conv": sheet.loc[unit_name,"conversion_rate_elec_pu"].values,
-                 "heat_conv": sheet.loc[unit_name,"conversion_rate_heat_pu"].values,
-                 "co2_conv":sheet.loc[unit_name,"CO2_captured_pu"].values,
+                 "elec_conv": round(sheet.loc[unit_name,"conversion_rate_elec_pu"].values.mean(),3),
+                 "heat_conv": round(sheet.loc[unit_name,"conversion_rate_heat_pu"].values.mean(),3),
+                 "co2_conv":  sheet.loc[unit_name,"CO2_captured_pu"].values.mean(),
                  "investment_cost": (sheet.loc[unit_name,"CAPEX_MEUR_MW"]*1e6).round(1).to_list(),
                  "fixed_cost": sheet.loc[unit_name,"FOM_EUR_MW_y"].to_list(),
                  "operational_cost": sheet.loc[unit_name,"VOM_EUR_MWh"].to_list(),
@@ -57,10 +57,12 @@ def process_units(target_db, sheet):
         add_entity(target_db, entity_name, entity_byname)
         add_parameter_value(target_db, entity_name, "lifetime", "Base", entity_byname, params["lifetime"])
         
-        if pd.notna(params["elec_conv"][0]):
+        if pd.notna(params["elec_conv"]):
+            print(unit_name,"District Heating")
             to_node = "elec"
             to_node_2 = "DH"
         else:
+            print(unit_name,"Individual Heating")
             to_node = sheet.loc[unit_name,"to_node"].tolist()[0]
             to_node_2 = None
 
@@ -71,7 +73,7 @@ def process_units(target_db, sheet):
             if sum(params[param_name]) > 0:
                 map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": dict(zip(params["planning_years"],params[param_name]))}
                 add_parameter_value(target_db, entity_name, param_name, "Base", entity_byname, map_param)
-
+        add_parameter_value(target_db, entity_name, "capacity", "Base", entity_byname, 1.0)
         from_node = sheet.loc[unit_name,"from_node"].tolist()[0]
         if pd.notna(from_node):
             entity_name = "commodity__to_technology"
@@ -82,19 +84,21 @@ def process_units(target_db, sheet):
                 entity_name = "commodity__to_technology__to_commodity"
                 entity_byname = (from_node, unit_name, to_node)
                 add_entity(target_db, entity_name, entity_byname)
-                map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": dict(zip(params["planning_years"],params["elec_conv"]))}
-                add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, map_param)
+                # map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": params["elec_conv"]}
+                add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, params["elec_conv"])
                 entity_byname = (from_node, unit_name, to_node_2)
                 add_entity(target_db, entity_name, entity_byname)
-                map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": dict(zip(params["planning_years"],params["elec_conv"]))}
-                add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, map_param)
+                # map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": params["heat_conv"]}
+                add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, params["heat_conv"])
             else:
                 entity_name = "commodity__to_technology__to_commodity"
                 entity_byname = (from_node, unit_name, to_node)
                 add_entity(target_db, entity_name, entity_byname)
-                map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": dict(zip(params["planning_years"],params["heat_conv"]))}
-                if pd.notna(params["heat_conv"][0]):
-                    add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, map_param)
+                # map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": params["heat_conv"]}
+                if pd.notna(params["heat_conv"]):
+                    add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname,1.0)
+                else:
+                    print("WARNING: NO STATIC CONVERSION RATES FOR",unit_name)
                 
             if "+CC" in unit_name:
                 entity_name = "technology__to_commodity"
@@ -103,8 +107,8 @@ def process_units(target_db, sheet):
                 entity_name = "commodity__to_technology__to_commodity"
                 entity_byname = (from_node, unit_name, "CO2")
                 add_entity(target_db, entity_name, entity_byname)
-                map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": dict(zip(params["planning_years"],co2_content[from_node]*params["co2_conv"]))}
-                add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, map_param)
+                #map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": dict(zip(params["planning_years"],co2_content[from_node]*params["co2_conv"]))}
+                add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, round(co2_content[from_node]*params["co2_conv"],3))
 
 
 def process_storages(target_db, sheet):
@@ -137,6 +141,11 @@ def process_storages(target_db, sheet):
 def process_region_data(target_db,path):
 
     years = ["wy1995","wy2008","wy2009"]
+    time_list = []
+    for year in years:
+        pd_range = pd.date_range(str(int(year[2:]))+"-01-01 00:00:00",str(int(year[2:]))+"-12-31 23:00:00",freq="h")
+        time_list += [i.isoformat() for i in pd_range if not (i.month==2 and i.day==29)]
+
     map_tech = {"A2AHP-cooling":{"technology":"air-heatpump-cool","commodity":"heat","data":None},
                 "A2WHP-DHW":{"technology":"air-heatpump","commodity":"DH","data":None},
                 "A2WHP-radiators":{"technology":"air-heatpump","commodity":"heat","data":None},
@@ -147,18 +156,18 @@ def process_region_data(target_db,path):
     for tech in map_tech:
         for cy in years:
             if isinstance(map_tech[tech]["data"],pd.DataFrame):
-                map_tech[tech]["data"] = pd.concat([map_tech[tech]["data"],pd.read_csv(os.path.join(path,f"COP_{tech}_{cy}.csv"),index_col=0)],axis=0,ignore_index=False)
+                map_tech[tech]["data"] = pd.concat([map_tech[tech]["data"],pd.read_csv(os.path.join(path,f"COP_{tech}_{cy}.csv"),index_col=0).iloc[:8759,:]],axis=0,ignore_index=False)
             else:
-                map_tech[tech]["data"] = pd.read_csv(os.path.join(path,f"COP_{tech}_{cy}.csv"),index_col=0)
+                map_tech[tech]["data"] = pd.read_csv(os.path.join(path,f"COP_{tech}_{cy}.csv"),index_col=0).iloc[:8759,:]
 
-    demand_type = {"cooling_res":"cool","cooling_nonres":"cool","DHW_res":"heat","DHW_nonres":"heat","heating_res":"heat","heating_nonres":"heat"}
+    demand_type = {"cooling_res":"res-cool","cooling_nonres":"nonres-cool","DHW_res":"res-DHW","DHW_nonres":"nonres-DHW","heating_res":"res-space","heating_nonres":"nonres-space"}
     map_demand = {}
     for dem in demand_type:
         for cy in years:
             if dem in map_demand.keys():
-                map_demand[dem] = pd.concat([map_demand[dem],pd.read_csv(os.path.join(path,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0)],axis=0,ignore_index=False)
+                map_demand[dem] = pd.concat([map_demand[dem],pd.read_csv(os.path.join(path,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0).iloc[:8759,:]],axis=0,ignore_index=False)
             else:
-                map_demand[dem] = pd.read_csv(os.path.join(path,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0)
+                map_demand[dem] = pd.read_csv(os.path.join(path,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0).iloc[:8759,:]
     
     
     for country in map_demand[dem].columns:
@@ -169,11 +178,11 @@ def process_region_data(target_db,path):
             except:
                 pass
 
-            entity_name = "commodity__region"
+            entity_name = "end-use__region"
             entity_byname = (demand_type[dem],country)
             add_entity(target_db, entity_name, entity_byname)
-            value_dem = map_demand[dem][country].values
-            map_param = {"type": "time_series", "data": dict(zip(map_demand[dem].index,value_dem))}
+            value_dem = -1*map_demand[dem][country].values
+            map_param = {"type": "map", "index_type": "str", "index_name": "t", "data":dict(zip(time_list,value_dem))}
             add_parameter_value(target_db, entity_name, "flow_profile", "Base", entity_byname, map_param)
 
             sector_i,type_i = dem.split("_")
@@ -184,8 +193,8 @@ def process_region_data(target_db,path):
                     pass
                 map_scale = {}
                 for year in [2030,2040,2050]:
-                    map_scale[year] = scenario_df[(scenario_df.scenario==scenario)&(scenario_df.scenario_year==year)&(scenario_df.building_category==type_i)&(scenario_df.demand==sector_i)][country].to_list()[0]
-                map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": map_scale}
+                    map_scale[f"y{year}"] = scenario_df[(scenario_df.scenario==scenario)&(scenario_df.scenario_year==year)&(scenario_df.building_category==type_i)&(scenario_df.demand==sector_i)][country].to_list()[0]
+                map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": map_scale}
                 add_parameter_value(target_db, entity_name, "annual_scale", scenario, entity_byname, map_param)
 
         dem_space = scenario_df[((scenario_df.scenario_year==2030)|(scenario_df.scenario_year==2040)|(scenario_df.scenario_year==2050))&(scenario_df.demand=="heating")][country].values
@@ -194,12 +203,12 @@ def process_region_data(target_db,path):
         ratio_DHW   = sum(dem_dhw[i]/(dem_space[i]+dem_dhw[i]) for i in range(len(dem_space)) if (dem_space[i]+dem_dhw[i]) > 0.0)/len(dem_space)
         print(ratio_DHW,ratio_space)
         for tech in ["A2AHP-cooling","A2WHP-radiators","G2WHP-radiators"]:
-            entity_name = "commodity__to_technology__to_commodity__region"
-            entity_byname = ("elec",map_tech[tech]["technology"],map_tech[tech]["commodity"],country)
+            entity_name = "technology__region"
+            entity_byname = (map_tech[tech]["technology"],country)
             add_entity(target_db, entity_name, entity_byname)
             value_cop = map_tech[tech]["data"][country].values if tech == "A2AHP-cooling" else map_tech[tech]["data"][country].values*ratio_space + map_tech[tech[:6]+"DHW"]["data"][country].values*ratio_DHW
-            map_param = {"type": "time_series", "data": dict(zip(map_tech[tech]["data"].index,value_cop.round(4)))}
-            add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, map_param)
+            map_param = {"type": "map", "index_type": "str", "index_name": "t", "data":dict(zip(time_list,value_cop.round(4)))}
+            add_parameter_value(target_db, entity_name, "efficiency", "Base", entity_byname, map_param)
         
 def main():
 
@@ -224,9 +233,9 @@ def main():
         process_units(target_db,tech_info)
         target_db.commit_session("units added")
         print("technologies_added")
-        process_storages(target_db,stog_info)
+        '''process_storages(target_db,stog_info)
         target_db.commit_session("storages added")
-        print("storages_added")
+        print("storages_added")'''
         process_region_data(target_db,path_time_series)
         target_db.commit_session("regions added")
 

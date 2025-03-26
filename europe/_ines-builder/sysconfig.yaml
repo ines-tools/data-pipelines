@@ -401,6 +401,7 @@ gas_sector:
       technology__to_commodity_region:
         unit__to_node:
           operational_cost: [other_operational_cost,[[1],[2]],[area,{}],null,PECD1]
+          capacity: [capacity,[[1],[2]],[area,{}],null,PECD1]
       storage__region:
         node:
           capacity: [storage_capacity,[[1]],[area,{}],null,PECD1]
@@ -417,33 +418,6 @@ gas_sector:
           capacity_out: [capacity,[[1],[1,2],[2]],[area,{}],null,PECD1]
           operational_cost_in: [operational_cost,[[2],[2,1],[1]],[area,{}],null,PECD1]
           operational_cost_out: [operational_cost,[[1],[1,2],[2]],[area,{}],null,PECD1]
-          
-# gas transmission map
-gas_transmission:
-  entities:
-    pipeline:
-      link:
-        - [[1,2,3]]
-      node__link__node:
-        - [[2,1],[1,2,3],[2,3]]
-  parameters:
-    user: null
-    default:
-      region__transmission__commodity__region:
-        link: 
-          - [retirement_method,economic_retirement,[[1,2,3]]]
-          - [investment_method,cumulative_limits,[[1,2,3]]]
-        node__link__node:
-          - [capacity,1.0,[[2,1],[1,2,3],[2,3]]]
-          - [efficiency,1.0,[[2,1],[1,2,3],[2,3]]]
-    fixed:
-      pipeline:
-        link:
-          investment_cost: [investment_cost,1.0,[[1,2,3]]]
-          operational_cost: [operational_cost,1.0,[[1,2,3]]]
-          lifetime: [lifetime,1.0,[[1,2,3]]]
-          links_existing: [links_existing,1.0,[[1,2,3]]]
-          potentials: [links_max_cumulative,1.0,[[1,2,3]]]
 
 # gas pipelines integration
 gas_pipelines:

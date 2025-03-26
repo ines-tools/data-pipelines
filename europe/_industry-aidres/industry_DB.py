@@ -134,17 +134,16 @@ def demand_sectors(target_db,sheet):
         except:
             pass
 
-        entity_name = "commodity__region"
-        entity_byname = (sheet.at[i,"to_node"],sheet.at[i,"nuts3"])
-        add_entity(target_db, entity_name, entity_byname)
-        multiplier = 1000.0/8760.0 if sheet.at[i,"unit"] == "kt_yr" else 1/8760.0
-        map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": {"y2030":None,"y2040":None,"y2050":None}}
-        map_param["data"]["y2030"] = multiplier*float(sheet.at[i,"2030"])
-        map_param["data"]["y2050"] = multiplier*float(sheet.at[i,"2050"])
-        map_param["data"]["y2040"] = (map_param["data"]["y2030"] + map_param["data"]["y2050"])/2
-        add_parameter_value(target_db, entity_name, "demand", "Base", entity_byname, map_param)
-               
-
+        if sheet.at[i,"to_node"] not in ["HC"]:
+            entity_name = "commodity__region"
+            entity_byname = (sheet.at[i,"to_node"],sheet.at[i,"nuts3"])
+            add_entity(target_db, entity_name, entity_byname)
+            multiplier = 1000.0/8760.0 if sheet.at[i,"unit"] == "kt_yr" else 1/8760.0
+            map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": {"y2030":None,"y2040":None,"y2050":None}}
+            map_param["data"]["y2030"] = -1*multiplier*float(sheet.at[i,"2030"])
+            map_param["data"]["y2050"] = -1*multiplier*float(sheet.at[i,"2050"])
+            map_param["data"]["y2040"] = (map_param["data"]["y2030"] + map_param["data"]["y2050"])/2
+            add_parameter_value(target_db, entity_name, "demand", "Base", entity_byname, -1*multiplier*float(sheet.at[i,"2030"])) # same demand for every year
 
 def main():
 

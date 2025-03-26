@@ -33,7 +33,9 @@ def main():
     electricity_demand = pd.read_csv(sys.argv[2],index_col=0)
 
     # Just for now in order to avoid a heavy DB
-    index_filter = [str(i) for i in pd.date_range("1995-01-01 00:00:00","1995-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2008-01-01 00:00:00","2008-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2009-01-01 00:00:00","2009-12-31 23:00:00",freq="1h").tolist() if not (i.month == 2 and i.day == 29)]
+    index_pick = [str(i) for i in pd.date_range("1995-01-01 00:00:00","1995-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2008-01-01 00:00:00","2008-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2009-01-01 00:00:00","2009-12-31 23:00:00",freq="1h").tolist() if not (i.year == 2008 and i.month == 12 and i.day == 31)]
+    index_map  = [i.isoformat() for i in pd.date_range("1995-01-01 00:00:00","1995-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2008-01-01 00:00:00","2008-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2009-01-01 00:00:00","2009-12-31 23:00:00",freq="1h").tolist() if not (i.month == 2 and i.day == 29)]
+    
     with DatabaseMapping(url_db_out) as db_map:
 
         ## Empty the database
@@ -49,12 +51,11 @@ def main():
         for country in electricity_demand.columns:    
 
             add_entity(db_map,"region",country)
-            add_parameter_value(db_map,"region","type","Base",(country,),"onshore")
-            add_parameter_value(db_map,"region","GIS_level","Base",(country,),"PECD1")
+            '''add_parameter_value(db_map,"region","type","Base",(country,),"onshore")
+            add_parameter_value(db_map,"region","GIS_level","Base",(country,),"PECD1")'''
             add_relationship(db_map,"commodity__region",("elec",country))
-            demand_v = (-1*electricity_demand.loc[index_filter,country].values).round(1)
-            demand_i = [pd.Timestamp(i).isoformat() for i in electricity_demand.loc[index_filter,:].index.tolist()]
-            value_de = {"type":"map","index_type":"date_time","index_name":"t","data":dict(zip(demand_i,demand_v))}
+            demand_v = (-1*electricity_demand.loc[index_pick,country].values).round(1)
+            value_de = {"type":"map","index_type":"date_time","index_name":"t","data":dict(zip(index_map,demand_v))}
             add_parameter_value(db_map,"commodity__region","flow_profile","Base",("elec",country),value_de)
              
         print("Demand loaded")

@@ -26,9 +26,9 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
 def process_single_parameter(sheet, config_file, target_db, entity_name, entity_byname, param_name,multiplier=1.0):
 
     source_param_name = config_file[entity_name][param_name]
-    cell_value = float(sheet.at[source_param_name])
+    cell_value = float(sheet.loc[[i for i in sheet.index if source_param_name in i]].mean())
     if isinstance(cell_value, (float, int)) and pd.notna(cell_value):
-        add_parameter_value(target_db, entity_name, param_name, "Base", entity_byname, multiplier*cell_value)
+        add_parameter_value(target_db, entity_name, param_name, "Base", entity_byname, round(multiplier*cell_value,3))
 
 def process_map_parameter(sheet, config_file, target_db, entity_name, entity_byname, param_name, multiplier=1.0):
     map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": {}}
@@ -40,15 +40,6 @@ def process_map_parameter(sheet, config_file, target_db, entity_name, entity_byn
             map_param["data"][f"y{param_alternative}"] = round(cell_value * multiplier, 2)
     if len(map_param["data"]) > 1:
         add_parameter_value(target_db, entity_name, param_name, "Base", entity_byname, map_param)
-
-'''def process_commodity_data(sheet, config_file, target_db):
-    for commodity_name in sheet.index:
-        entity_name = "commodity"
-        entity_byname = (commodity_name,)
-        add_entity(target_db, entity_name, entity_byname)
-        process_single_parameter(sheet.T[commodity_name], config_file, target_db, entity_name, entity_byname, "co2_content")
-        multiplier = 3.6 if commodity_name != "CO2" else 1.0
-        process_map_parameter(sheet.T[commodity_name], config_file, target_db, entity_name, entity_byname, "commodity_price",multiplier)'''
 
 def process_storage_data(sheet, config_file, target_db,commodities):
     for storage_name in sheet.index:
@@ -105,7 +96,7 @@ def process_units(sheet, config_file, target_db, commodities, technologies_exclu
                 entity_name = "commodity__to_technology__to_commodity"
                 entity_byname = (from_node, unit_name, to_node)
                 add_entity(target_db, entity_name, entity_byname)
-                process_map_parameter(sheet.T[unit_name], config_file, target_db, entity_name, entity_byname,"conversion_rate")
+                process_single_parameter(sheet.T[unit_name], config_file, target_db, entity_name, entity_byname,"conversion_rate")
                 if "+CC" in unit_name:
                     try:
                         add_entity(target_db, "commodity", ("CO2",))
@@ -118,7 +109,7 @@ def process_units(sheet, config_file, target_db, commodities, technologies_exclu
                     entity_byname = (from_node, unit_name, "CO2")
                     add_entity(target_db, entity_name, entity_byname)
                     multiplier = co2_content[from_node]
-                    process_map_parameter(sheet.T[unit_name], config_file, target_db, entity_name, entity_byname,"CO2_captured",multiplier)
+                    process_single_parameter(sheet.T[unit_name], config_file, target_db, entity_name, entity_byname,"CO2_captured",multiplier)
 
             
 

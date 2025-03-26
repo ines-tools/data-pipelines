@@ -60,11 +60,15 @@ def week_to_hourly(commodity,target_db,veh_type,data,key_df,factor,df_index,regi
     
 def profile_historical_wy(array,cyears):
     
+    year_day_index = {"1995":6,"2008":1,"2009":3}
     index_time = []
+    value_time = []
     for alternative in cyears:
+        weeks_52_array = np.concatenate([array[year_day_index[alternative]*24:52*7*24],array[:year_day_index[alternative]*24]])
+        value_time += np.concatenate([weeks_52_array,weeks_52_array[-7*24:-6*24]]).tolist()
         index_time += time_index(alternative)
 
-    data = dict(zip(index_time,list(array)*3))
+    data = dict(zip(index_time,value_time))
     return data
 
 def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):

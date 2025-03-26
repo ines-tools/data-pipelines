@@ -25,7 +25,7 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
 def time_index(year) -> list:
     time_list = {}
     pd_range = pd.date_range(str(int(year))+"-01-01 00:00:00",str(int(year))+"-12-31 23:00:00",freq="h")
-    time_list["standard"] = [i.strftime('%Y-%m-%d %H:%M:%S') for i in pd_range if not (i.month==2 and i.day==29)]
+    time_list["standard"] = [i.strftime('%Y-%m-%d %H:%M:%S') for i in pd_range if not (i.year == 2008 and i.month==12 and i.day==31)]
     time_list["iso"]  = [i.isoformat() for i in pd_range if not (i.month==2 and i.day==29)]
     return time_list["standard"], time_list["iso"]
 
