@@ -50,11 +50,11 @@ commodity:
   elec: 
     status: True
   CH4: 
-    status: True
+    status: False
   H2: 
-    status: True
+    status: False
   CO2: 
-    status: True
+    status: False
   bio: 
     status: True
   HC: 
@@ -119,11 +119,21 @@ storage:
 technology:
   oil-eng: 
     rename : "oil-eng"
-    status: True
+    status: False
     investment_method: "no_limits"
+    renewable : False
+  oil-eng-existing: 
+    rename : "oil-eng-existing"
+    status: True
+    investment_method: "not_allowed"
     renewable : False
   SCPC:
     rename : "SCPC"
+    status: False
+    investment_method: "not_allowed"
+    renewable : False
+  SCPC-existing:
+    rename : "SCPC-existing"
     status: True
     investment_method: "not_allowed"
     renewable : False
@@ -144,8 +154,13 @@ technology:
     renewable : False
   CCGT:
     rename : "CCGT"
-    status: True
+    status: False
     investment_method: "no_limits"
+    renewable : False
+  CCGT-existing:
+    rename : "CCGT-existing"
+    status: True
+    investment_method: "not_allowed"
     renewable : False
   CCGT+CC:
     rename : "CCGT+CC"
@@ -164,6 +179,11 @@ technology:
     renewable : False
   wasteST:
     rename : "wasteST"
+    status: False
+    investment_method: "not_allowed"
+    renewable : False
+  wasteST-existing:
+    rename : "wasteST-existing"
     status: True
     investment_method: "not_allowed"
     renewable : False
@@ -171,6 +191,11 @@ technology:
     rename : "bioST"
     status: True
     investment_method: "no_limits"
+    renewable : True
+  bioST-existing:
+    rename : "bioST-existing"
+    status: True
+    investment_method: "not_allowed"
     renewable : True
   bioST+CC:
     rename : "bioST+CC"
@@ -184,8 +209,13 @@ technology:
     renewable : True
   nuclear-3:
     rename : "nuclear-3"
-    status: True
+    status: False
     investment_method: "no_limits"
+    renewable : False
+  nuclear-3-existing:
+    rename : "nuclear-3-existing"
+    status: True
+    investment_method: "not_allowed"
     renewable : False
   nuclear-4:
     rename : "nuclear-4"
@@ -345,7 +375,97 @@ technology:
   LH2-terminal: 
     status: True
     investment_method: "not_allowed"
+  gas-CHP:
+    status: False
+    investment_method: "not_allowed"
+  coal-CHP:
+    status: False
+    investment_method: "not_allowed"
+  bio-boiler:
+    status: True
+    investment_method: "no_limits"
+  gas-CHP+CC:
+    status: False
+    investment_method: "not_allowed"
+  oil-boiler:
+    status: True
+    investment_method: "no_limits"
+  bio-boiler-DH:
+    status: False
+    investment_method: "not_allowed"
+  fuelcell-CHP:
+    status: False
+    investment_method: "not_allowed"
+  gas-boiler-DH:
+    status: False
+    investment_method: "not_allowed"
+  heatpump-DH:
+    status: False
+    investment_method: "not_allowed"
+  elec-boiler:
+    status: True
+    investment_method: "no_limits"
+  coal-CHP+CC:
+    status: False
+    investment_method: "not_allowed"
+  electric-heating:
+    status: True
+    investment_method: "no_limits"
+  solar-DH:
+    status: False
+    investment_method: "not_allowed"
+  air-heatpump-cool:
+    status: True
+    investment_method: "no_limits"
+  air-heatpump:
+    status: True
+    investment_method: "no_limits"
+  solar-heating:
+    status: False
+    investment_method: "not_allowed"
+  ground-heatpump: 
+    status: True
+    investment_method: "no_limits"
+  gas-boiler:
+    status: True
+    investment_method: "no_limits"
+  waste-CHP:
+    status: False
+    investment_method: "not_allowed"
+  bio-boiler-DH+CC:
+    status: False
+    investment_method: "not_allowed"
+  geothermal-DH:
+    status: False
+    investment_method: "not_allowed"
+  bio-CHP:
+    status: False
+    investment_method: "not_allowed"
+  bio-CHP+CC:
+    status: False
+    investment_method: "not_allowed"
+  waste-DH:
+    status: False
+    investment_method: "not_allowed"
 
+end-use:
+  nonres-cool:
+    status: True
+  res-cool:
+    status: True
+  nonres-space:
+    status: True
+  res-space:
+    status: True
+  nonres-DHW:
+    status: True
+  res-DHW:
+    status: True
+  DH-space:
+    status: False
+  DH-DHW:
+    status: False
+    
 vehicle:
   car:
     status: True

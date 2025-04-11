@@ -1,0 +1,7 @@
+,from_node,efficiency,vom_cost,fom_cost,lifetime,expected_2030,expected_2040,expected_2050
+SCPC,coal,0.5,3.21,35000,25,0.4,0.2,0.0
+CCGT,CH4,0.55,4.5,30000,25,0.7,0.3,0.1
+wasteST,waste,0.21,28.2,205000,25,0.9,0.4,0.0
+bioST,bio,0.41,2.36,70000,25,0.9,0.4,0.0
+oil-eng,HC,0.37,6.38,9000,25,0.8,0.1,0.0
+nuclear-3,U-92,0.38,7.0,115000,60,1,0.8,0.6

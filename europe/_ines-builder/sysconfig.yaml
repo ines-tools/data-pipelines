@@ -59,18 +59,12 @@ power_sector:
         link:
           investment_method: [storage,investment_method,[[1]],[[1,2]]]
     default:
-      technology:
-        unit: 
-          - [retirement_method,economic_retirement,[[1]]]
       storage:
         node:
           - [node_type,storage,[[1]]]
           - [storage_capacity,1.0,[[1]]]
           - [storage_limit_method,upper_limit,[[1]]]
-          - [storage_retirement_method,economic_retirement,[[1]]]   
-      storage_connection:
-        link:
-          - [retirement_method,economic_retirement,[[1,2]]]   
+      storage_connection:  
         node__link__node:
           - [capacity,1.0,[[1],[1,2],[2]]]
           - [capacity,1.0,[[2],[1,2],[1]]]
@@ -102,15 +96,9 @@ power_sector:
           efficiency_in: [efficiency,1.0,[[2],[1,2],[1]]]
           efficiency_out: [efficiency,1.0,[[1],[1,2],[2]]]
     dynamic:
-      technology__region:
-        unit:
-          units_existing: [units_existing,[[1]],[area,{}],0.0,PECD1]
-      storage__region:
-        node:
-          storages_existing: [storages_existing,[[1]],[area,{}],0.0,PECD1]
-      storage_connection__region:
-        link:
-          links_existing: [links_existing,[[1,2]],[area,{}],0.0,PECD1]
+      technology__to_commodity__region:
+        unit__to_node:
+          capacity: [capacity,[[1],[2]],[area,{}],null,PECD1]
 
 # Variable Renewable Energy
 vre:
@@ -132,13 +120,7 @@ vre:
       technology:
         unit:
           investment_method: [technology,investment_method,[[1]],[[1]]]
-    default:
-      technology:
-        unit: 
-          - [retirement_method,economic_retirement,[[1]]]
-      technology__to_commodity:
-        unit__to_node:
-          - [capacity,1.0,[[1],[2]]]
+    default: null
     fixed:
       technology:
         unit:
@@ -148,13 +130,15 @@ vre:
           investment_cost: [investment_cost,1.0,[[1],[2]]]
           fixed_cost: [fixed_cost,1.0,[[1],[2]]]
           operational_cost: [other_operational_cost,1.0,[[1],[2]]]
+          capacity: [capacity,1.0,[[1],[2]]]
     dynamic:
       technology__region:
         unit:
-          units_existing: [units_existing,[[1]],[area,{}],0.0,{"on": PECD2, "off": OFF3}]
+          units_existing: [units_existing,[[1]],[area,{}],null,{"on": PECD2, "off": OFF3}]
       technology__to_commodity__region:
         unit__to_node:
           profile_limit_upper: [profile_limit_upper,[[1],[2]],[potential,{existing: capacity}],null,{"on": PECD2, "off": OFF3}]
+          capacity: [capacity,[[1],[2]],[area,{}],null,{"on": PECD2, "off": OFF3}]
       technology_type__region:
         set:
           potential: [invest_max_total,[[1]],[area,{}],0.0,{"on": PECD2, "off": OFF3}]
@@ -222,7 +206,6 @@ power_transmission:
     default:
       region__transmission__commodity__region:
         link: 
-          - [retirement_method,economic_retirement,[[1,3,4]]]
           - [investment_method,cumulative_limits,[[1,3,4]]]
         node__link__node:
           - [capacity,1.0,[[3,1],[1,3,4],[3,4]]]
@@ -353,18 +336,10 @@ gas_sector:
             - [storage,investment_method,[[1]],[[1,2]]]
             - [storage,investment_method,[[1]],[[2,1]]]
     default:
-      technology:
-        unit: 
-          - [retirement_method,economic_retirement,[[1]]]
       storage:
         node:
           - [node_type,storage,[[1]]]
           - [storage_limit_method,upper_limit,[[1]]]
-          - [storage_retirement_method,economic_retirement,[[1]]]   
-      storage_connection:
-        link:
-          - [retirement_method,economic_retirement,[[1,2]]] 
-          - [retirement_method,economic_retirement,[[2,1]]]  
     fixed:
       technology:
         unit:
@@ -397,8 +372,8 @@ gas_sector:
     dynamic:
       technology__region:
         unit:
-          units_existing: [units_existing,[[1]],[area,{}],0.0,PECD1]
-      technology__to_commodity_region:
+          units_existing: [units_existing,[[1]],[area,{}],null,PECD1]
+      technology__to_commodity__region:
         unit__to_node:
           operational_cost: [other_operational_cost,[[1],[2]],[area,{}],null,PECD1]
           capacity: [capacity,[[1],[2]],[area,{}],null,PECD1]
@@ -432,7 +407,6 @@ gas_pipelines:
     default:
       pipeline:
         link: 
-          - [retirement_method,economic_retirement,[[1,2,3]]]
           - [investment_method,cumulative_limits,[[1,2,3]]]
         node__link__node:
           - [efficiency,1.0,[[2,1],[1,2,3],[2,3]]]
@@ -446,7 +420,7 @@ gas_pipelines:
           potentials: [links_max_cumulative,1.0,[[1,2,3]]]
 
 #transport integration
-gas_pipelines:
+transport_sector:
   entities:
     commodity__vehicle__region:
       node:
@@ -477,3 +451,97 @@ gas_pipelines:
           capacity_in: [capacity,1.0,[[1,3],[1,2,3],[2,3]]]
           efficiency_out: [efficiency,1.0,[[2,3],[1,2,3],[1,3]]]
           capacity_out: [capacity,1.0,[[2,3],[1,2,3],[1,3]]]
+
+# Heat Sector Integration
+heat_sector:
+  entities:
+    commodity:
+      node:
+        - [[1]]
+    end-use:
+      node:
+        - [[1]]
+    commodity__to_end-use:
+      link:
+        - [[1,2]]
+      node__link__node:
+        - [[1],[1,2],[2]]
+    technology:
+      unit:
+        - [[1]]
+    commodity__to_technology:
+      node__to_unit: 
+        - [[1],[2]]
+    technology__to_commodity:
+      unit__to_node: 
+        - [[1],[2]]
+    commodity__to_technology__to_commodity: 
+      unit_flow__unit_flow:
+        - [[2],[3],[1],[2]]
+    storage:
+      node: 
+        - [[1]]
+    storage_connection:
+      link: 
+        - [[1,2]]
+      node__link__node: 
+        - [[1],[1,2],[2]]
+        - [[2],[1,2],[1]]
+  parameters:
+    user:
+      technology:
+        unit:
+          investment_method: [technology,investment_method,[[1]],[[1]]]
+      storage:
+        node:
+          storage_investment_method: [storage,investment_method,[[1]],[[1]]]
+      storage_connection:
+        link:
+          investment_method: [storage,investment_method,[[1]],[[1,2]]]
+    default:
+      storage:
+        node:
+          - [node_type,storage,[[1]]]
+          - [storage_capacity,1.0,[[1]]]
+          - [storage_limit_method,upper_limit,[[1]]]
+      storage_connection:
+        node__link__node:
+          - [efficiency,1.0,[[1],[1,2],[2]]]
+          - [efficiency,1.0,[[2],[1,2],[1]]]
+          - [capacity,1.0,[[1],[1,2],[2]]]
+          - [capacity,1.0,[[2],[1,2],[1]]]
+      end-use:
+        node:
+          - [node_type,balance,[[1]]]
+      commodity__to_end-use:
+        node__link__node:
+          - [efficiency,1.0,[[1],[1,2],[2]]]
+    fixed:
+      technology:
+        unit:
+          lifetime: [lifetime,1.0,[[1]]]
+      technology__to_commodity:
+        unit__to_node:
+          capacity: [capacity,1.0,[[1],[2]]]
+          investment_cost: [investment_cost,1.0,[[1],[2]]]
+          fixed_cost: [fixed_cost,1.0,[[1],[2]]]
+          operational_cost: [other_operational_cost,1.0,[[1],[2]]]
+      commodity__to_technology__to_commodity:
+        unit_flow__unit_flow:
+          conversion_rate: [equality_ratio,1.0,[[2],[3],[1],[2]]]
+      storage:
+        node:
+          investment_cost: [storage_investment_cost,1.0,[[1]]]
+          lifetime: [storage_lifetime,1.0,[[1]]]
+    dynamic:
+      technology__region:
+        unit:
+          units_existing: [units_existing,[[1]],[area,{}],null,PECD1]
+          efficiency: [efficiency,[[1]],[area,{}],null,PECD1]
+      storage__region:
+        node:
+          storages_existing: [storages_existing,[[1]],[area,{}],null,PECD1]
+      end-use__region:
+        node:
+          flow_profile: [flow_profile,[[1]],[population,{}],null,PECD1]
+          annual_scale: [flow_annual,[[1]],[population,{}],null,PECD1]

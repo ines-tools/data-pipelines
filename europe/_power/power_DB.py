@@ -136,13 +136,11 @@ def process_all_sectors(tech_wb, config_file, target_db, sector_commodity):
         sheet = tech_wb["storage"]  
         process_storage_data(sheet, config_file, target_db, commodities)
 
-def existing_data(target_db,existing_tech):
+def existing_data(target_db,existing_tech,existing_param):
 
     for country in existing_tech.index:    
         try:
             add_entity(target_db,"region",(country,))
-            add_parameter_value(target_db,"region","type","Base",(country,),"onshore")
-            add_parameter_value(target_db,"region","GIS_level","Base",(country,),"PECD1")
         except:
             pass
         try:
@@ -150,11 +148,25 @@ def existing_data(target_db,existing_tech):
         except:
             pass
 
-        for tech in existing_tech.columns:
-            if round(float(existing_tech.at[country,tech]),1 > 0.0) and tech != "hydro-turbine":
-                add_entity(target_db,"technology__region",(tech,country))
-                map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(float(existing_tech.at[country,tech]),1)}}
-                add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_existing)    
+        for techname in existing_tech.columns:
+            if techname not in ["hydro-turbine","geothermal"]:
+                tech = techname+"-existing"
+                from_node = existing_param.at[techname,"from_node"]
+                try:
+                    add_entity(target_db,"technology",(tech,))
+                    add_entity(target_db,"technology__to_commodity",(tech,"elec"))
+                    add_parameter_value(target_db,"technology__to_commodity","operational_cost","Base",(tech,"elec"),float(existing_param.at[techname,"vom_cost"]))
+                    add_entity(target_db,"commodity__to_technology",(from_node,tech))
+                    add_entity(target_db,"commodity__to_technology__to_commodity",(from_node,tech,"elec"))
+                    add_parameter_value(target_db,"commodity__to_technology__to_commodity","conversion_rate","Base",(from_node,tech,"elec"),float(existing_param.at[techname,"efficiency"]))
+                except:
+                    pass
+                if round(float(existing_tech.at[country,techname]),1 > 0.0):
+                    add_entity(target_db,"technology__to_commodity__region",(tech,"elec",country))
+                    '''map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(float(existing_tech.at[country,techname]),1)}}
+                    add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_existing)'''    
+                    map_max = {"type":"map","index_type":"str","index_name":"period","data":{f"y{str(year)}":round(float(existing_tech.at[country,techname])*existing_param.at[techname,f"expected_{str(year)}"],1) for year in [2030,2040,2050]}}
+                    add_parameter_value(target_db,"technology__to_commodity__region","capacity","Base",(tech,"elec",country),map_max) 
 
 
 def main():
@@ -163,6 +175,7 @@ def main():
     url_db_out = sys.argv[1]
     existing_tech = pd.read_csv(sys.argv[2],index_col=0)
     tech_wb = pd.read_excel(sys.argv[3],sheet_name=None,index_col=0)
+    existing_param = pd.read_csv(sys.argv[4],index_col=0)
 
     parameters_map = {"storage":{"investment_cost":"capex-energy",
                                  "lifetime":"lifetime"},
@@ -199,7 +212,7 @@ def main():
 
         process_all_sectors(tech_wb, parameters_map, target_db,sector_commodity)
                         
-        existing_data(target_db,existing_tech)
+        existing_data(target_db,existing_tech,existing_param)
         target_db.commit_session("catalogue added")
 
 if __name__ == "__main__":

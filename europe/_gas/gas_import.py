@@ -143,6 +143,7 @@ def ch4_production(target_db,sheet):
             except:
                 pass
             add_entity(target_db,"commodity__to_technology",("fossil-CH4",tech))
+            add_entity(target_db,"technology__to_commodity",(tech,"CH4"))
     
     for country in sheet["To Country"].unique():
         add_entity(target_db,"region",(country,))   
@@ -244,6 +245,7 @@ def h2_production(target_db,sheet):
             except:
                 pass
             add_entity(target_db,"commodity__to_technology",("global-H2",tech))
+            add_entity(target_db,"technology__to_commodity",(tech,"H2"))
 
     for country in sheet["Country"].unique():
         try:

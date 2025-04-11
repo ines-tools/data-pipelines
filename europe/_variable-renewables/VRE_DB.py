@@ -95,20 +95,22 @@ def main():
         add_entity(db_map,"technology_type",("wind-off",))
         add_entity(db_map,"technology_type",("solar-PV",))
 
-        vre_cost.fillna(0.0,inplace=True)
         for tech in vre_cost.index:
             add_entity(db_map,"technology",(tech,))
             add_entity(db_map,"technology__to_commodity",(tech,"elec"))
+            if "existing" not in tech:
+                add_parameter_value(db_map,"technology__to_commodity","capacity","Base",(tech,"elec"),1.0)
+            
             tech_type = "wind-on" if "wind-on" in tech else ("wind-off" if "wind-off" in tech else "solar-PV")
             add_entity(db_map,"technology_type__technology",(tech_type,tech))
 
             # Investment costs
-            map_icost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"capex_"+year])*1e6 + float(vre_cost.at[tech,"fom_"+year])*float(vre_cost.at[tech,"lifetime"]),1) for year in ["2030","2040","2050"] if vre_cost.at[tech,"capex_"+year] != 0.0}}
+            map_icost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"capex_"+year])*1e6,1) for year in ["2030","2040","2050"] if pd.notna(vre_cost.at[tech,"capex_"+year])}}
             # Fixed costs 
-            map_fcost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"fom_"+year]),1) for year in ["2030","2040","2050"] if vre_cost.at[tech,"capex_"+year] != 0.0}}
+            map_fcost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"fom_"+year]),1) for year in ["2030","2040","2050"] if pd.notna(vre_cost.at[tech,"capex_"+year])}}
             # Vom costs 
-            map_vcost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"vom_"+year]),1) for year in ["2030","2040","2050"] if vre_cost.at[tech,"capex_"+year] != 0.0}}
-            
+            map_vcost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"vom_"+year]),1) for year in ["2030","2040","2050"] if pd.notna(vre_cost.at[tech,"capex_"+year]) and pd.notna(vre_cost.at[tech,"vom_"+year])}}
+
             if bool(map_icost["data"]):
                 add_parameter_value(db_map,"technology__to_commodity","investment_cost","Base",(tech,"elec"),map_icost)
             
@@ -116,7 +118,7 @@ def main():
             if bool(map_fcost["data"]):
                 add_parameter_value(db_map,"technology__to_commodity","fixed_cost","Base",(tech,"elec"),map_fcost)
             
-            if map_vcost:
+            if bool(map_vcost["data"]):
                 add_parameter_value(db_map,"technology__to_commodity","operational_cost","Base",(tech,"elec"),map_vcost)
             add_parameter_value(db_map,"technology","lifetime","Base",(tech,),float(vre_cost.at[tech,"lifetime"]))
 
@@ -130,7 +132,7 @@ def main():
                 existing = round(float(existing_wind_on.at[poly]*1e3),1)
                 add_entity(db_map,"technology__region",(tech,poly))
                 map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":existing}}
-                add_parameter_value(db_map,"technology__region","units_existing","Base",(tech,poly),map_existing)                
+                add_parameter_value(db_map,"technology__to_commodity__region","capacity","Base",(tech,"elec",poly),map_existing)                
         print("existing_wind_onshore")
 
         ## ONSHORE FUTURE
@@ -168,7 +170,7 @@ def main():
                 existing = round(float(existing_wind_off.at[poly]*1e3),1)
                 add_entity(db_map,"technology__region",(tech,poly))
                 map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":existing}}
-                add_parameter_value(db_map,"technology__region","units_existing","Base",(tech,poly),map_existing)   
+                add_parameter_value(db_map,"technology__to_commodity__region","capacity","Base",(tech,"elec",poly),map_existing)   
         print("existing_wind_offshore")
 
         ### OFFSHORE FUTURE

@@ -162,10 +162,10 @@ def main():
 
     data = {}
     path = "../../../Transport"
-    files = [os.path.join(path,filename) for filename in os.listdir(path)]
+    files = [os.path.join(path,filename) for filename in os.listdir(path) if "profile" in filename or "weekly" in filename]
 
     print("Loading all the CSV files")
-    for file in files[0:24]:
+    for file in files:
         elements = file.split("\\")[-1].split("_")
         data_type = "hourly" if "profile" in elements[3] else "weekly"
         data[(elements[0],elements[1],elements[2],data_type)] = pd.read_csv(file,index_col=0)
