@@ -28,9 +28,10 @@ clustering :
   number_periods : 24
 global_constraints:
   co2_budget:
-    "2030": 724950
-    "2040": 161100
+    "2030": 2200000000
+    "2040": 550000000
     "2050": 0.0
+  co2_annual_sequestration: 200000000
   renewable_target:
     "2030": 42.5
     "2040": 42.5

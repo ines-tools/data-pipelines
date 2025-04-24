@@ -15,16 +15,16 @@
             true
         ],
         [
-            "technology",
+            "stock",
             [],
             null,
-            280375481856629,
+            280743406202908,
             true
         ],
         [
-            "technology__to_commodity",
+            "stock__to_commodity",
             [
-                "technology",
+                "stock",
                 "commodity"
             ],
             null,
@@ -32,9 +32,9 @@
             true
         ],
         [
-            "technology__to_commodity__region",
+            "stock__to_commodity__region",
             [
-                "technology",
+                "stock",
                 "commodity",
                 "region"
             ],
@@ -55,14 +55,14 @@
     ],
     "parameter_definitions": [
         [
-            "technology__to_commodity__region",
-            "average_hourly_production",
+            "stock__to_commodity__region",
+            "annual_production",
             null,
             null,
             null
         ],
         [
-            "technology__to_commodity__region",
+            "stock__to_commodity__region",
             "operational_cost",
             null,
             null,

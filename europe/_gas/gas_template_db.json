@@ -378,6 +378,13 @@
         ],
         [
             "technology__to_commodity__region",
+            "capacity",
+            null,
+            null,
+            null
+        ],
+        [
+            "technology__to_commodity__region",
             "operational_cost",
             null,
             null,

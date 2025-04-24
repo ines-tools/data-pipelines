@@ -43,8 +43,8 @@ def main():
         
         add_alternative(db_map,"Base")
         add_entity(db_map,"commodity","bio")
-        add_entity(db_map,"technology","biomass-gen")
-        add_relationship(db_map,"technology__to_commodity",("biomass-gen","bio"))
+        add_entity(db_map,"stock","biomass-stock")
+        add_relationship(db_map,"stock__to_commodity",("biomass-stock","bio"))
         for scenario in bio_db["scenario"].unique():
             add_alternative(db_map,scenario+"_bio")
 
@@ -57,18 +57,18 @@ def main():
                     pass
                 
                 try:
-                    add_relationship(db_map,"technology__to_commodity__region",("biomass-gen","bio",region))
+                    add_relationship(db_map,"stock__to_commodity__region",("biomass-stock","bio",region))
                 except:
                     pass
 
                 filter_db = bio_db[(bio_db.nuts0 == region_i)&(bio_db.scenario == scenario)]
                 
-                value_converted = filter_db["quantity"].sum()*277777.77/8760.0
-                add_parameter_value(db_map,"technology__to_commodity__region","average_hourly_production",scenario+"_bio",("biomass-gen","bio",region),round(value_converted,1))
+                value_converted = filter_db["quantity"].sum()*277777.77
+                add_parameter_value(db_map,"stock__to_commodity__region","annual_production",scenario+"_bio",("biomass-stock","bio",region),round(value_converted,1))
 
                 transport_cost = 7.0 # moving biomass to final destination, average value
-                value_converted = np.dot(filter_db["quantity"].values,filter_db["roadsidecost"].values)/filter_db["quantity"].sum()/0.277778 + transport_cost if filter_db["quantity"].sum() > 0 else transport_cost
-                add_parameter_value(db_map,"technology__to_commodity__region","operational_cost",scenario+"_bio",("biomass-gen","bio",region),round(value_converted,1))
+                value_converted = 1.32*np.dot(filter_db["quantity"].values,filter_db["roadsidecost"].values)/filter_db["quantity"].sum()/0.277778 + transport_cost if filter_db["quantity"].sum() > 0 else transport_cost
+                add_parameter_value(db_map,"stock__to_commodity__region","operational_cost",scenario+"_bio",("biomass-stock","bio",region),round(value_converted,1))
 
         print("Biomass Data Added")
 

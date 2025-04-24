@@ -245,6 +245,7 @@ industrial_sector:
       technology:
         unit: 
           - [retirement_method,economic_retirement,[[1]]]
+          - [investment_method,no_limits,[[1]]]
     fixed:
       technology:
         unit:
@@ -263,10 +264,10 @@ industrial_sector:
     dynamic:
       technology__region:
         unit:
-          units_existing: [units_existing,[[1]],[area,{}],0.0,NUTS3]
+          units_existing: [units_existing,[[1]],[area,{}],0.0,PECD1]
       commodity__region:
         node:
-          demand: [flow_profile,[[1]],[population,{}],null,NUTS3]
+          demand: [flow_profile,[[1]],[population,{}],null,PECD1]
 
 # Biomass Production
 biomass_production:
@@ -274,37 +275,42 @@ biomass_production:
     commodity:
       node: 
         - [[1]]
-    technology:
-      unit:
+    stock__to_commodity:
+      node:
         - [[1]]
-    technology__to_commodity:
-      unit__to_node:
-        - [[1],[2]]
-      set:
+      link:
         - [[1,2]]
-      set__unit_flow:
-        - [[1,2],[1],[2]]
+      node__link__node:
+        - [[1],[1,2],[2]]
   parameters:
+    default:
+      stock__to_commodity:
+        node:
+          - [node_type,storage,[[1]]]
+          - [storage_state_fix_method,fix_start,[[1]]]
+        node__link__node:
+          - [efficiency,1.0,[[1],[1,2],[2]]]
     dynamic:
-      technology__to_commodity__region:
-        unit__to_node:
-          operational_cost: [other_operational_cost,[[1],[2]],[area,{}],null,PECD1]
-        set:
-          average_hourly_production: [flow_max_cumulative,[[1,2]],[area,{}],null,PECD1]
+      stock__to_commodity__region:
+        node__link__node:
+          operational_cost: [operational_cost,[[1],[1,2],[2]],[area,{}],null,PECD1]
+        node:
+          annual_production: [storage_state_fix,[[1]],[area,{}],null,PECD1]
 
 # gas sector modelling
 gas_sector:
   entities:
-    commodity:
-      node:
-        - [[1]]
     technology:
       unit:
         - [[1]]
     commodity__to_technology:
+      node:
+        - [[1]]
       node__to_unit: 
         - [[1],[2]]
     technology__to_commodity:
+      node:
+        - [[2]]
       unit__to_node: 
         - [[1],[2]]
     commodity__to_technology__to_commodity: 

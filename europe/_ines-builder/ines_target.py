@@ -202,7 +202,7 @@ def add_nodes(db_map : DatabaseMapping, db_com : DatabaseMapping, config : dict)
         list_names = entity_node.split("_")
         if len(list_names) > 1:
             add_parameter_value(db_map,"node","node_type","Base",(entity_node,),"balance")
-        else:
+        elif entity_node != "CO2":
             add_parameter_value(db_map,"node","node_type","Base",(entity_node,),"commodity")
             param_list = config["sys"]["commodities"]["commodity"][entity_class]
             for param_source in param_list:
@@ -535,9 +535,14 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
                     if not region_params["commodity"]["demand"][technology_node][poly]:
                         print(technology_name, f"cannot supply {technology_node} in", poly, "as demand does not exist")
                         definition_condition = False 
-                    elif not sum(sum(region_params["commodity"]["demand"][technology_node][poly][alternative]["data"].values()) for alternative in region_params["commodity"]["demand"][technology_node][poly]):
+                    elif sum(region_params["commodity"]["demand"][technology_node][poly][alternative] for alternative in region_params["commodity"]["demand"][technology_node][poly]) == 0:
                         print(technology_name, f"cannot supply {technology_node} in", poly, "as demand equals to zero")
                         definition_condition = False 
+                    
+                    if definition_condition == False:
+                        technology_connected = [entity_i["element_name_list"][1] for entity_i in db_source.get_entity_items(entity_class_name = "commodity__to_technology") if entity_i["element_name_list"][0] == technology_node]
+                        if technology_connected and config["user"]["commodity"][technology_node]["status"] == True:
+                            definition_condition = True
 
                 if definition_condition == True:
                     for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
@@ -577,7 +582,7 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
                                 if region_params[entity_class][param_source][entity_name][poly]:
                                     for alternative in region_params[entity_class][param_source][entity_name][poly]:
-                                        if sum(region_params[entity_class][param_source][entity_name][poly][alternative]["data"].values()):
+                                        if region_params[entity_class][param_source][entity_name][poly]:
                                             add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
 
 def add_biomass_production(db_map : DatabaseMapping, db_source : DatabaseMapping, config :dict) -> None:
@@ -618,7 +623,14 @@ def add_biomass_production(db_map : DatabaseMapping, db_source : DatabaseMapping
                                 except RuntimeError:
                                     print(f"Repeated Entity {entity_class} {entity_name}, then not added")
                                     pass
-      
+                                
+                        # Default Parameters
+                        if entity_class in config["sys"][db_name]["parameters"]["default"]:
+                            if entity_class_target in config["sys"][db_name]["parameters"]["default"][entity_class]:
+                                for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
+                                    entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_items[2]])
+                                    add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
+                        
                         # Regional Parameter
                         entity_class_region = f"{entity_class}__region"
                         if entity_class_region in config["sys"][db_name]["parameters"]["dynamic"]:
@@ -927,7 +939,6 @@ def add_heat_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, confi
                                 for alternative in region_params[entity_class][param_source][entity_name][poly]:
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
                             
-
 def add_policy_constraints(db_map : DatabaseMapping, config : dict):
 
     co2_budget = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":config["user"]["global_constraints"]["co2_budget"][year] for year in config["user"]["global_constraints"]["co2_budget"]}}
@@ -935,9 +946,22 @@ def add_policy_constraints(db_map : DatabaseMapping, config : dict):
     entity_name = "node"
     entity_byname = ("atmosphere",)
     add_entity(db_map,entity_name,entity_byname)
-    add_parameter_value(db_map,"node","node_type","Base",("atmosphere",),"storage")
-    add_parameter_value(db_map,"node","storage_capacity","Base",("atmosphere",),co2_budget)
-        
+    add_parameter_value(db_map,entity_name,"node_type","Base",entity_byname,"storage")
+    add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,co2_budget)
+
+    # co2 storage entity is created
+    if not config["user"]["commodity"]["CO2"]["status"]:
+        entity_name = "node"
+        entity_byname = ("CO2",)
+        try:
+            add_entity(db_map,entity_name,entity_byname)
+        except:
+            pass
+        add_parameter_value(db_map,entity_name,"node_type","Base",entity_byname,"storage")
+        add_parameter_value(db_map,entity_name,"storage_state_fix_method","Base",entity_byname,"fix_start")
+        add_parameter_value(db_map,entity_name,"storage_state_fix","Base",entity_byname,0.0)
+        add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,float(config["user"]["global_constraints"]["co2_annual_sequestration"]))
+              
 def main():
 
     url_db_out = sys.argv[1]
