@@ -532,3 +532,165 @@ vehicle:
     status: True
   bus-LPG:
     status: True
+  # industrial routes
+  ((BM)MeOH)O_ES:
+    status: false
+  ((BM+H2)MeOH)O_ES:
+    status: false
+  ((COEL)MeOH)O-MEA_ES:
+    status: false
+  (BM)FT_ES:
+    status: true
+  (BM)MeOH_ES:
+    status: false
+  (BM)NH3_ES:
+    status: false
+  (COEL)FT-MEA_ES:
+    status: false
+  (COEL)MeOH-MEA_ES:
+    status: false
+  (EL)-CC_gco_ES:
+    status: false
+  (EL)-CC_gfi_ES:
+    status: false
+  (EL)-CC_gfl_ES:
+    status: false
+  (EL)PEA_ES:
+    status: false
+  (EL)PE_ES:
+    status: false
+  (EL)_gco_ES:
+    status: false
+  (EL)_gfl_ES:
+    status: false
+  (H2)-CC_gco_ES:
+    status: false
+  (H2)-CC_gfi_ES:
+    status: false
+  (H2)-CC_gfl_ES:
+    status: false
+  (H2)DRI-EAF_ES:
+    status: false
+  (H2)FT-DC_ES:
+    status: true
+  (H2)MeOH-DC_ES:
+    status: true
+  (H2)NH3_ES:
+    status: false
+  (H2)PEA_ES:
+    status: false
+  (H2)PE_ES:
+    status: false
+  (H2)_gco_ES:
+    status: false
+  (H2)_gfi_ES:
+    status: false
+  (H2)_gfl_ES:
+    status: false
+  (LN)O-MEA_ES:
+    status: false
+  (LN)O_ES:
+    status: false
+  (LN+EL)O_ES:
+    status: false
+  (MeOH)O-MEA_ES:
+    status: true
+  (NG)-CC_gco_ES:
+    status: false
+  (NG)-CC_gfi_ES:
+    status: false
+  (NG)-CC_gfl_ES:
+    status: false
+  (NG)DRI-EAF-MEA_ES:
+    status: false
+  (NG)DRI-EAF_ES:
+    status: false
+  (NG)NH3-DEA_ES:
+    status: false
+  (NG)NH3-MEA-DEA_ES:
+    status: false
+  (NG)NH3-MVR-DEA_ES:
+    status: false
+  (NG)NH3-MVR-MEA-DEA_ES:
+    status: false
+  (NG)NH3_ES:
+    status: true
+  (NG)PE-MEA_ES:
+    status: false
+  (NG)PEA-MEA_ES:
+    status: false
+  (NG)PEA_ES:
+    status: true
+  (NG)PE_ES:
+    status: true
+  (NG)_gco_ES:
+    status: true
+  (NG)_gfi_ES:
+    status: true
+  (NG)_gfl_ES:
+    status: true
+  BF-BOF-MEA_ES:
+    status: false
+  BF-BOF_ES:
+    status: true
+  CEM2-(Afm)CaL_ES:
+    status: false
+  CEM2-(Afm)MEA_ES:
+    status: false
+  CEM2-(Afm)Oxy-CaL_ES:
+    status: false
+  CEM2-(Afm)_ES:
+    status: false
+  CEM2-(BMW)CaL_ES:
+    status: false
+  CEM2-(BMW)MEA_ES:
+    status: false
+  CEM2-(BMW)Oxy-CaL_ES:
+    status: false
+  CEM2-(BMW)Oxy-MEA_ES:
+    status: true
+  CEM2-(BMW)_ES:
+    status: false
+  CEM2-(Coal)CaL_ES:
+    status: false
+  CEM2-(Coal)Oxy-CaL_ES:
+    status: false
+  CEM2-(Coal)_ES:
+    status: false
+  DAC_ES:
+    status: false
+  EU-mix-2018_ES:
+    status: false
+  LC3-(Afm)CaL_ES:
+    status: false
+  LC3-(Afm)MEA_ES:
+    status: false
+  LC3-(Afm)Oxy-CaL_ES:
+    status: false
+  LC3-(Afm)Oxy-MEA_ES:
+    status: false
+  LC3-(BMW)Oxy-CaL_ES:
+    status: false
+  LC3-(BMW)Oxy-MEA_ES:
+    status: false
+  LC3-(Coal)CaL_ES:
+    status: false
+  LC3-(NG)CaL_ES:
+    status: false
+  LC3-(NG)MEA_ES:
+    status: false
+  LC3-(NG)Oxy-CaL_ES:
+    status: false
+  MOE_ES:
+    status: false
+  REF(H2)_ES:
+    status: false
+  REF-SMR-MEA_ES:
+    status: false
+  REF-SMR_ES:
+    status: true
+  Scraps_EAF_ES:
+    status: true
+  WPI-BOF-MEA_ES:
+    status: false
+
