@@ -303,9 +303,6 @@ technology:
     status: True
     investment_method: "not_allowed"
     renewable : True
-  # biomass production
-  biomass-gen:
-    status : True
   # gas production
   SMR: 
     status: True
@@ -376,6 +373,7 @@ technology:
   LH2-terminal: 
     status: True
     investment_method: "not_allowed"
+  # heat sector
   gas-CHP:
     status: False
     investment_method: "not_allowed"
@@ -448,90 +446,6 @@ technology:
   waste-DH:
     status: False
     investment_method: "not_allowed"
-
-end-use:
-  nonres-cool:
-    status: True
-  res-cool:
-    status: True
-  nonres-space:
-    status: True
-  res-space:
-    status: True
-  nonres-DHW:
-    status: True
-  res-DHW:
-    status: True
-  DH-space:
-    status: False
-  DH-DHW:
-    status: False
-    
-vehicle:
-  car:
-    status: True
-  car-diesel:
-    status: True
-  car-gasoline:
-    status: True
-  car-DR:
-    status: True
-  car-H2:
-    status: True
-  car-CNG:
-    status: True
-  car-LNG:
-    status: True
-  car-LPG:
-    status: True
-  van:
-    status: True
-  van-diesel:
-    status: True
-  van-gasoline:
-    status: True
-  van-DR:
-    status: True
-  van-H2:
-    status: True
-  van-CNG:
-    status: True
-  van-LNG:
-    status: True
-  van-LPG:
-    status: True
-  truck:
-    status: True
-  truck-diesel:
-    status: True
-  truck-gasoline:
-    status: True
-  truck-DR:
-    status: True
-  truck-H2:
-    status: True
-  truck-CNG:
-    status: True
-  truck-LNG:
-    status: True
-  truck-LPG:
-    status: True
-  bus:
-    status: True
-  bus-diesel:
-    status: True
-  bus-gasoline:
-    status: True
-  bus-DR:
-    status: True
-  bus-H2:
-    status: True
-  bus-CNG:
-    status: True
-  bus-LNG:
-    status: True
-  bus-LPG:
-    status: True
   # industrial routes
   ((BM)MeOH)O_ES:
     status: false
@@ -693,4 +607,89 @@ vehicle:
     status: true
   WPI-BOF-MEA_ES:
     status: false
+
+end-use:
+  nonres-cool:
+    status: True
+  res-cool:
+    status: True
+  nonres-space:
+    status: True
+  res-space:
+    status: True
+  nonres-DHW:
+    status: True
+  res-DHW:
+    status: True
+  DH-space:
+    status: False
+  DH-DHW:
+    status: False
+    
+vehicle:
+  car:
+    status: True
+  car-diesel:
+    status: True
+  car-gasoline:
+    status: True
+  car-DR:
+    status: True
+  car-H2:
+    status: True
+  car-CNG:
+    status: True
+  car-LNG:
+    status: True
+  car-LPG:
+    status: True
+  van:
+    status: True
+  van-diesel:
+    status: True
+  van-gasoline:
+    status: True
+  van-DR:
+    status: True
+  van-H2:
+    status: True
+  van-CNG:
+    status: True
+  van-LNG:
+    status: True
+  van-LPG:
+    status: True
+  truck:
+    status: True
+  truck-diesel:
+    status: True
+  truck-gasoline:
+    status: True
+  truck-DR:
+    status: True
+  truck-H2:
+    status: True
+  truck-CNG:
+    status: True
+  truck-LNG:
+    status: True
+  truck-LPG:
+    status: True
+  bus:
+    status: True
+  bus-diesel:
+    status: True
+  bus-gasoline:
+    status: True
+  bus-DR:
+    status: True
+  bus-H2:
+    status: True
+  bus-CNG:
+    status: True
+  bus-LNG:
+    status: True
+  bus-LPG:
+    status: True
+  
 
