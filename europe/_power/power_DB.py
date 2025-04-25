@@ -59,14 +59,14 @@ def process_storage_data(sheet, config_file, target_db,commodities):
                 multiplier = 1e6 if param_name == "investment_cost" else 1
                 process_map_parameter(sheet.T[storage_name], config_file, target_db, entity_name, entity_byname, param_name, multiplier)
 
-def process_units(sheet, config_file, target_db, commodities, technologies_excluded):
+def process_units(sheet, config_file, target_db, commodities):
 
     co2_content = {"CH4":0.2,"HC":0.25,"coal":0.37,"waste":0.13,"bio":0.35}
     
     for unit_name in sheet.index:
 
         to_node = sheet.to_node.at[unit_name]
-        if unit_name not in technologies_excluded and to_node in commodities:
+        if to_node in commodities:
             entity_name = "technology"
             entity_byname = (unit_name,)
             add_entity(target_db, entity_name, entity_byname)
@@ -112,25 +112,14 @@ def process_units(sheet, config_file, target_db, commodities, technologies_exclu
                     process_single_parameter(sheet.T[unit_name], config_file, target_db, entity_name, entity_byname,"CO2_captured",multiplier)
 
             
-
-
 def process_all_sectors(tech_wb, config_file, target_db, sector_commodity):
 
-    technologies_excluded = [
-        "wind-on-SP335-HH100", "wind-on-SP335-HH150", "wind-on-SP277-HH100", "wind-on-SP277-HH150",
-        "wind-on-SP198-HH100", "wind-on-SP198-HH150", "solar-PV-no-tracking", "solar-PV-rooftop",
-        "solar-PV-tracking", "wind-off-FB-SP316-HH155", "wind-off-FB-SP370-HH155", "wind-on-existing",
-        "wind-off-existing","hydro-turbine"
-    ]
-
-    ################ COMMODITIES
-    sheet = tech_wb["commodity"]
-    
+ 
     for sector,commodities in sector_commodity.items():
 
         sheet = tech_wb[sector]
         ################ UNITS
-        process_units(sheet, config_file, target_db, commodities, technologies_excluded)
+        process_units(sheet, config_file, target_db, commodities)
 
         ################ STORAGES
         sheet = tech_wb["storage"]  
@@ -162,11 +151,11 @@ def existing_data(target_db,existing_tech,existing_param):
                 except:
                     pass
                 if round(float(existing_tech.at[country,techname]),1 > 0.0):
+                    add_entity(target_db,"technology__region",(tech,country))
                     add_entity(target_db,"technology__to_commodity__region",(tech,"elec",country))
-                    '''map_existing = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":round(float(existing_tech.at[country,techname]),1)}}
-                    add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_existing)'''    
-                    map_max = {"type":"map","index_type":"str","index_name":"period","data":{f"y{str(year)}":round(float(existing_tech.at[country,techname])*existing_param.at[techname,f"expected_{str(year)}"],1) for year in [2030,2040,2050]}}
-                    add_parameter_value(target_db,"technology__to_commodity__region","capacity","Base",(tech,"elec",country),map_max) 
+                    add_parameter_value(target_db,"technology__to_commodity__region","capacity","Base",(tech,"elec",country),float(existing_tech.at[country,techname]))  
+                    map_max = {"type":"map","index_type":"str","index_name":"period","data":{f"y{str(year)}":round(existing_param.at[techname,f"expected_{str(year)}"],3) for year in [2030,2040,2050]}}
+                    add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_max) 
 
 
 def main():

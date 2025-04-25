@@ -98,23 +98,20 @@
             null,
             null,
             true
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "technology",
+                "commodity",
+                "region"
+            ],
+            null,
+            null,
+            true
         ]
     ],
     "parameter_definitions": [
-        [
-            "commodity",
-            "co2_content",
-            null,
-            null,
-            null
-        ],
-        [
-            "commodity",
-            "commodity_price",
-            null,
-            null,
-            null
-        ],
         [
             "commodity__to_technology__to_commodity",
             "CO2_captured",
@@ -125,20 +122,6 @@
         [
             "commodity__to_technology__to_commodity",
             "conversion_rate",
-            null,
-            null,
-            null
-        ],
-        [
-            "region",
-            "GIS_level",
-            null,
-            null,
-            null
-        ],
-        [
-            "region",
-            "type",
             null,
             null,
             null
@@ -258,6 +241,13 @@
         [
             "technology__to_commodity",
             "operational_cost",
+            null,
+            null,
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            "capacity",
             null,
             null,
             null

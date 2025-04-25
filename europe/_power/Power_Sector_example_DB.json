@@ -1,0 +1,8146 @@
+{
+    "entity_classes": [
+        [
+            "commodity",
+            [],
+            null,
+            281107043971139,
+            true
+        ],
+        [
+            "region",
+            [],
+            null,
+            281470681804865,
+            true
+        ],
+        [
+            "storage",
+            [],
+            null,
+            281107035649182,
+            true
+        ],
+        [
+            "technology",
+            [],
+            null,
+            280376907919989,
+            true
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "commodity",
+                "technology"
+            ],
+            null,
+            280375465144754,
+            true
+        ],
+        [
+            "storage__region",
+            [
+                "storage",
+                "region"
+            ],
+            null,
+            null,
+            true
+        ],
+        [
+            "storage_connection",
+            [
+                "storage",
+                "commodity"
+            ],
+            null,
+            281107052360258,
+            true
+        ],
+        [
+            "storage_connection__region",
+            [
+                "storage_connection",
+                "region"
+            ],
+            null,
+            null,
+            true
+        ],
+        [
+            "technology__region",
+            [
+                "technology",
+                "region"
+            ],
+            null,
+            null,
+            true
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "technology",
+                "commodity"
+            ],
+            null,
+            280375465144754,
+            true
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "commodity",
+                "technology",
+                "commodity"
+            ],
+            null,
+            null,
+            true
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "technology",
+                "commodity",
+                "region"
+            ],
+            null,
+            null,
+            true
+        ]
+    ],
+    "entities": [
+        [
+            "commodity",
+            "CH4",
+            null
+        ],
+        [
+            "commodity",
+            "CO2",
+            null
+        ],
+        [
+            "commodity",
+            "H2",
+            null
+        ],
+        [
+            "commodity",
+            "HC",
+            null
+        ],
+        [
+            "commodity",
+            "U-92",
+            null
+        ],
+        [
+            "commodity",
+            "bio",
+            null
+        ],
+        [
+            "commodity",
+            "coal",
+            null
+        ],
+        [
+            "commodity",
+            "elec",
+            null
+        ],
+        [
+            "commodity",
+            "waste",
+            null
+        ],
+        [
+            "region",
+            "AL",
+            null
+        ],
+        [
+            "region",
+            "AT",
+            null
+        ],
+        [
+            "region",
+            "BA",
+            null
+        ],
+        [
+            "region",
+            "BE",
+            null
+        ],
+        [
+            "region",
+            "BG",
+            null
+        ],
+        [
+            "region",
+            "CH",
+            null
+        ],
+        [
+            "region",
+            "DE",
+            null
+        ],
+        [
+            "region",
+            "DK",
+            null
+        ],
+        [
+            "region",
+            "EE",
+            null
+        ],
+        [
+            "region",
+            "ES",
+            null
+        ],
+        [
+            "region",
+            "FI",
+            null
+        ],
+        [
+            "region",
+            "FR",
+            null
+        ],
+        [
+            "region",
+            "GR",
+            null
+        ],
+        [
+            "region",
+            "HR",
+            null
+        ],
+        [
+            "region",
+            "HU",
+            null
+        ],
+        [
+            "region",
+            "IE",
+            null
+        ],
+        [
+            "region",
+            "IT",
+            null
+        ],
+        [
+            "region",
+            "LT",
+            null
+        ],
+        [
+            "region",
+            "LU",
+            null
+        ],
+        [
+            "region",
+            "LV",
+            null
+        ],
+        [
+            "region",
+            "ME",
+            null
+        ],
+        [
+            "region",
+            "MK",
+            null
+        ],
+        [
+            "region",
+            "NL",
+            null
+        ],
+        [
+            "region",
+            "NO",
+            null
+        ],
+        [
+            "region",
+            "PL",
+            null
+        ],
+        [
+            "region",
+            "PT",
+            null
+        ],
+        [
+            "region",
+            "RO",
+            null
+        ],
+        [
+            "region",
+            "RS",
+            null
+        ],
+        [
+            "region",
+            "SE",
+            null
+        ],
+        [
+            "region",
+            "SK",
+            null
+        ],
+        [
+            "region",
+            "UK",
+            null
+        ],
+        [
+            "region",
+            "XK",
+            null
+        ],
+        [
+            "storage",
+            "large-battery",
+            null
+        ],
+        [
+            "technology",
+            "CCGT",
+            null
+        ],
+        [
+            "technology",
+            "CCGT+CC",
+            null
+        ],
+        [
+            "technology",
+            "CCGT-H2",
+            null
+        ],
+        [
+            "technology",
+            "CCGT-existing",
+            null
+        ],
+        [
+            "technology",
+            "OCGT",
+            null
+        ],
+        [
+            "technology",
+            "OCGT+CC",
+            null
+        ],
+        [
+            "technology",
+            "OCGT-H2",
+            null
+        ],
+        [
+            "technology",
+            "SCPC",
+            null
+        ],
+        [
+            "technology",
+            "SCPC+CC",
+            null
+        ],
+        [
+            "technology",
+            "SCPC-existing",
+            null
+        ],
+        [
+            "technology",
+            "bioST",
+            null
+        ],
+        [
+            "technology",
+            "bioST+CC",
+            null
+        ],
+        [
+            "technology",
+            "bioST-existing",
+            null
+        ],
+        [
+            "technology",
+            "fuelcell",
+            null
+        ],
+        [
+            "technology",
+            "geothermal",
+            null
+        ],
+        [
+            "technology",
+            "hydro-turbine",
+            null
+        ],
+        [
+            "technology",
+            "nuclear-3",
+            null
+        ],
+        [
+            "technology",
+            "nuclear-3-existing",
+            null
+        ],
+        [
+            "technology",
+            "oil-eng",
+            null
+        ],
+        [
+            "technology",
+            "oil-eng-existing",
+            null
+        ],
+        [
+            "technology",
+            "wasteST",
+            null
+        ],
+        [
+            "technology",
+            "wasteST-existing",
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "CH4",
+                "CCGT"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "CH4",
+                "CCGT+CC"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "CH4",
+                "CCGT-existing"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "CH4",
+                "OCGT"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "CH4",
+                "OCGT+CC"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "H2",
+                "CCGT-H2"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "H2",
+                "OCGT-H2"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "H2",
+                "fuelcell"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "HC",
+                "oil-eng"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "HC",
+                "oil-eng-existing"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "U-92",
+                "nuclear-3"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "U-92",
+                "nuclear-3-existing"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "bio",
+                "bioST"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "bio",
+                "bioST+CC"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "bio",
+                "bioST-existing"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "coal",
+                "SCPC"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "coal",
+                "SCPC+CC"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "coal",
+                "SCPC-existing"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "waste",
+                "wasteST"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology",
+            [
+                "waste",
+                "wasteST-existing"
+            ],
+            null
+        ],
+        [
+            "storage_connection",
+            [
+                "large-battery",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "AT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "BE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "BG"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "DK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "EE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "GR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "HR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "IE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "IT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "LT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "LU"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "LV"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "MK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "NL"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "NO"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "PL"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "PT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "RO"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "RS"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "SK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "UK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "BA"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "BG"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "DK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "EE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "GR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "HR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "IE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "IT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "ME"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "MK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "NL"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "PL"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "RO"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "RS"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "SK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "UK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "XK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "AT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "BE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "BG"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "DK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "EE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "GR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "HR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "IT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "LT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "LU"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "LV"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "MK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "NL"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "NO"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "PL"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "PT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "RO"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "RS"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "SK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "UK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "BE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "BG"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "CH"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "NL"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "RO"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "SE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "SK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "UK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "AL"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "AT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "BE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "DK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "EE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "HR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "IE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "IT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "MK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "PL"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "SK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "UK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "AT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "BE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "BG"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "DK"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "EE"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "HR"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "IT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "LT"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "LU"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "NL"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "NO"
+            ],
+            null
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "RS"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT+CC",
+                "CO2"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT+CC",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT-H2",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT+CC",
+                "CO2"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT+CC",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT-H2",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "SCPC",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "SCPC+CC",
+                "CO2"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "SCPC+CC",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "SCPC-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "bioST",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "bioST+CC",
+                "CO2"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "bioST+CC",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "bioST-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "fuelcell",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "geothermal",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "hydro-turbine",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "nuclear-3",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "nuclear-3-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "oil-eng",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "oil-eng-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "wasteST",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "wasteST-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "CCGT",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "CCGT+CC",
+                "CO2"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "CCGT+CC",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "CCGT-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "OCGT",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "OCGT+CC",
+                "CO2"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "OCGT+CC",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "H2",
+                "CCGT-H2",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "H2",
+                "OCGT-H2",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "H2",
+                "fuelcell",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "HC",
+                "oil-eng",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "HC",
+                "oil-eng-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "U-92",
+                "nuclear-3",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "U-92",
+                "nuclear-3-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "bio",
+                "bioST",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "bio",
+                "bioST+CC",
+                "CO2"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "bio",
+                "bioST+CC",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "bio",
+                "bioST-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "coal",
+                "SCPC",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "coal",
+                "SCPC+CC",
+                "CO2"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "coal",
+                "SCPC+CC",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "coal",
+                "SCPC-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "waste",
+                "wasteST",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "waste",
+                "wasteST-existing",
+                "elec"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "AT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "BE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "BG"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "DK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "EE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "GR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "HR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "IE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "IT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "LT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "LU"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "LV"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "MK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "NL"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "NO"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "PL"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "PT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "RO"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "RS"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "SK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "UK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "BA"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "BG"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "DK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "EE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "GR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "HR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "IE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "IT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "ME"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "MK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "NL"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "PL"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "RO"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "RS"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "SK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "UK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "XK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "AT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "BE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "BG"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "DK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "EE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "GR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "HR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "IT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "LT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "LU"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "LV"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "MK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "NL"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "NO"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "PL"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "PT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "RO"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "RS"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "SK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "UK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "BE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "BG"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "CH"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "NL"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "RO"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "SE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "SK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "UK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "AL"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "AT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "BE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "DK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "EE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "HR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "IE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "IT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "MK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "PL"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "SK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "UK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "AT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "BE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "BG"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "DE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "DK"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "EE"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "ES"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "FI"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "FR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "HR"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "HU"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "IT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "LT"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "LU"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "NL"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "NO"
+            ],
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "RS"
+            ],
+            null
+        ]
+    ],
+    "parameter_definitions": [
+        [
+            "commodity__to_technology__to_commodity",
+            "CO2_captured",
+            null,
+            null,
+            null
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            "conversion_rate",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage",
+            "fixed_cost",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage",
+            "investment_cost",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage",
+            "lifetime",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage__region",
+            "storages_existing",
+            0.0,
+            null,
+            null
+        ],
+        [
+            "storage_connection",
+            "efficiency_in",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage_connection",
+            "efficiency_out",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage_connection",
+            "fixed_cost",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage_connection",
+            "investment_cost",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage_connection",
+            "lifetime",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage_connection",
+            "operational_cost",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage_connection__region",
+            "links_existing",
+            0.0,
+            null,
+            null
+        ],
+        [
+            "technology",
+            "lifetime",
+            null,
+            null,
+            null
+        ],
+        [
+            "technology__region",
+            "units_existing",
+            0.0,
+            null,
+            null
+        ],
+        [
+            "technology__to_commodity",
+            "capacity",
+            null,
+            null,
+            null
+        ],
+        [
+            "technology__to_commodity",
+            "fixed_cost",
+            null,
+            null,
+            null
+        ],
+        [
+            "technology__to_commodity",
+            "investment_cost",
+            null,
+            null,
+            null
+        ],
+        [
+            "technology__to_commodity",
+            "operational_cost",
+            null,
+            null,
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            "capacity",
+            null,
+            null,
+            null
+        ]
+    ],
+    "parameter_values": [
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "CCGT",
+                "elec"
+            ],
+            "conversion_rate",
+            0.59,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "CCGT+CC",
+                "CO2"
+            ],
+            "CO2_captured",
+            0.189,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "CCGT+CC",
+                "elec"
+            ],
+            "conversion_rate",
+            0.497,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "CCGT-existing",
+                "elec"
+            ],
+            "conversion_rate",
+            0.55,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "OCGT",
+                "elec"
+            ],
+            "conversion_rate",
+            0.42,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "CH4",
+                "OCGT+CC",
+                "CO2"
+            ],
+            "CO2_captured",
+            0.189,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "H2",
+                "CCGT-H2",
+                "elec"
+            ],
+            "conversion_rate",
+            0.59,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "H2",
+                "OCGT-H2",
+                "elec"
+            ],
+            "conversion_rate",
+            0.42,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "H2",
+                "fuelcell",
+                "elec"
+            ],
+            "conversion_rate",
+            0.5,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "HC",
+                "oil-eng",
+                "elec"
+            ],
+            "conversion_rate",
+            0.37,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "HC",
+                "oil-eng-existing",
+                "elec"
+            ],
+            "conversion_rate",
+            0.37,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "U-92",
+                "nuclear-3",
+                "elec"
+            ],
+            "conversion_rate",
+            0.38,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "U-92",
+                "nuclear-3-existing",
+                "elec"
+            ],
+            "conversion_rate",
+            0.38,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "bio",
+                "bioST",
+                "elec"
+            ],
+            "conversion_rate",
+            0.4,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "bio",
+                "bioST+CC",
+                "CO2"
+            ],
+            "CO2_captured",
+            0.33,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "bio",
+                "bioST-existing",
+                "elec"
+            ],
+            "conversion_rate",
+            0.41,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "coal",
+                "SCPC",
+                "elec"
+            ],
+            "conversion_rate",
+            0.53,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "coal",
+                "SCPC+CC",
+                "CO2"
+            ],
+            "CO2_captured",
+            0.349,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "coal",
+                "SCPC-existing",
+                "elec"
+            ],
+            "conversion_rate",
+            0.5,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "waste",
+                "wasteST",
+                "elec"
+            ],
+            "conversion_rate",
+            0.213,
+            "Base"
+        ],
+        [
+            "commodity__to_technology__to_commodity",
+            [
+                "waste",
+                "wasteST-existing",
+                "elec"
+            ],
+            "conversion_rate",
+            0.21,
+            "Base"
+        ],
+        [
+            "storage",
+            "large-battery",
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 160000.0,
+                    "y2040": 100000.0,
+                    "y2050": 80000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "storage",
+            "large-battery",
+            "lifetime",
+            25.0,
+            "Base"
+        ],
+        [
+            "storage_connection",
+            [
+                "large-battery",
+                "elec"
+            ],
+            "efficiency_in",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.97,
+                    "y2040": 0.97,
+                    "y2050": 0.97
+                }
+            },
+            "Base"
+        ],
+        [
+            "storage_connection",
+            [
+                "large-battery",
+                "elec"
+            ],
+            "efficiency_out",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.97,
+                    "y2040": 0.97,
+                    "y2050": 0.97
+                }
+            },
+            "Base"
+        ],
+        [
+            "storage_connection",
+            [
+                "large-battery",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 57000,
+                    "y2040": 57000,
+                    "y2050": 57000
+                }
+            },
+            "Base"
+        ],
+        [
+            "storage_connection",
+            [
+                "large-battery",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 170000.0,
+                    "y2040": 110000.0,
+                    "y2050": 60000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "storage_connection",
+            [
+                "large-battery",
+                "elec"
+            ],
+            "lifetime",
+            25.0,
+            "Base"
+        ],
+        [
+            "storage_connection",
+            [
+                "large-battery",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.91,
+                    "y2040": 1.81,
+                    "y2050": 1.7
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology",
+            "CCGT",
+            "lifetime",
+            25.0,
+            "Base"
+        ],
+        [
+            "technology",
+            "CCGT+CC",
+            "lifetime",
+            25.0,
+            "Base"
+        ],
+        [
+            "technology",
+            "CCGT-H2",
+            "lifetime",
+            25.0,
+            "Base"
+        ],
+        [
+            "technology",
+            "OCGT",
+            "lifetime",
+            25.0,
+            "Base"
+        ],
+        [
+            "technology",
+            "OCGT-H2",
+            "lifetime",
+            25.0,
+            "Base"
+        ],
+        [
+            "technology",
+            "SCPC",
+            "lifetime",
+            25.0,
+            "Base"
+        ],
+        [
+            "technology",
+            "bioST",
+            "lifetime",
+            25.0,
+            "Base"
+        ],
+        [
+            "technology",
+            "fuelcell",
+            "lifetime",
+            10.0,
+            "Base"
+        ],
+        [
+            "technology",
+            "hydro-turbine",
+            "lifetime",
+            80.0,
+            "Base"
+        ],
+        [
+            "technology",
+            "nuclear-3",
+            "lifetime",
+            60.0,
+            "Base"
+        ],
+        [
+            "technology",
+            "oil-eng",
+            "lifetime",
+            25.0,
+            "Base"
+        ],
+        [
+            "technology",
+            "wasteST",
+            "lifetime",
+            25.0,
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "AT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "BE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "BG"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "DE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "DK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "EE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "ES"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "FI"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "FR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "GR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "HR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "HU"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "IE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "IT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "LT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "LU"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "LV"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "MK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "NL"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "NO"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "PL"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "PT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "RO"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "RS"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "SK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "CCGT-existing",
+                "UK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.7,
+                    "y2040": 0.3,
+                    "y2050": 0.1
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "BA"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "BG"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "DE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "DK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "EE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "ES"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "FI"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "FR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "GR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "HR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "HU"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "IE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "IT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "ME"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "MK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "NL"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "PL"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "RO"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "RS"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "SK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "UK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "SCPC-existing",
+                "XK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.4,
+                    "y2040": 0.2,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "AT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "BE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "BG"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "DE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "DK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "EE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "ES"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "FI"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "FR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "GR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "HR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "HU"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "IT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "LT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "LU"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "LV"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "MK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "NL"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "NO"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "PL"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "PT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "RO"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "RS"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "SK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "bioST-existing",
+                "UK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "BE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "BG"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "CH"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "DE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "ES"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "FI"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "FR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "HU"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "NL"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "RO"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "SE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "SK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "nuclear-3-existing",
+                "UK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1.0,
+                    "y2040": 0.8,
+                    "y2050": 0.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "AL"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "AT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "BE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "DE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "DK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "EE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "ES"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "FI"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "FR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "HR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "HU"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "IE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "IT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "MK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "PL"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "SK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "oil-eng-existing",
+                "UK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.8,
+                    "y2040": 0.1,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "AT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "BE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "BG"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "DE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "DK"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "EE"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "ES"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "FI"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "FR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "HR"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "HU"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "IT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "LT"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "LU"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "NL"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "NO"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__region",
+            [
+                "wasteST-existing",
+                "RS"
+            ],
+            "units_existing",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 0.9,
+                    "y2040": 0.4,
+                    "y2050": 0.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 29561.76,
+                    "y2040": 28604.73,
+                    "y2050": 27647.69
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 880000.0,
+                    "y2040": 870000.0,
+                    "y2050": 850000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 4.47,
+                    "y2040": 4.36,
+                    "y2050": 4.25
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT+CC",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT+CC",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 37834.0,
+                    "y2040": 33413.0,
+                    "y2050": 30765.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT+CC",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1100000.0,
+                    "y2040": 1080000.0,
+                    "y2050": 1030000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT+CC",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 5.8,
+                    "y2040": 5.7,
+                    "y2050": 5.6
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT-H2",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT-H2",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 29561.76,
+                    "y2040": 28604.73,
+                    "y2050": 27647.69
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT-H2",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 880000.0,
+                    "y2040": 870000.0,
+                    "y2050": 850000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT-H2",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 4.47,
+                    "y2040": 4.36,
+                    "y2050": 4.25
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "CCGT-existing",
+                "elec"
+            ],
+            "operational_cost",
+            4.5,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 8236.12,
+                    "y2040": 8236.12,
+                    "y2050": 7892.95
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 470000.0,
+                    "y2040": 470000.0,
+                    "y2050": 440000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 4.79,
+                    "y2040": 4.79,
+                    "y2050": 4.79
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT+CC",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT-H2",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT-H2",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 8236.12,
+                    "y2040": 8236.12,
+                    "y2050": 7892.95
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT-H2",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 470000.0,
+                    "y2040": 470000.0,
+                    "y2050": 440000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "OCGT-H2",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 4.79,
+                    "y2040": 4.79,
+                    "y2050": 4.79
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "SCPC",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "SCPC",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 34324.4,
+                    "y2040": 34324.4,
+                    "y2050": 32911.18
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "SCPC",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 2100000.0,
+                    "y2040": 2100000.0,
+                    "y2050": 2010000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "SCPC",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 3.21,
+                    "y2040": 3.21,
+                    "y2050": 3.08
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "SCPC+CC",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "SCPC-existing",
+                "elec"
+            ],
+            "operational_cost",
+            3.21,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "bioST",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "bioST",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 68055.85,
+                    "y2040": 68055.85,
+                    "y2050": 65929.11
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "bioST",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 2550000.0,
+                    "y2040": 2550000.0,
+                    "y2050": 2450000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "bioST",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 2.76,
+                    "y2040": 2.76,
+                    "y2050": 2.87
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "bioST+CC",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "bioST-existing",
+                "elec"
+            ],
+            "operational_cost",
+            2.36,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "fuelcell",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "fuelcell",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 58485.5,
+                    "y2040": 58485.5,
+                    "y2050": 42534.91
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "fuelcell",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 1170000.0,
+                    "y2040": 1170000.0,
+                    "y2050": 850000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "geothermal",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "hydro-turbine",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "hydro-turbine",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 65120.0,
+                    "y2040": 65120.0,
+                    "y2050": 65120.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "hydro-turbine",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 2960000.0,
+                    "y2040": 2960000.0,
+                    "y2050": 2960000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "hydro-turbine",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 3.03,
+                    "y2040": 3.03,
+                    "y2050": 3.03
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "nuclear-3",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "nuclear-3",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 115000.0,
+                    "y2040": 108000.0,
+                    "y2050": 105000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "nuclear-3",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 4500000.0,
+                    "y2040": 4500000.0,
+                    "y2050": 4500000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "nuclear-3",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 7.4,
+                    "y2040": 7.6,
+                    "y2050": 7.8
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "nuclear-3-existing",
+                "elec"
+            ],
+            "operational_cost",
+            7.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "oil-eng",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "oil-eng",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 8983.37,
+                    "y2040": 8983.37,
+                    "y2050": 8609.07
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "oil-eng",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 360000.0,
+                    "y2040": 360000.0,
+                    "y2050": 360000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "oil-eng",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 6.38,
+                    "y2040": 6.38,
+                    "y2050": 6.38
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "oil-eng-existing",
+                "elec"
+            ],
+            "operational_cost",
+            6.38,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "wasteST",
+                "elec"
+            ],
+            "capacity",
+            1.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "wasteST",
+                "elec"
+            ],
+            "fixed_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 203104.19,
+                    "y2040": 203104.19,
+                    "y2050": 172266.38
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "wasteST",
+                "elec"
+            ],
+            "investment_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 8620000.0,
+                    "y2040": 8620000.0,
+                    "y2050": 7520000.0
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "wasteST",
+                "elec"
+            ],
+            "operational_cost",
+            {
+                "type": "map",
+                "index_type": "str",
+                "index_name": "period",
+                "data": {
+                    "y2030": 28.2,
+                    "y2040": 28.2,
+                    "y2050": 27.16
+                }
+            },
+            "Base"
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "wasteST-existing",
+                "elec"
+            ],
+            "operational_cost",
+            28.2,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "AT"
+            ],
+            "capacity",
+            4206.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "BE"
+            ],
+            "capacity",
+            6988.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "BG"
+            ],
+            "capacity",
+            695.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "DE"
+            ],
+            "capacity",
+            31808.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "DK"
+            ],
+            "capacity",
+            1568.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "EE"
+            ],
+            "capacity",
+            110.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "ES"
+            ],
+            "capacity",
+            29903.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "FI"
+            ],
+            "capacity",
+            1865.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "FR"
+            ],
+            "capacity",
+            12893.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "GR"
+            ],
+            "capacity",
+            6030.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "HR"
+            ],
+            "capacity",
+            766.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "HU"
+            ],
+            "capacity",
+            3151.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "IE"
+            ],
+            "capacity",
+            4265.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "IT"
+            ],
+            "capacity",
+            44215.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "LT"
+            ],
+            "capacity",
+            1518.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "LU"
+            ],
+            "capacity",
+            70.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "LV"
+            ],
+            "capacity",
+            1157.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "MK"
+            ],
+            "capacity",
+            251.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "NL"
+            ],
+            "capacity",
+            18351.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "NO"
+            ],
+            "capacity",
+            459.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "PL"
+            ],
+            "capacity",
+            3786.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "PT"
+            ],
+            "capacity",
+            4520.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "RO"
+            ],
+            "capacity",
+            1988.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "RS"
+            ],
+            "capacity",
+            608.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "SK"
+            ],
+            "capacity",
+            1111.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "CCGT-existing",
+                "elec",
+                "UK"
+            ],
+            "capacity",
+            29237.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "BA"
+            ],
+            "capacity",
+            1883.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "BG"
+            ],
+            "capacity",
+            4475.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "DE"
+            ],
+            "capacity",
+            37508.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "DK"
+            ],
+            "capacity",
+            3022.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "EE"
+            ],
+            "capacity",
+            78.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "ES"
+            ],
+            "capacity",
+            3223.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "FI"
+            ],
+            "capacity",
+            3413.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "FR"
+            ],
+            "capacity",
+            1816.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "GR"
+            ],
+            "capacity",
+            2650.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "HR"
+            ],
+            "capacity",
+            217.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "HU"
+            ],
+            "capacity",
+            829.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "IE"
+            ],
+            "capacity",
+            1199.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "IT"
+            ],
+            "capacity",
+            7648.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "ME"
+            ],
+            "capacity",
+            210.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "MK"
+            ],
+            "capacity",
+            824.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "NL"
+            ],
+            "capacity",
+            4006.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "PL"
+            ],
+            "capacity",
+            26849.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "RO"
+            ],
+            "capacity",
+            2673.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "RS"
+            ],
+            "capacity",
+            6011.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "SK"
+            ],
+            "capacity",
+            566.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "UK"
+            ],
+            "capacity",
+            11611.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "SCPC-existing",
+                "elec",
+                "XK"
+            ],
+            "capacity",
+            1288.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "AT"
+            ],
+            "capacity",
+            482.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "BE"
+            ],
+            "capacity",
+            730.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "BG"
+            ],
+            "capacity",
+            74.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "DE"
+            ],
+            "capacity",
+            8467.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "DK"
+            ],
+            "capacity",
+            1754.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "EE"
+            ],
+            "capacity",
+            152.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "ES"
+            ],
+            "capacity",
+            707.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "FI"
+            ],
+            "capacity",
+            1813.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "FR"
+            ],
+            "capacity",
+            1343.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "GR"
+            ],
+            "capacity",
+            127.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "HR"
+            ],
+            "capacity",
+            114.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "HU"
+            ],
+            "capacity",
+            213.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "IT"
+            ],
+            "capacity",
+            1534.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "LT"
+            ],
+            "capacity",
+            99.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "LU"
+            ],
+            "capacity",
+            47.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "LV"
+            ],
+            "capacity",
+            177.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "MK"
+            ],
+            "capacity",
+            7.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "NL"
+            ],
+            "capacity",
+            415.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "NO"
+            ],
+            "capacity",
+            2.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "PL"
+            ],
+            "capacity",
+            664.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "PT"
+            ],
+            "capacity",
+            681.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "RO"
+            ],
+            "capacity",
+            118.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "RS"
+            ],
+            "capacity",
+            2.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "SK"
+            ],
+            "capacity",
+            224.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "bioST-existing",
+                "elec",
+                "UK"
+            ],
+            "capacity",
+            2119.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "BE"
+            ],
+            "capacity",
+            4937.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "BG"
+            ],
+            "capacity",
+            2080.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "CH"
+            ],
+            "capacity",
+            2970.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "DE"
+            ],
+            "capacity",
+            4056.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "ES"
+            ],
+            "capacity",
+            7117.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "FI"
+            ],
+            "capacity",
+            2782.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "FR"
+            ],
+            "capacity",
+            61370.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "HU"
+            ],
+            "capacity",
+            1916.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "NL"
+            ],
+            "capacity",
+            486.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "RO"
+            ],
+            "capacity",
+            1300.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "SE"
+            ],
+            "capacity",
+            6900.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "SK"
+            ],
+            "capacity",
+            1940.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "nuclear-3-existing",
+                "elec",
+                "UK"
+            ],
+            "capacity",
+            8985.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "AL"
+            ],
+            "capacity",
+            97.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "AT"
+            ],
+            "capacity",
+            120.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "BE"
+            ],
+            "capacity",
+            450.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "DE"
+            ],
+            "capacity",
+            4083.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "DK"
+            ],
+            "capacity",
+            959.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "EE"
+            ],
+            "capacity",
+            1330.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "ES"
+            ],
+            "capacity",
+            670.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "FI"
+            ],
+            "capacity",
+            1386.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "FR"
+            ],
+            "capacity",
+            2566.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "HR"
+            ],
+            "capacity",
+            45.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "HU"
+            ],
+            "capacity",
+            425.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "IE"
+            ],
+            "capacity",
+            1272.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "IT"
+            ],
+            "capacity",
+            1543.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "MK"
+            ],
+            "capacity",
+            165.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "PL"
+            ],
+            "capacity",
+            393.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "SK"
+            ],
+            "capacity",
+            257.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "oil-eng-existing",
+                "elec",
+                "UK"
+            ],
+            "capacity",
+            1075.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "AT"
+            ],
+            "capacity",
+            103.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "BE"
+            ],
+            "capacity",
+            384.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "BG"
+            ],
+            "capacity",
+            6.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "DE"
+            ],
+            "capacity",
+            1912.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "DK"
+            ],
+            "capacity",
+            385.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "EE"
+            ],
+            "capacity",
+            17.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "ES"
+            ],
+            "capacity",
+            546.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "FI"
+            ],
+            "capacity",
+            157.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "FR"
+            ],
+            "capacity",
+            929.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "HR"
+            ],
+            "capacity",
+            6.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "HU"
+            ],
+            "capacity",
+            49.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "IT"
+            ],
+            "capacity",
+            120.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "LT"
+            ],
+            "capacity",
+            70.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "LU"
+            ],
+            "capacity",
+            21.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "NL"
+            ],
+            "capacity",
+            786.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "NO"
+            ],
+            "capacity",
+            90.0,
+            "Base"
+        ],
+        [
+            "technology__to_commodity__region",
+            [
+                "wasteST-existing",
+                "elec",
+                "RS"
+            ],
+            "capacity",
+            32.0,
+            "Base"
+        ]
+    ],
+    "alternatives": [
+        [
+            "Base",
+            null
+        ]
+    ]
+}
