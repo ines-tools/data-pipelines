@@ -23,16 +23,17 @@ elec_demand:
 # Power Sector DB including Transmission in Target Resolution
 power_sector:
   entities:
-    commodity:
-      node:
-        - [[1]]
     technology:
       unit:
         - [[1]]
     commodity__to_technology:
+      node:
+        - [[1]]
       node__to_unit: 
         - [[1],[2]]
     technology__to_commodity:
+      node:
+        - [[2]]
       unit__to_node: 
         - [[1],[2]]
     commodity__to_technology__to_commodity: 
@@ -47,6 +48,7 @@ power_sector:
       node__link__node: 
         - [[1],[1,2],[2]]
         - [[2],[1,2],[1]]
+
   parameters:
     user:
       technology:
@@ -96,9 +98,9 @@ power_sector:
           efficiency_in: [efficiency,1.0,[[2],[1,2],[1]]]
           efficiency_out: [efficiency,1.0,[[1],[1,2],[2]]]
     dynamic:
-      technology__to_commodity__region:
-        unit__to_node:
-          capacity: [capacity,[[1],[2]],[area,{}],null,PECD1]
+      technology__region:
+        unit:
+          units_existing: [units_existing,[[1]],[area,{}],null,PECD1]
 
 # Variable Renewable Energy
 vre:
@@ -120,7 +122,10 @@ vre:
       technology:
         unit:
           investment_method: [technology,investment_method,[[1]],[[1]]]
-    default: null
+    default:
+      technology__to_commodity:
+        unit__to_node:
+          - [capacity,1.0,[[1],[2]]]
     fixed:
       technology:
         unit:
@@ -130,7 +135,6 @@ vre:
           investment_cost: [investment_cost,1.0,[[1],[2]]]
           fixed_cost: [fixed_cost,1.0,[[1],[2]]]
           operational_cost: [other_operational_cost,1.0,[[1],[2]]]
-          capacity: [capacity,1.0,[[1],[2]]]
     dynamic:
       technology__region:
         unit:
@@ -138,7 +142,6 @@ vre:
       technology__to_commodity__region:
         unit__to_node:
           profile_limit_upper: [profile_limit_upper,[[1],[2]],[potential,{existing: capacity}],null,{"on": PECD2, "off": OFF3}]
-          capacity: [capacity,[[1],[2]],[area,{}],null,{"on": PECD2, "off": OFF3}]
       technology_type__region:
         set:
           potential: [invest_max_total,[[1]],[area,{}],0.0,{"on": PECD2, "off": OFF3}]
@@ -244,7 +247,6 @@ industrial_sector:
     default:
       technology:
         unit: 
-          - [retirement_method,economic_retirement,[[1]]]
           - [investment_method,no_limits,[[1]]]
     fixed:
       technology:
@@ -264,7 +266,7 @@ industrial_sector:
     dynamic:
       technology__region:
         unit:
-          units_existing: [units_existing,[[1]],[area,{}],0.0,PECD1]
+          units_existing: [units_existing,[[1]],[area,{}],null,PECD1]
       commodity__region:
         node:
           demand: [flow_profile,[[1]],[population,{}],null,PECD1]

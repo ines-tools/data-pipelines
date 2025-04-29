@@ -277,13 +277,8 @@ def add_power_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
                 # checking hard-coding conditions
                 if "technology" in entity_class_elements and definition_condition == True:
                     for index_in_class in [i for i in range(len(entity_class_elements)) if entity_class_elements[i]=="technology"]:
-                        entity_name_for_capacity = [i for i in db_source.get_entity_items(entity_class_name = "technology__to_commodity") if entity_names[index_in_class] in i["entity_byname"]][0]["name"]
-                        capacity_dict = region_params.get("technology__to_commodity",{}).get("capacity",{}).get(entity_name_for_capacity,{})
                         existing_dict = region_params.get("technology",{}).get("units_existing",{}).get(entity_names[index_in_class],{})
-                        if capacity_dict and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
-                            if sum((capacity_dict[poly][alternative] if isinstance(capacity_dict[poly][alternative],float) else sum(capacity_dict[poly][alternative]["data"].values())) for alternative in capacity_dict[poly]) == 0.0:
-                                definition_condition *= False
-                        elif existing_dict and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
+                        if existing_dict and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
                             if sum(sum(existing_dict[poly][alternative]["data"].values()) for alternative in existing_dict[poly]) == 0.0:
                                 definition_condition *= False
                         elif config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
@@ -334,7 +329,7 @@ def add_power_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
                             dynamic_params = config["sys"][db_name]["parameters"]["dynamic"][entity_class_region].get(entity_class_target, {})
                             for param_source, param_values in dynamic_params.items():
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
-                                for alternative in region_params[entity_class][param_source][entity_name][poly]:
+                                for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
                             
 def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
@@ -372,7 +367,7 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                     if not region_params["technology__to_commodity"]["profile_limit_upper"][entity_names[entity_class_elements.index("technology")]+"__elec"][poly]:
                         definition_condition *= False
 
-                print(entity_name, definition_condition)
+                # print(entity_name, definition_condition)
                 if definition_condition == True:
                     for entity_class_target in config["sys"]["vre"]["entities"][entity_class]:
                         # Entity Definitions
@@ -388,13 +383,13 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[3]])
                                 add_parameter_value(db_map,entity_class_target,param_target,"Base",entity_target_name,config["user"][param_values[0]][entity_source_name][param_values[1]])
   
-                        '''# Default Parameters
+                        # Default Parameters
                         if entity_class in config["sys"]["vre"]["parameters"]["default"]:
                             if entity_class_target in config["sys"]["vre"]["parameters"]["default"][entity_class]:
                                 for param_items in config["sys"]["vre"]["parameters"]["default"][entity_class][entity_class_target]:
                                     entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_items[2]])
                                     add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
-                        '''
+                        
                         # Fixed Parameters
                         if entity_class in config["sys"]["vre"]["parameters"]["fixed"]:
                             if entity_class_target in config["sys"]["vre"]["parameters"]["fixed"][entity_class]:
@@ -412,7 +407,7 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                             dynamic_params = config["sys"]["vre"]["parameters"]["dynamic"][entity_class_region].get(entity_class_target, {})
                             for param_source, param_values in dynamic_params.items():
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
-                                for alternative in region_params[entity_class][param_source][entity_name][poly]:
+                                for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
 
 def add_hydro(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
@@ -523,13 +518,12 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
             entity_target_names   = []
-            status = False 
 
             for poly in config["onshore_polygons"]:
                 entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on")
                 
                 # Condition of demand at technology node
-                if "technology" in entity_class_elements:
+                if "technology" in entity_class_elements and definition_condition:
                     technology_name = entity_names[entity_class_elements.index("technology")]
                     technology_node = [entity_i["element_name_list"][1] for entity_i in db_source.get_entity_items(entity_class_name = "technology__to_commodity") if entity_i["element_name_list"][0] == technology_name and entity_i["element_name_list"][1] != "CO2"][0]
                     if not region_params["commodity"]["demand"][technology_node][poly]:
@@ -544,6 +538,7 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
                         if technology_connected and config["user"]["commodity"][technology_node]["status"] == True:
                             definition_condition = True
 
+                print(entity_target_names,definition_condition)
                 if definition_condition == True:
                     for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                         if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
@@ -580,10 +575,8 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
                             dynamic_params = config["sys"][db_name]["parameters"]["dynamic"][entity_class_region].get(entity_class_target, {})
                             for param_source, param_values in dynamic_params.items():
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
-                                if region_params[entity_class][param_source][entity_name][poly]:
-                                    for alternative in region_params[entity_class][param_source][entity_name][poly]:
-                                        if region_params[entity_class][param_source][entity_name][poly]:
-                                            add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
+                                for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
+                                    add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
 
 def add_biomass_production(db_map : DatabaseMapping, db_source : DatabaseMapping, config :dict) -> None:
 
@@ -736,7 +729,7 @@ def add_gas_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                             dynamic_params = config["sys"][db_name]["parameters"]["dynamic"][entity_class_region].get(entity_class_target, {})
                             for param_source, param_values in dynamic_params.items():
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
-                                for alternative in region_params[entity_class][param_source][entity_name][poly]:
+                                for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
 
 def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
@@ -936,12 +929,12 @@ def add_heat_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, confi
                             dynamic_params = config["sys"][db_name]["parameters"]["dynamic"][entity_class_region].get(entity_class_target, {})
                             for param_source, param_values in dynamic_params.items():
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
-                                for alternative in region_params[entity_class][param_source][entity_name][poly]:
+                                for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
                             
 def add_policy_constraints(db_map : DatabaseMapping, config : dict):
 
-    co2_budget = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":config["user"]["global_constraints"]["co2_budget"][year] for year in config["user"]["global_constraints"]["co2_budget"]}}
+    co2_budget = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":config["user"]["global_constraints"]["co2_annual_budget"][year] for year in config["user"]["global_constraints"]["co2_annual_budget"]}}
     # Atmosphere entity is created
     entity_name = "node"
     entity_byname = ("atmosphere",)
@@ -1021,59 +1014,70 @@ def main():
         db_map.commit_session("timeline_added")
 
         # Power Sector Representation
-        add_power_sector(db_map,db_pow,config)
-        print("power_sector_added")
-        db_map.commit_session("power_sector_added")
+        if config["user"]["pipelines"]["power"]:
+            add_power_sector(db_map,db_pow,config)
+            print("power_sector_added")
+            db_map.commit_session("power_sector_added")
 
         # Hydro Systems
-        add_hydro(db_map,db_hyd,config)
-        print("hydro_systems_added")
-        db_map.commit_session("hydro_systems_added")
+        if config["user"]["pipelines"]["hydro"]:
+            add_hydro(db_map,db_hyd,config)
+            print("hydro_systems_added")
+            db_map.commit_session("hydro_systems_added")
         
         # Power VRE Representation
-        add_vre_sector(db_map,db_vre,config)
-        print("vre_added")
-        db_map.commit_session("vre_added")
+        if config["user"]["pipelines"]["vre"]:
+            add_vre_sector(db_map,db_vre,config)
+            print("vre_added")
+            db_map.commit_session("vre_added")
 
         # Power Transmission Representation
-        add_power_transmission(db_map,db_tra,config)
-        print("power_transmission_added")
-        db_map.commit_session("power_transmission_added")
+        if config["user"]["pipelines"]["electricity_transmission"]:
+            add_power_transmission(db_map,db_tra,config)
+            print("power_transmission_added")
+            db_map.commit_session("power_transmission_added")
         
         # Electricity Demand
-        add_electricity_demand(db_map,db_dem,config)
-        print("electricity_demand_added")
-        db_map.commit_session("electricity_demand_added")
+        if config["user"]["pipelines"]["residual_demand"]:
+            add_electricity_demand(db_map,db_dem,config)
+            print("electricity_demand_added")
+            db_map.commit_session("electricity_demand_added")
 
-        '''#  Industrial Sector
-        add_industrial_sector(db_map,db_ind,config)
-        print("industrial_sector_added")
-        db_map.commit_session("industrial_sector_added")'''
+        #  Industrial Sector
+        if config["user"]["pipelines"]["industry"]:
+            add_industrial_sector(db_map,db_ind,config)
+            print("industrial_sector_added")
+            db_map.commit_session("industrial_sector_added")
 
         #  Biomass Sector
-        add_biomass_production(db_map,db_bio,config)
-        print("biomass_sector_added")
-        db_map.commit_session("biomass_sector_added")
+        if config["user"]["pipelines"]["biomass"]:
+            add_biomass_production(db_map,db_bio,config)
+            print("biomass_sector_added")
+            db_map.commit_session("biomass_sector_added")
 
-        '''# Gas Sector Representation
-        add_gas_sector(db_map,db_gas,config)
-        print("gas_sector_added")
-        db_map.commit_session("gas_sector_added")
+        # Gas Sector Representation
+        if config["user"]["pipelines"]["gas"]:
+            add_gas_sector(db_map,db_gas,config)
+            print("gas_sector_added")
+            db_map.commit_session("gas_sector_added")
         
         # Gas Pipelines Representation
-        add_gas_pipelines(db_map,db_gas,config)
-        print("gas_pipelines_added")
-        db_map.commit_session("gas_pipelines_added")'''
+        if config["user"]["pipelines"]["gas_pipelines"]:
+            add_gas_pipelines(db_map,db_gas,config)
+            print("gas_pipelines_added")
+            db_map.commit_session("gas_pipelines_added")
         
-        '''# Transport Representation
-        add_transport(db_map,db_veh,config)
-        print("transport_added")
-        db_map.commit_session("transport_added")'''
+        # Transport Representation
+        if config["user"]["pipelines"]["transport"]:
+            add_transport(db_map,db_veh,config)
+            print("transport_added")
+            db_map.commit_session("transport_added")
 
-        '''#   Heat Sector Representation
-        add_heat_sector(db_map,db_hea,config)
-        print("heat_sector_added")
-        db_map.commit_session("heat_sector_added")'''
+        # Heat Sector Representation
+        if config["user"]["pipelines"]["heat"]:
+            add_heat_sector(db_map,db_hea,config)
+            print("heat_sector_added")
+            db_map.commit_session("heat_sector_added")
 
         # Commodity Nodes parameters
         add_nodes(db_map,db_com,config)

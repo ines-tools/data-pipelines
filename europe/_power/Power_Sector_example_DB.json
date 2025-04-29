@@ -98,17 +98,6 @@
             null,
             null,
             true
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "technology",
-                "commodity",
-                "region"
-            ],
-            null,
-            null,
-            true
         ]
     ],
     "entities": [
@@ -452,14 +441,6 @@
             "commodity__to_technology",
             [
                 "CH4",
-                "CCGT-existing"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology",
-            [
-                "CH4",
                 "OCGT"
             ],
             null
@@ -507,24 +488,8 @@
         [
             "commodity__to_technology",
             [
-                "HC",
-                "oil-eng-existing"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology",
-            [
                 "U-92",
                 "nuclear-3"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology",
-            [
-                "U-92",
-                "nuclear-3-existing"
             ],
             null
         ],
@@ -547,14 +512,6 @@
         [
             "commodity__to_technology",
             [
-                "bio",
-                "bioST-existing"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology",
-            [
                 "coal",
                 "SCPC"
             ],
@@ -571,24 +528,8 @@
         [
             "commodity__to_technology",
             [
-                "coal",
-                "SCPC-existing"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology",
-            [
                 "waste",
                 "wasteST"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology",
-            [
-                "waste",
-                "wasteST-existing"
             ],
             null
         ],
@@ -1799,15 +1740,6 @@
             "commodity__to_technology__to_commodity",
             [
                 "CH4",
-                "CCGT-existing",
-                "elec"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
-                "CH4",
                 "OCGT",
                 "elec"
             ],
@@ -1870,26 +1802,8 @@
         [
             "commodity__to_technology__to_commodity",
             [
-                "HC",
-                "oil-eng-existing",
-                "elec"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
                 "U-92",
                 "nuclear-3",
-                "elec"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
-                "U-92",
-                "nuclear-3-existing",
                 "elec"
             ],
             null
@@ -1924,15 +1838,6 @@
         [
             "commodity__to_technology__to_commodity",
             [
-                "bio",
-                "bioST-existing",
-                "elec"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
                 "coal",
                 "SCPC",
                 "elec"
@@ -1960,1107 +1865,9 @@
         [
             "commodity__to_technology__to_commodity",
             [
-                "coal",
-                "SCPC-existing",
-                "elec"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
                 "waste",
                 "wasteST",
                 "elec"
-            ],
-            null
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
-                "waste",
-                "wasteST-existing",
-                "elec"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "AT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "BE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "BG"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "DE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "DK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "EE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "ES"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "FI"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "FR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "GR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "HR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "HU"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "IE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "IT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "LT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "LU"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "LV"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "MK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "NL"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "NO"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "PL"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "PT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "RO"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "RS"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "SK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "UK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "BA"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "BG"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "DE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "DK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "EE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "ES"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "FI"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "FR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "GR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "HR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "HU"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "IE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "IT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "ME"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "MK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "NL"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "PL"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "RO"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "RS"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "SK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "UK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "XK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "AT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "BE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "BG"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "DE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "DK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "EE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "ES"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "FI"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "FR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "GR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "HR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "HU"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "IT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "LT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "LU"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "LV"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "MK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "NL"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "NO"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "PL"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "PT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "RO"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "RS"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "SK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "UK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "BE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "BG"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "CH"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "DE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "ES"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "FI"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "FR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "HU"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "NL"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "RO"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "SE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "SK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "UK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "AL"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "AT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "BE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "DE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "DK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "EE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "ES"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "FI"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "FR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "HR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "HU"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "IE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "IT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "MK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "PL"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "SK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "UK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "AT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "BE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "BG"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "DE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "DK"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "EE"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "ES"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "FI"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "FR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "HR"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "HU"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "IT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "LT"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "LU"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "NL"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "NO"
-            ],
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "RS"
             ],
             null
         ]
@@ -3198,13 +2005,6 @@
             null,
             null,
             null
-        ],
-        [
-            "technology__to_commodity__region",
-            "capacity",
-            null,
-            null,
-            null
         ]
     ],
     "parameter_values": [
@@ -3239,17 +2039,6 @@
             ],
             "conversion_rate",
             0.497,
-            "Base"
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
-                "CH4",
-                "CCGT-existing",
-                "elec"
-            ],
-            "conversion_rate",
-            0.55,
             "Base"
         ],
         [
@@ -3321,30 +2110,8 @@
         [
             "commodity__to_technology__to_commodity",
             [
-                "HC",
-                "oil-eng-existing",
-                "elec"
-            ],
-            "conversion_rate",
-            0.37,
-            "Base"
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
                 "U-92",
                 "nuclear-3",
-                "elec"
-            ],
-            "conversion_rate",
-            0.38,
-            "Base"
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
-                "U-92",
-                "nuclear-3-existing",
                 "elec"
             ],
             "conversion_rate",
@@ -3376,17 +2143,6 @@
         [
             "commodity__to_technology__to_commodity",
             [
-                "bio",
-                "bioST-existing",
-                "elec"
-            ],
-            "conversion_rate",
-            0.41,
-            "Base"
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
                 "coal",
                 "SCPC",
                 "elec"
@@ -3409,34 +2165,12 @@
         [
             "commodity__to_technology__to_commodity",
             [
-                "coal",
-                "SCPC-existing",
-                "elec"
-            ],
-            "conversion_rate",
-            0.5,
-            "Base"
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
                 "waste",
                 "wasteST",
                 "elec"
             ],
             "conversion_rate",
             0.213,
-            "Base"
-        ],
-        [
-            "commodity__to_technology__to_commodity",
-            [
-                "waste",
-                "wasteST-existing",
-                "elec"
-            ],
-            "conversion_rate",
-            0.21,
             "Base"
         ],
         [
@@ -3663,9 +2397,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 2944.2,
+                    "y2040": 1261.8,
+                    "y2050": 420.6
                 }
             },
             "Base"
@@ -3682,9 +2416,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 4891.6,
+                    "y2040": 2096.4,
+                    "y2050": 698.8
                 }
             },
             "Base"
@@ -3701,9 +2435,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 486.5,
+                    "y2040": 208.5,
+                    "y2050": 69.5
                 }
             },
             "Base"
@@ -3720,9 +2454,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 22265.6,
+                    "y2040": 9542.4,
+                    "y2050": 3180.8
                 }
             },
             "Base"
@@ -3739,9 +2473,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 1097.6,
+                    "y2040": 470.4,
+                    "y2050": 156.8
                 }
             },
             "Base"
@@ -3758,9 +2492,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 77.0,
+                    "y2040": 33.0,
+                    "y2050": 11.0
                 }
             },
             "Base"
@@ -3777,9 +2511,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 20932.1,
+                    "y2040": 8970.9,
+                    "y2050": 2990.3
                 }
             },
             "Base"
@@ -3796,9 +2530,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 1305.5,
+                    "y2040": 559.5,
+                    "y2050": 186.5
                 }
             },
             "Base"
@@ -3815,9 +2549,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 9025.1,
+                    "y2040": 3867.9,
+                    "y2050": 1289.3
                 }
             },
             "Base"
@@ -3834,9 +2568,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 4221.0,
+                    "y2040": 1809.0,
+                    "y2050": 603.0
                 }
             },
             "Base"
@@ -3853,9 +2587,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 536.2,
+                    "y2040": 229.8,
+                    "y2050": 76.6
                 }
             },
             "Base"
@@ -3872,9 +2606,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 2205.7,
+                    "y2040": 945.3,
+                    "y2050": 315.1
                 }
             },
             "Base"
@@ -3891,9 +2625,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 2985.5,
+                    "y2040": 1279.5,
+                    "y2050": 426.5
                 }
             },
             "Base"
@@ -3910,9 +2644,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 30950.5,
+                    "y2040": 13264.5,
+                    "y2050": 4421.5
                 }
             },
             "Base"
@@ -3929,9 +2663,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 1062.6,
+                    "y2040": 455.4,
+                    "y2050": 151.8
                 }
             },
             "Base"
@@ -3948,9 +2682,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 49.0,
+                    "y2040": 21.0,
+                    "y2050": 7.0
                 }
             },
             "Base"
@@ -3967,9 +2701,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 809.9,
+                    "y2040": 347.1,
+                    "y2050": 115.7
                 }
             },
             "Base"
@@ -3986,9 +2720,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 175.7,
+                    "y2040": 75.3,
+                    "y2050": 25.1
                 }
             },
             "Base"
@@ -4005,9 +2739,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 12845.7,
+                    "y2040": 5505.3,
+                    "y2050": 1835.1
                 }
             },
             "Base"
@@ -4024,9 +2758,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 321.3,
+                    "y2040": 137.7,
+                    "y2050": 45.9
                 }
             },
             "Base"
@@ -4043,9 +2777,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 2650.2,
+                    "y2040": 1135.8,
+                    "y2050": 378.6
                 }
             },
             "Base"
@@ -4062,9 +2796,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 3164.0,
+                    "y2040": 1356.0,
+                    "y2050": 452.0
                 }
             },
             "Base"
@@ -4081,9 +2815,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 1391.6,
+                    "y2040": 596.4,
+                    "y2050": 198.8
                 }
             },
             "Base"
@@ -4100,9 +2834,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 425.6,
+                    "y2040": 182.4,
+                    "y2050": 60.8
                 }
             },
             "Base"
@@ -4119,9 +2853,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 777.7,
+                    "y2040": 333.3,
+                    "y2050": 111.1
                 }
             },
             "Base"
@@ -4138,9 +2872,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.7,
-                    "y2040": 0.3,
-                    "y2050": 0.1
+                    "y2030": 20465.9,
+                    "y2040": 8771.1,
+                    "y2050": 2923.7
                 }
             },
             "Base"
@@ -4157,8 +2891,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 753.2,
+                    "y2040": 376.6,
                     "y2050": 0.0
                 }
             },
@@ -4176,8 +2910,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 1790.0,
+                    "y2040": 895.0,
                     "y2050": 0.0
                 }
             },
@@ -4195,8 +2929,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 15003.2,
+                    "y2040": 7501.6,
                     "y2050": 0.0
                 }
             },
@@ -4214,8 +2948,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 1208.8,
+                    "y2040": 604.4,
                     "y2050": 0.0
                 }
             },
@@ -4233,8 +2967,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 31.2,
+                    "y2040": 15.6,
                     "y2050": 0.0
                 }
             },
@@ -4252,8 +2986,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 1289.2,
+                    "y2040": 644.6,
                     "y2050": 0.0
                 }
             },
@@ -4271,8 +3005,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 1365.2,
+                    "y2040": 682.6,
                     "y2050": 0.0
                 }
             },
@@ -4290,8 +3024,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 726.4,
+                    "y2040": 363.2,
                     "y2050": 0.0
                 }
             },
@@ -4309,8 +3043,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 1060.0,
+                    "y2040": 530.0,
                     "y2050": 0.0
                 }
             },
@@ -4328,8 +3062,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 86.8,
+                    "y2040": 43.4,
                     "y2050": 0.0
                 }
             },
@@ -4347,8 +3081,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 331.6,
+                    "y2040": 165.8,
                     "y2050": 0.0
                 }
             },
@@ -4366,8 +3100,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 479.6,
+                    "y2040": 239.8,
                     "y2050": 0.0
                 }
             },
@@ -4385,8 +3119,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 3059.2,
+                    "y2040": 1529.6,
                     "y2050": 0.0
                 }
             },
@@ -4404,8 +3138,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 84.0,
+                    "y2040": 42.0,
                     "y2050": 0.0
                 }
             },
@@ -4423,8 +3157,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 329.6,
+                    "y2040": 164.8,
                     "y2050": 0.0
                 }
             },
@@ -4442,8 +3176,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 1602.4,
+                    "y2040": 801.2,
                     "y2050": 0.0
                 }
             },
@@ -4461,8 +3195,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 10739.6,
+                    "y2040": 5369.8,
                     "y2050": 0.0
                 }
             },
@@ -4480,8 +3214,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 1069.2,
+                    "y2040": 534.6,
                     "y2050": 0.0
                 }
             },
@@ -4499,8 +3233,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 2404.4,
+                    "y2040": 1202.2,
                     "y2050": 0.0
                 }
             },
@@ -4518,8 +3252,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 226.4,
+                    "y2040": 113.2,
                     "y2050": 0.0
                 }
             },
@@ -4537,8 +3271,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 4644.4,
+                    "y2040": 2322.2,
                     "y2050": 0.0
                 }
             },
@@ -4556,8 +3290,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.4,
-                    "y2040": 0.2,
+                    "y2030": 515.2,
+                    "y2040": 257.6,
                     "y2050": 0.0
                 }
             },
@@ -4575,8 +3309,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 433.8,
+                    "y2040": 192.8,
                     "y2050": 0.0
                 }
             },
@@ -4594,8 +3328,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 657.0,
+                    "y2040": 292.0,
                     "y2050": 0.0
                 }
             },
@@ -4613,8 +3347,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 66.6,
+                    "y2040": 29.6,
                     "y2050": 0.0
                 }
             },
@@ -4632,8 +3366,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 7620.3,
+                    "y2040": 3386.8,
                     "y2050": 0.0
                 }
             },
@@ -4651,8 +3385,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 1578.6,
+                    "y2040": 701.6,
                     "y2050": 0.0
                 }
             },
@@ -4670,8 +3404,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 136.8,
+                    "y2040": 60.8,
                     "y2050": 0.0
                 }
             },
@@ -4689,8 +3423,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 636.3,
+                    "y2040": 282.8,
                     "y2050": 0.0
                 }
             },
@@ -4708,8 +3442,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 1631.7,
+                    "y2040": 725.2,
                     "y2050": 0.0
                 }
             },
@@ -4727,8 +3461,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 1208.7,
+                    "y2040": 537.2,
                     "y2050": 0.0
                 }
             },
@@ -4746,8 +3480,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 114.3,
+                    "y2040": 50.8,
                     "y2050": 0.0
                 }
             },
@@ -4765,8 +3499,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 102.6,
+                    "y2040": 45.6,
                     "y2050": 0.0
                 }
             },
@@ -4784,8 +3518,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 191.7,
+                    "y2040": 85.2,
                     "y2050": 0.0
                 }
             },
@@ -4803,8 +3537,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 1380.6,
+                    "y2040": 613.6,
                     "y2050": 0.0
                 }
             },
@@ -4822,8 +3556,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 89.1,
+                    "y2040": 39.6,
                     "y2050": 0.0
                 }
             },
@@ -4841,8 +3575,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 42.3,
+                    "y2040": 18.8,
                     "y2050": 0.0
                 }
             },
@@ -4860,8 +3594,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 159.3,
+                    "y2040": 70.8,
                     "y2050": 0.0
                 }
             },
@@ -4879,8 +3613,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 6.3,
+                    "y2040": 2.8,
                     "y2050": 0.0
                 }
             },
@@ -4898,8 +3632,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 373.5,
+                    "y2040": 166.0,
                     "y2050": 0.0
                 }
             },
@@ -4917,8 +3651,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 1.8,
+                    "y2040": 0.8,
                     "y2050": 0.0
                 }
             },
@@ -4936,8 +3670,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 597.6,
+                    "y2040": 265.6,
                     "y2050": 0.0
                 }
             },
@@ -4955,8 +3689,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 612.9,
+                    "y2040": 272.4,
                     "y2050": 0.0
                 }
             },
@@ -4974,8 +3708,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 106.2,
+                    "y2040": 47.2,
                     "y2050": 0.0
                 }
             },
@@ -4993,8 +3727,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 1.8,
+                    "y2040": 0.8,
                     "y2050": 0.0
                 }
             },
@@ -5012,8 +3746,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 201.6,
+                    "y2040": 89.6,
                     "y2050": 0.0
                 }
             },
@@ -5031,8 +3765,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 1907.1,
+                    "y2040": 847.6,
                     "y2050": 0.0
                 }
             },
@@ -5050,9 +3784,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 4937.0,
+                    "y2040": 3949.6,
+                    "y2050": 2962.2
                 }
             },
             "Base"
@@ -5069,9 +3803,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 2080.0,
+                    "y2040": 1664.0,
+                    "y2050": 1248.0
                 }
             },
             "Base"
@@ -5088,9 +3822,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 2970.0,
+                    "y2040": 2376.0,
+                    "y2050": 1782.0
                 }
             },
             "Base"
@@ -5107,9 +3841,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 4056.0,
+                    "y2040": 3244.8,
+                    "y2050": 2433.6
                 }
             },
             "Base"
@@ -5126,9 +3860,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 7117.0,
+                    "y2040": 5693.6,
+                    "y2050": 4270.2
                 }
             },
             "Base"
@@ -5145,9 +3879,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 2782.0,
+                    "y2040": 2225.6,
+                    "y2050": 1669.2
                 }
             },
             "Base"
@@ -5164,9 +3898,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 61370.0,
+                    "y2040": 49096.0,
+                    "y2050": 36822.0
                 }
             },
             "Base"
@@ -5183,9 +3917,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 1916.0,
+                    "y2040": 1532.8,
+                    "y2050": 1149.6
                 }
             },
             "Base"
@@ -5202,9 +3936,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 486.0,
+                    "y2040": 388.8,
+                    "y2050": 291.6
                 }
             },
             "Base"
@@ -5221,9 +3955,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 1300.0,
+                    "y2040": 1040.0,
+                    "y2050": 780.0
                 }
             },
             "Base"
@@ -5240,9 +3974,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 6900.0,
+                    "y2040": 5520.0,
+                    "y2050": 4140.0
                 }
             },
             "Base"
@@ -5259,9 +3993,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 1940.0,
+                    "y2040": 1552.0,
+                    "y2050": 1164.0
                 }
             },
             "Base"
@@ -5278,9 +4012,9 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 1.0,
-                    "y2040": 0.8,
-                    "y2050": 0.6
+                    "y2030": 8985.0,
+                    "y2040": 7188.0,
+                    "y2050": 5391.0
                 }
             },
             "Base"
@@ -5297,8 +4031,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 77.6,
+                    "y2040": 9.7,
                     "y2050": 0.0
                 }
             },
@@ -5316,8 +4050,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 96.0,
+                    "y2040": 12.0,
                     "y2050": 0.0
                 }
             },
@@ -5335,8 +4069,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 360.0,
+                    "y2040": 45.0,
                     "y2050": 0.0
                 }
             },
@@ -5354,8 +4088,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 3266.4,
+                    "y2040": 408.3,
                     "y2050": 0.0
                 }
             },
@@ -5373,8 +4107,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 767.2,
+                    "y2040": 95.9,
                     "y2050": 0.0
                 }
             },
@@ -5392,8 +4126,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 1064.0,
+                    "y2040": 133.0,
                     "y2050": 0.0
                 }
             },
@@ -5411,8 +4145,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 536.0,
+                    "y2040": 67.0,
                     "y2050": 0.0
                 }
             },
@@ -5430,8 +4164,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 1108.8,
+                    "y2040": 138.6,
                     "y2050": 0.0
                 }
             },
@@ -5449,8 +4183,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 2052.8,
+                    "y2040": 256.6,
                     "y2050": 0.0
                 }
             },
@@ -5468,8 +4202,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 36.0,
+                    "y2040": 4.5,
                     "y2050": 0.0
                 }
             },
@@ -5487,8 +4221,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 340.0,
+                    "y2040": 42.5,
                     "y2050": 0.0
                 }
             },
@@ -5506,8 +4240,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 1017.6,
+                    "y2040": 127.2,
                     "y2050": 0.0
                 }
             },
@@ -5525,8 +4259,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 1234.4,
+                    "y2040": 154.3,
                     "y2050": 0.0
                 }
             },
@@ -5544,8 +4278,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 132.0,
+                    "y2040": 16.5,
                     "y2050": 0.0
                 }
             },
@@ -5563,8 +4297,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 314.4,
+                    "y2040": 39.3,
                     "y2050": 0.0
                 }
             },
@@ -5582,8 +4316,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 205.6,
+                    "y2040": 25.7,
                     "y2050": 0.0
                 }
             },
@@ -5601,8 +4335,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.8,
-                    "y2040": 0.1,
+                    "y2030": 860.0,
+                    "y2040": 107.5,
                     "y2050": 0.0
                 }
             },
@@ -5620,8 +4354,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 92.7,
+                    "y2040": 41.2,
                     "y2050": 0.0
                 }
             },
@@ -5639,8 +4373,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 345.6,
+                    "y2040": 153.6,
                     "y2050": 0.0
                 }
             },
@@ -5658,8 +4392,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 5.4,
+                    "y2040": 2.4,
                     "y2050": 0.0
                 }
             },
@@ -5677,8 +4411,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 1720.8,
+                    "y2040": 764.8,
                     "y2050": 0.0
                 }
             },
@@ -5696,8 +4430,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 346.5,
+                    "y2040": 154.0,
                     "y2050": 0.0
                 }
             },
@@ -5715,8 +4449,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 15.3,
+                    "y2040": 6.8,
                     "y2050": 0.0
                 }
             },
@@ -5734,8 +4468,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 491.4,
+                    "y2040": 218.4,
                     "y2050": 0.0
                 }
             },
@@ -5753,8 +4487,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 141.3,
+                    "y2040": 62.8,
                     "y2050": 0.0
                 }
             },
@@ -5772,8 +4506,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 836.1,
+                    "y2040": 371.6,
                     "y2050": 0.0
                 }
             },
@@ -5791,8 +4525,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 5.4,
+                    "y2040": 2.4,
                     "y2050": 0.0
                 }
             },
@@ -5810,8 +4544,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 44.1,
+                    "y2040": 19.6,
                     "y2050": 0.0
                 }
             },
@@ -5829,8 +4563,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 108.0,
+                    "y2040": 48.0,
                     "y2050": 0.0
                 }
             },
@@ -5848,8 +4582,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 63.0,
+                    "y2040": 28.0,
                     "y2050": 0.0
                 }
             },
@@ -5867,8 +4601,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 18.9,
+                    "y2040": 8.4,
                     "y2050": 0.0
                 }
             },
@@ -5886,8 +4620,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 707.4,
+                    "y2040": 314.4,
                     "y2050": 0.0
                 }
             },
@@ -5905,8 +4639,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 81.0,
+                    "y2040": 36.0,
                     "y2050": 0.0
                 }
             },
@@ -5924,8 +4658,8 @@
                 "index_type": "str",
                 "index_name": "period",
                 "data": {
-                    "y2030": 0.9,
-                    "y2040": 0.4,
+                    "y2030": 28.8,
+                    "y2040": 12.8,
                     "y2050": 0.0
                 }
             },
@@ -6130,16 +4864,6 @@
                     "y2050": 4.25
                 }
             },
-            "Base"
-        ],
-        [
-            "technology__to_commodity",
-            [
-                "CCGT-existing",
-                "elec"
-            ],
-            "operational_cost",
-            4.5,
             "Base"
         ],
         [
@@ -6366,16 +5090,6 @@
         [
             "technology__to_commodity",
             [
-                "SCPC-existing",
-                "elec"
-            ],
-            "operational_cost",
-            3.21,
-            "Base"
-        ],
-        [
-            "technology__to_commodity",
-            [
                 "bioST",
                 "elec"
             ],
@@ -6448,16 +5162,6 @@
             ],
             "capacity",
             1.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity",
-            [
-                "bioST-existing",
-                "elec"
-            ],
-            "operational_cost",
-            2.36,
             "Base"
         ],
         [
@@ -6655,16 +5359,6 @@
         [
             "technology__to_commodity",
             [
-                "nuclear-3-existing",
-                "elec"
-            ],
-            "operational_cost",
-            7.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity",
-            [
                 "oil-eng",
                 "elec"
             ],
@@ -6732,16 +5426,6 @@
         [
             "technology__to_commodity",
             [
-                "oil-eng-existing",
-                "elec"
-            ],
-            "operational_cost",
-            6.38,
-            "Base"
-        ],
-        [
-            "technology__to_commodity",
-            [
                 "wasteST",
                 "elec"
             ],
@@ -6804,1336 +5488,6 @@
                     "y2050": 27.16
                 }
             },
-            "Base"
-        ],
-        [
-            "technology__to_commodity",
-            [
-                "wasteST-existing",
-                "elec"
-            ],
-            "operational_cost",
-            28.2,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "AT"
-            ],
-            "capacity",
-            4206.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "BE"
-            ],
-            "capacity",
-            6988.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "BG"
-            ],
-            "capacity",
-            695.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "DE"
-            ],
-            "capacity",
-            31808.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "DK"
-            ],
-            "capacity",
-            1568.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "EE"
-            ],
-            "capacity",
-            110.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "ES"
-            ],
-            "capacity",
-            29903.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "FI"
-            ],
-            "capacity",
-            1865.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "FR"
-            ],
-            "capacity",
-            12893.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "GR"
-            ],
-            "capacity",
-            6030.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "HR"
-            ],
-            "capacity",
-            766.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "HU"
-            ],
-            "capacity",
-            3151.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "IE"
-            ],
-            "capacity",
-            4265.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "IT"
-            ],
-            "capacity",
-            44215.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "LT"
-            ],
-            "capacity",
-            1518.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "LU"
-            ],
-            "capacity",
-            70.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "LV"
-            ],
-            "capacity",
-            1157.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "MK"
-            ],
-            "capacity",
-            251.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "NL"
-            ],
-            "capacity",
-            18351.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "NO"
-            ],
-            "capacity",
-            459.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "PL"
-            ],
-            "capacity",
-            3786.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "PT"
-            ],
-            "capacity",
-            4520.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "RO"
-            ],
-            "capacity",
-            1988.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "RS"
-            ],
-            "capacity",
-            608.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "SK"
-            ],
-            "capacity",
-            1111.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "CCGT-existing",
-                "elec",
-                "UK"
-            ],
-            "capacity",
-            29237.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "BA"
-            ],
-            "capacity",
-            1883.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "BG"
-            ],
-            "capacity",
-            4475.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "DE"
-            ],
-            "capacity",
-            37508.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "DK"
-            ],
-            "capacity",
-            3022.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "EE"
-            ],
-            "capacity",
-            78.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "ES"
-            ],
-            "capacity",
-            3223.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "FI"
-            ],
-            "capacity",
-            3413.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "FR"
-            ],
-            "capacity",
-            1816.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "GR"
-            ],
-            "capacity",
-            2650.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "HR"
-            ],
-            "capacity",
-            217.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "HU"
-            ],
-            "capacity",
-            829.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "IE"
-            ],
-            "capacity",
-            1199.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "IT"
-            ],
-            "capacity",
-            7648.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "ME"
-            ],
-            "capacity",
-            210.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "MK"
-            ],
-            "capacity",
-            824.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "NL"
-            ],
-            "capacity",
-            4006.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "PL"
-            ],
-            "capacity",
-            26849.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "RO"
-            ],
-            "capacity",
-            2673.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "RS"
-            ],
-            "capacity",
-            6011.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "SK"
-            ],
-            "capacity",
-            566.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "UK"
-            ],
-            "capacity",
-            11611.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "SCPC-existing",
-                "elec",
-                "XK"
-            ],
-            "capacity",
-            1288.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "AT"
-            ],
-            "capacity",
-            482.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "BE"
-            ],
-            "capacity",
-            730.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "BG"
-            ],
-            "capacity",
-            74.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "DE"
-            ],
-            "capacity",
-            8467.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "DK"
-            ],
-            "capacity",
-            1754.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "EE"
-            ],
-            "capacity",
-            152.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "ES"
-            ],
-            "capacity",
-            707.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "FI"
-            ],
-            "capacity",
-            1813.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "FR"
-            ],
-            "capacity",
-            1343.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "GR"
-            ],
-            "capacity",
-            127.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "HR"
-            ],
-            "capacity",
-            114.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "HU"
-            ],
-            "capacity",
-            213.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "IT"
-            ],
-            "capacity",
-            1534.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "LT"
-            ],
-            "capacity",
-            99.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "LU"
-            ],
-            "capacity",
-            47.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "LV"
-            ],
-            "capacity",
-            177.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "MK"
-            ],
-            "capacity",
-            7.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "NL"
-            ],
-            "capacity",
-            415.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "NO"
-            ],
-            "capacity",
-            2.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "PL"
-            ],
-            "capacity",
-            664.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "PT"
-            ],
-            "capacity",
-            681.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "RO"
-            ],
-            "capacity",
-            118.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "RS"
-            ],
-            "capacity",
-            2.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "SK"
-            ],
-            "capacity",
-            224.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "bioST-existing",
-                "elec",
-                "UK"
-            ],
-            "capacity",
-            2119.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "BE"
-            ],
-            "capacity",
-            4937.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "BG"
-            ],
-            "capacity",
-            2080.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "CH"
-            ],
-            "capacity",
-            2970.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "DE"
-            ],
-            "capacity",
-            4056.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "ES"
-            ],
-            "capacity",
-            7117.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "FI"
-            ],
-            "capacity",
-            2782.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "FR"
-            ],
-            "capacity",
-            61370.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "HU"
-            ],
-            "capacity",
-            1916.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "NL"
-            ],
-            "capacity",
-            486.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "RO"
-            ],
-            "capacity",
-            1300.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "SE"
-            ],
-            "capacity",
-            6900.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "SK"
-            ],
-            "capacity",
-            1940.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "nuclear-3-existing",
-                "elec",
-                "UK"
-            ],
-            "capacity",
-            8985.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "AL"
-            ],
-            "capacity",
-            97.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "AT"
-            ],
-            "capacity",
-            120.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "BE"
-            ],
-            "capacity",
-            450.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "DE"
-            ],
-            "capacity",
-            4083.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "DK"
-            ],
-            "capacity",
-            959.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "EE"
-            ],
-            "capacity",
-            1330.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "ES"
-            ],
-            "capacity",
-            670.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "FI"
-            ],
-            "capacity",
-            1386.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "FR"
-            ],
-            "capacity",
-            2566.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "HR"
-            ],
-            "capacity",
-            45.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "HU"
-            ],
-            "capacity",
-            425.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "IE"
-            ],
-            "capacity",
-            1272.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "IT"
-            ],
-            "capacity",
-            1543.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "MK"
-            ],
-            "capacity",
-            165.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "PL"
-            ],
-            "capacity",
-            393.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "SK"
-            ],
-            "capacity",
-            257.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "oil-eng-existing",
-                "elec",
-                "UK"
-            ],
-            "capacity",
-            1075.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "AT"
-            ],
-            "capacity",
-            103.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "BE"
-            ],
-            "capacity",
-            384.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "BG"
-            ],
-            "capacity",
-            6.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "DE"
-            ],
-            "capacity",
-            1912.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "DK"
-            ],
-            "capacity",
-            385.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "EE"
-            ],
-            "capacity",
-            17.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "ES"
-            ],
-            "capacity",
-            546.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "FI"
-            ],
-            "capacity",
-            157.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "FR"
-            ],
-            "capacity",
-            929.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "HR"
-            ],
-            "capacity",
-            6.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "HU"
-            ],
-            "capacity",
-            49.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "IT"
-            ],
-            "capacity",
-            120.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "LT"
-            ],
-            "capacity",
-            70.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "LU"
-            ],
-            "capacity",
-            21.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "NL"
-            ],
-            "capacity",
-            786.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "NO"
-            ],
-            "capacity",
-            90.0,
-            "Base"
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "wasteST-existing",
-                "elec",
-                "RS"
-            ],
-            "capacity",
-            32.0,
             "Base"
         ]
     ],

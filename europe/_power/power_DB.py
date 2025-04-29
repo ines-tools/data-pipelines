@@ -144,17 +144,17 @@ def existing_data(target_db,existing_tech,existing_param):
                 try:
                     add_entity(target_db,"technology",(tech,))
                     add_entity(target_db,"technology__to_commodity",(tech,"elec"))
+                    add_parameter_value(target_db,"technology__to_commodity","capacity","Base",(tech,"elec"),1.0)  
                     add_parameter_value(target_db,"technology__to_commodity","operational_cost","Base",(tech,"elec"),float(existing_param.at[techname,"vom_cost"]))
                     add_entity(target_db,"commodity__to_technology",(from_node,tech))
                     add_entity(target_db,"commodity__to_technology__to_commodity",(from_node,tech,"elec"))
                     add_parameter_value(target_db,"commodity__to_technology__to_commodity","conversion_rate","Base",(from_node,tech,"elec"),float(existing_param.at[techname,"efficiency"]))
                 except:
                     pass
+
                 if round(float(existing_tech.at[country,techname]),1 > 0.0):
                     add_entity(target_db,"technology__region",(tech,country))
-                    add_entity(target_db,"technology__to_commodity__region",(tech,"elec",country))
-                    add_parameter_value(target_db,"technology__to_commodity__region","capacity","Base",(tech,"elec",country),float(existing_tech.at[country,techname]))  
-                    map_max = {"type":"map","index_type":"str","index_name":"period","data":{f"y{str(year)}":round(existing_param.at[techname,f"expected_{str(year)}"],3) for year in [2030,2040,2050]}}
+                    map_max = {"type":"map","index_type":"str","index_name":"period","data":{f"y{str(year)}":round(float(existing_tech.at[country,techname])*existing_param.at[techname,f"expected_{str(year)}"],3) for year in [2030,2040,2050]}}
                     add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_max) 
 
 

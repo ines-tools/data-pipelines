@@ -98,17 +98,6 @@
             null,
             null,
             true
-        ],
-        [
-            "technology__to_commodity__region",
-            [
-                "technology",
-                "commodity",
-                "region"
-            ],
-            null,
-            null,
-            true
         ]
     ],
     "parameter_definitions": [
@@ -241,13 +230,6 @@
         [
             "technology__to_commodity",
             "operational_cost",
-            null,
-            null,
-            null
-        ],
-        [
-            "technology__to_commodity__region",
-            "capacity",
             null,
             null,
             null
