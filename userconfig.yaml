@@ -2,16 +2,16 @@
 # countries : ["AL","DE","HU","MK","SE","AT","DK","IE","MT","SI","BA","EE","IT","NL","SK","BE","ES","LT","NO","TR","BG","FI","LU","PL","UA","CH","FR","LV","PT","UK","CY","GR","MD","RO","XK","CZ","HR","ME","RS"]
 
 pipelines:
-  power: True
-  vre: True
-  hydro: True
-  biomass: True
-  electricity_transmission: True
-  residual_demand: True
-  gas: True
+  power: False
+  vre: False
+  hydro: False
+  biomass: False
+  electricity_transmission: False
+  residual_demand: False
+  gas: False
   gas_pipelines: False
-  industry: True
-  heat: False
+  industry: False
+  heat: True
   transport: False
 
 model:

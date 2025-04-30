@@ -538,7 +538,7 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
                         if technology_connected and config["user"]["commodity"][technology_node]["status"] == True:
                             definition_condition = True
 
-                print(entity_target_names,definition_condition)
+                # print(entity_target_names,definition_condition)
                 if definition_condition == True:
                     for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                         if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
@@ -575,8 +575,12 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
                             dynamic_params = config["sys"][db_name]["parameters"]["dynamic"][entity_class_region].get(entity_class_target, {})
                             for param_source, param_values in dynamic_params.items():
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
-                                for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
-                                    add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
+                                if region_params[entity_class][param_source][entity_name].get(poly,{}):
+                                    for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
+                                        add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
+                                    # Default value when demand is defined
+                                    if param_source == "demand":
+                                        add_parameter_value(db_map,entity_class_target,"flow_scaling_method","Base",entity_target_name,"use_profile_directly")
 
 def add_biomass_production(db_map : DatabaseMapping, db_source : DatabaseMapping, config :dict) -> None:
 
