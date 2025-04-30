@@ -442,15 +442,16 @@ transport_sector:
   parameters:
     user: null
     default:
-      node:
-        - [storage_limit_method,upper_limit,[[2,3]],{node_type: storage}]
-        - [flow_scaling_method,scale_to_annual,[[2,3]],{}]
+      commodity__vehicle__region:
+        node:
+          - [storage_investment_method,no_limits,[[2,3]],{node_type: storage}]
+          - [flow_scaling_method,scale_to_annual,[[2,3]],{}]
     fixed:
       commodity__vehicle__region:
         node:
           node_type: [node_type,1.0,[[2,3]]]
-          connected_vehicles: [storage_state_upper_limit,1.0,[[2,3]]]
-          energy_max: [storage_capacity,1.0,[[2,3]]]
+          connected_vehicles: [storage_capacity,1.0,[[2,3]]]
+          energy_max: [storages_fix_cumulative,1.0,[[2,3]]]
           flow_profile: [flow_profile,1.0,[[2,3]]]
           scale_demand: [flow_annual,1.0,[[2,3]]]
         link:

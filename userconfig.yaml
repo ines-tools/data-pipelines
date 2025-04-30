@@ -11,8 +11,8 @@ pipelines:
   gas: False
   gas_pipelines: False
   industry: False
-  heat: True
-  transport: False
+  heat: False
+  transport: True
 
 model:
     type :  brownfield # greenfied
@@ -54,9 +54,6 @@ global_constraints:
 # Define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
   ES : 
-    onshore:  "PECD1"
-    offshore: "OFF2"
-  FR :
     onshore:  "PECD1"
     offshore: "OFF2"
 
