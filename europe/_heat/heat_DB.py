@@ -34,7 +34,7 @@ def process_units(target_db, sheet):
             entity_byname = (commodity,)
             add_entity(target_db, "commodity", entity_byname)
 
-    nodes = {"heat":["nonres-DHW","nonres-space","res-DHW","res-space"],"DH":["DH-DHW","DH-space"],"cool":["res-cool","nonres-cool"]}
+    nodes = {"heat":["nonres-DHW","nonres-space","res-DHW","res-space"],"cool":["res-cool","nonres-cool"]}
     for node_u in nodes:
         add_entity(target_db, "commodity", (node_u,))
         for node_l in nodes[node_u]:
@@ -43,20 +43,14 @@ def process_units(target_db, sheet):
 
     for unit_name in sheet.index.unique():
         params ={"planning_years" : ["y"+str(i) for i in sheet.loc[unit_name,"year"].to_list()],
-                 "elec_conv": round(sheet.loc[unit_name,"conversion_rate_elec_pu"].values.mean(),3),
-                 "heat_conv": round(sheet.loc[unit_name,"conversion_rate_heat_pu"].values.mean(),3),
+                 "elec_conv": round(sheet.loc[unit_name,"conversion_rate_elec_pu"].values.mean(),4),
+                 "heat_conv": round(sheet.loc[unit_name,"conversion_rate_heat_pu"].values.mean(),4),
                  "co2_conv":  sheet.loc[unit_name,"CO2_captured_pu"].values.mean(),
                  "investment_cost": (sheet.loc[unit_name,"CAPEX_MEUR_MW"]*1e6).round(1).to_list(),
                  "fixed_cost": sheet.loc[unit_name,"FOM_EUR_MW_y"].to_list(),
                  "operational_cost": sheet.loc[unit_name,"VOM_EUR_MWh"].to_list(),
                  "lifetime": sheet.loc[unit_name,"lifetime_y"].to_list()[0]}
-
-        
-        entity_name = "technology"
-        entity_byname = (unit_name,)
-        add_entity(target_db, entity_name, entity_byname)
-        add_parameter_value(target_db, entity_name, "lifetime", "Base", entity_byname, params["lifetime"])
-        
+ 
         if pd.notna(params["elec_conv"]):
             print(unit_name,"District Heating")
             to_node = "elec"
@@ -66,49 +60,56 @@ def process_units(target_db, sheet):
             to_node = sheet.loc[unit_name,"to_node"].tolist()[0]
             to_node_2 = None
 
-        entity_name = "technology__to_commodity"
-        entity_byname = (unit_name, to_node)
-        add_entity(target_db, entity_name, entity_byname)
-        for param_name in ["investment_cost", "fixed_cost","operational_cost"]:
-            if sum(params[param_name]) > 0:
-                map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": dict(zip(params["planning_years"],params[param_name]))}
-                add_parameter_value(target_db, entity_name, param_name, "Base", entity_byname, map_param)
-        add_parameter_value(target_db, entity_name, "capacity", "Base", entity_byname, 1.0)
-        from_node = sheet.loc[unit_name,"from_node"].tolist()[0]
-        if pd.notna(from_node):
-            entity_name = "commodity__to_technology"
-            entity_byname = (from_node, unit_name)
+        if to_node != "DH" and to_node_2 != "DH":
+           
+            entity_name = "technology"
+            entity_byname = (unit_name,)
             add_entity(target_db, entity_name, entity_byname)
+            add_parameter_value(target_db, entity_name, "lifetime", "Base", entity_byname, params["lifetime"])
+        
+            entity_name = "technology__to_commodity"
+            entity_byname = (unit_name, to_node)
+            add_entity(target_db, entity_name, entity_byname)
+            for param_name in ["investment_cost", "fixed_cost","operational_cost"]:
+                if sum(params[param_name]) > 0:
+                    map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": dict(zip(params["planning_years"],params[param_name]))}
+                    add_parameter_value(target_db, entity_name, param_name, "Base", entity_byname, map_param)
+            add_parameter_value(target_db, entity_name, "capacity", "Base", entity_byname, 1.0)
+            from_node = sheet.loc[unit_name,"from_node"].tolist()[0]
+            if pd.notna(from_node):
+                entity_name = "commodity__to_technology"
+                entity_byname = (from_node, unit_name)
+                add_entity(target_db, entity_name, entity_byname)
 
-            if to_node_2:
-                entity_name = "commodity__to_technology__to_commodity"
-                entity_byname = (from_node, unit_name, to_node)
-                add_entity(target_db, entity_name, entity_byname)
-                # map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": params["elec_conv"]}
-                add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, params["elec_conv"])
-                entity_byname = (from_node, unit_name, to_node_2)
-                add_entity(target_db, entity_name, entity_byname)
-                # map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": params["heat_conv"]}
-                add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, params["heat_conv"])
-            else:
-                entity_name = "commodity__to_technology__to_commodity"
-                entity_byname = (from_node, unit_name, to_node)
-                add_entity(target_db, entity_name, entity_byname)
-                # map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": params["heat_conv"]}
-                if pd.notna(params["heat_conv"]):
-                    add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname,1.0)
+                if to_node_2:
+                    entity_name = "commodity__to_technology__to_commodity"
+                    entity_byname = (from_node, unit_name, to_node)
+                    add_entity(target_db, entity_name, entity_byname)
+                    # map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": params["elec_conv"]}
+                    add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, params["elec_conv"])
+                    entity_byname = (from_node, unit_name, to_node_2)
+                    add_entity(target_db, entity_name, entity_byname)
+                    # map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": params["heat_conv"]}
+                    add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, params["heat_conv"])
                 else:
-                    print("WARNING: NO STATIC CONVERSION RATES FOR",unit_name)
-                
-            if "+CC" in unit_name:
-                entity_name = "technology__to_commodity"
-                entity_byname = (unit_name,"CO2")
-                add_entity(target_db, entity_name, entity_byname)
-                entity_name = "commodity__to_technology__to_commodity"
-                entity_byname = (from_node, unit_name, "CO2")
-                add_entity(target_db, entity_name, entity_byname)
-                #map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": dict(zip(params["planning_years"],co2_content[from_node]*params["co2_conv"]))}
-                add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, round(co2_content[from_node]*params["co2_conv"],3))
+                    entity_name = "commodity__to_technology__to_commodity"
+                    entity_byname = (from_node, unit_name, to_node)
+                    add_entity(target_db, entity_name, entity_byname)
+                    # map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": params["heat_conv"]}
+                    if pd.notna(params["heat_conv"]):
+                        add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, params["heat_conv"])
+                    else:
+                        print("WARNING: NO STATIC CONVERSION RATES FOR",unit_name)
+                    
+                if "+CC" in unit_name:
+                    entity_name = "technology__to_commodity"
+                    entity_byname = (unit_name,"CO2")
+                    add_entity(target_db, entity_name, entity_byname)
+                    entity_name = "commodity__to_technology__to_commodity"
+                    entity_byname = (from_node, unit_name, "CO2")
+                    add_entity(target_db, entity_name, entity_byname)
+                    #map_param = {"type": "map", "index_type": "str", "index_name": "year", "data": dict(zip(params["planning_years"],co2_content[from_node]*params["co2_conv"]))}
+                    add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, round(co2_content[from_node]*params["co2_conv"],3))
 
 
 def process_storages(target_db, sheet):

@@ -139,10 +139,8 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):
                         add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_profile)
                         map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(data_connected,cyears)}
                         add_parameter_value(target_db,entity_name,"connected_vehicles","Base",entity_byname,map_profile)
-                        map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(data_efficiency_in,cyears)}
-                        add_parameter_value(target_db,entity_name,"efficiency_in","Base",entity_byname,map_profile)
-                        map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(data_efficiency_out,cyears)}
-                        add_parameter_value(target_db,entity_name,"efficiency_out","Base",entity_byname,map_profile)
+                        add_parameter_value(target_db,entity_name,"efficiency_in","Base",entity_byname,round(data_efficiency_in.mean(),3))
+                        add_parameter_value(target_db,entity_name,"efficiency_out","Base",entity_byname,round(data_efficiency_out.mean(),3))
                     else:
                         print(vehicle,region,"elec not defined")
                 else:

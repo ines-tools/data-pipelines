@@ -798,7 +798,7 @@ def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config 
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if entity_names[2] in config["onshore_polygons"] and config["user"]["commodity"][entity_names[0]]["status"] == True and config["user"]["vehicle"][entity_names[1]]["status"] == True:               
+            if entity_names[2] in config["onshore_polygons"] and config["user"]["vehicle"][entity_names[1]]["status"] == True and config["user"]["commodity"][entity_names[0]]["status"] == True:             
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_items in config["sys"][db_name]["entities"][entity_class][entity_class_target]:

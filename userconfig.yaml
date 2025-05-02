@@ -11,8 +11,8 @@ pipelines:
   gas: False
   gas_pipelines: False
   industry: False
-  heat: False
-  transport: True
+  heat: True
+  transport: False
 
 model:
     type :  brownfield # greenfied
@@ -60,7 +60,7 @@ countries :
 # Sectors optimized
 commodity: 
   elec: 
-    status: True
+    status: False
   CH4: 
     status: False
   H2: 
@@ -68,13 +68,13 @@ commodity:
   CO2: 
     status: False
   bio: 
-    status: True
+    status: False
   HC: 
-    status: True
+    status: False
   NH3: 
     status: False
   MeOH: 
-    status: True
+    status: False
   fossil-CH4: 
     status: False
   fossil-HC: 

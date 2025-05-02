@@ -452,7 +452,7 @@ transport_sector:
           node_type: [node_type,1.0,[[2,3]]]
           connected_vehicles: [storage_capacity,1.0,[[2,3]]]
           energy_max: [storages_fix_cumulative,1.0,[[2,3]]]
-          flow_profile: [flow_profile,1.0,[[2,3]]]
+          flow_profile: [flow_profile,-1.0,[[2,3]]]
           scale_demand: [flow_annual,1.0,[[2,3]]]
         link:
           connected_vehicles: [availability,1.0,[[1,2,3]]]
@@ -465,9 +465,22 @@ transport_sector:
 # Heat Sector Integration
 heat_sector:
   entities:
-    commodity:
+    technology:
+      unit:
+        - [[1]]
+    commodity__to_technology:
       node:
         - [[1]]
+      node__to_unit: 
+        - [[1],[2]]
+    technology__to_commodity:
+      node:
+        - [[2]]
+      unit__to_node: 
+        - [[1],[2]]
+    commodity__to_technology__to_commodity: 
+      unit_flow__unit_flow:
+        - [[2],[3],[1],[2]]
     end-use:
       node:
         - [[1]]
@@ -476,18 +489,6 @@ heat_sector:
         - [[1,2]]
       node__link__node:
         - [[1],[1,2],[2]]
-    technology:
-      unit:
-        - [[1]]
-    commodity__to_technology:
-      node__to_unit: 
-        - [[1],[2]]
-    technology__to_commodity:
-      unit__to_node: 
-        - [[1],[2]]
-    commodity__to_technology__to_commodity: 
-      unit_flow__unit_flow:
-        - [[2],[3],[1],[2]]
     storage:
       node: 
         - [[1]]
