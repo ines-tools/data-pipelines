@@ -938,13 +938,15 @@ def add_heat_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, confi
                             
 def add_policy_constraints(db_map : DatabaseMapping, config : dict):
 
-    co2_budget = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":config["user"]["global_constraints"]["co2_annual_budget"][year] for year in config["user"]["global_constraints"]["co2_annual_budget"]}}
+    co2_budget = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":config["user"]["global_constraints"]["co2_annual_budget"][year]/1e3 for year in config["user"]["global_constraints"]["co2_annual_budget"]}}
     # Atmosphere entity is created
     entity_name = "node"
     entity_byname = ("atmosphere",)
     add_entity(db_map,entity_name,entity_byname)
     add_parameter_value(db_map,entity_name,"node_type","Base",entity_byname,"storage")
-    add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,co2_budget)
+    add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,1e3)
+    add_parameter_value(db_map,entity_name,"storages_fix_cumulative","Base",entity_byname,co2_budget)
+    add_parameter_value(db_map,entity_name,"storage_investment_method","Base",entity_byname,"no_limits")
 
     # co2 storage entity is created
     if not config["user"]["commodity"]["CO2"]["status"]:

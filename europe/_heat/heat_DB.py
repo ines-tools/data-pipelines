@@ -157,19 +157,18 @@ def process_region_data(target_db,path):
     for tech in map_tech:
         for cy in years:
             if isinstance(map_tech[tech]["data"],pd.DataFrame):
-                map_tech[tech]["data"] = pd.concat([map_tech[tech]["data"],pd.read_csv(os.path.join(path,f"COP_{tech}_{cy}.csv"),index_col=0).iloc[:8759,:]],axis=0,ignore_index=False)
+                map_tech[tech]["data"] = pd.concat([map_tech[tech]["data"],pd.read_csv(os.path.join(path,f"COP_{tech}_{cy}.csv"),index_col=0).iloc[:8760,:]],axis=0,ignore_index=False)
             else:
-                map_tech[tech]["data"] = pd.read_csv(os.path.join(path,f"COP_{tech}_{cy}.csv"),index_col=0).iloc[:8759,:]
+                map_tech[tech]["data"] = pd.read_csv(os.path.join(path,f"COP_{tech}_{cy}.csv"),index_col=0).iloc[:8760,:]
 
     demand_type = {"cooling_res":"res-cool","cooling_nonres":"nonres-cool","DHW_res":"res-DHW","DHW_nonres":"nonres-DHW","heating_res":"res-space","heating_nonres":"nonres-space"}
     map_demand = {}
     for dem in demand_type:
         for cy in years:
             if dem in map_demand.keys():
-                map_demand[dem] = pd.concat([map_demand[dem],pd.read_csv(os.path.join(path,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0).iloc[:8759,:]],axis=0,ignore_index=False)
+                map_demand[dem] = pd.concat([map_demand[dem],pd.read_csv(os.path.join(path,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0).iloc[:8760,:]],axis=0,ignore_index=False)
             else:
-                map_demand[dem] = pd.read_csv(os.path.join(path,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0).iloc[:8759,:]
-    
+                map_demand[dem] = pd.read_csv(os.path.join(path,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0).iloc[:8760,:]
     
     for country in map_demand[dem].columns:
 
@@ -204,12 +203,13 @@ def process_region_data(target_db,path):
         ratio_DHW   = sum(dem_dhw[i]/(dem_space[i]+dem_dhw[i]) for i in range(len(dem_space)) if (dem_space[i]+dem_dhw[i]) > 0.0)/len(dem_space)
         print(ratio_DHW,ratio_space)
         for tech in ["A2AHP-cooling","A2WHP-radiators","G2WHP-radiators"]:
-            entity_name = "technology__region"
-            entity_byname = (map_tech[tech]["technology"],country)
+            entity_name = "commodity__to_technology__to_commodity__region"
+            to_node = "cool" if tech == "A2AHP-cooling" else "heat"
+            entity_byname = ("elec",map_tech[tech]["technology"],to_node,country)
             add_entity(target_db, entity_name, entity_byname)
             value_cop = map_tech[tech]["data"][country].values if tech == "A2AHP-cooling" else map_tech[tech]["data"][country].values*ratio_space + map_tech[tech[:6]+"DHW"]["data"][country].values*ratio_DHW
             map_param = {"type": "map", "index_type": "str", "index_name": "t", "data":dict(zip(time_list,value_cop.round(4)))}
-            add_parameter_value(target_db, entity_name, "efficiency", "Base", entity_byname, map_param)
+            add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, map_param)
         
 def main():
 

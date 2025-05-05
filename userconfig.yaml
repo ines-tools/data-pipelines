@@ -5,12 +5,12 @@ pipelines:
   power: False
   vre: False
   hydro: False
-  biomass: False
+  biomass: True
   electricity_transmission: False
   residual_demand: False
   gas: False
   gas_pipelines: False
-  industry: False
+  industry: True
   heat: True
   transport: False
 
@@ -68,13 +68,13 @@ commodity:
   CO2: 
     status: False
   bio: 
-    status: False
+    status: True
   HC: 
-    status: False
+    status: True
   NH3: 
     status: False
   MeOH: 
-    status: False
+    status: True
   fossil-CH4: 
     status: False
   fossil-HC: 
