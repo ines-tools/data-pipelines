@@ -976,19 +976,6 @@ def main():
     url_db_veh = sys.argv[11]
     url_db_hea = sys.argv[12]
 
-
-    db_com = DatabaseMapping(url_db_com)
-    db_pow = DatabaseMapping(url_db_pow)
-    db_vre = DatabaseMapping(url_db_vre)
-    db_tra = DatabaseMapping(url_db_tra)
-    db_hyd = DatabaseMapping(url_db_hyd)
-    db_dem = DatabaseMapping(url_db_dem)
-    db_ind = DatabaseMapping(url_db_ind)
-    db_bio = DatabaseMapping(url_db_bio)
-    db_gas = DatabaseMapping(url_db_gas)
-    db_veh = DatabaseMapping(url_db_veh)
-    db_hea = DatabaseMapping(url_db_hea)
-
     with open("ines_structure.json", 'r') as f:
         ines_spec = json.load(f)
 
@@ -1021,74 +1008,95 @@ def main():
 
         # Power Sector Representation
         if config["user"]["pipelines"]["power"]:
-            add_power_sector(db_map,db_pow,config)
-            print("power_sector_added")
-            db_map.commit_session("power_sector_added")
+            with DatabaseMapping(url_db_pow) as db_pow:
+                db_pow.fetch_all()
+                add_power_sector(db_map,db_pow,config)
+                print("power_sector_added")
+                db_map.commit_session("power_sector_added")
 
         # Hydro Systems
         if config["user"]["pipelines"]["hydro"]:
-            add_hydro(db_map,db_hyd,config)
-            print("hydro_systems_added")
-            db_map.commit_session("hydro_systems_added")
+            with DatabaseMapping(url_db_hyd) as db_hyd:
+                db_hyd.fetch_all()
+                add_hydro(db_map,db_hyd,config)
+                print("hydro_systems_added")
+                db_map.commit_session("hydro_systems_added")
         
         # Power VRE Representation
         if config["user"]["pipelines"]["vre"]:
-            add_vre_sector(db_map,db_vre,config)
-            print("vre_added")
-            db_map.commit_session("vre_added")
+            with DatabaseMapping(url_db_vre) as db_vre:
+                db_vre.fetch_all()
+                add_vre_sector(db_map,db_vre,config)
+                print("vre_added")
+                db_map.commit_session("vre_added")
 
         # Power Transmission Representation
         if config["user"]["pipelines"]["electricity_transmission"]:
-            add_power_transmission(db_map,db_tra,config)
-            print("power_transmission_added")
-            db_map.commit_session("power_transmission_added")
+            with DatabaseMapping(url_db_tra) as db_tra:
+                db_tra.fetch_all()
+                add_power_transmission(db_map,db_tra,config)
+                print("power_transmission_added")
+                db_map.commit_session("power_transmission_added")
         
         # Electricity Demand
         if config["user"]["pipelines"]["residual_demand"]:
-            add_electricity_demand(db_map,db_dem,config)
-            print("electricity_demand_added")
-            db_map.commit_session("electricity_demand_added")
+            with DatabaseMapping(url_db_dem) as db_dem:
+                db_dem.fetch_all()
+                add_electricity_demand(db_map,db_dem,config)
+                print("electricity_demand_added")
+                db_map.commit_session("electricity_demand_added")
 
         #  Industrial Sector
         if config["user"]["pipelines"]["industry"]:
-            add_industrial_sector(db_map,db_ind,config)
-            print("industrial_sector_added")
-            db_map.commit_session("industrial_sector_added")
+            with DatabaseMapping(url_db_ind) as db_ind:
+                db_ind.fetch_all()
+                add_industrial_sector(db_map,db_ind,config)
+                print("industrial_sector_added")
+                db_map.commit_session("industrial_sector_added")
 
         #  Biomass Sector
         if config["user"]["pipelines"]["biomass"]:
-            add_biomass_production(db_map,db_bio,config)
-            print("biomass_sector_added")
-            db_map.commit_session("biomass_sector_added")
+            with DatabaseMapping(url_db_bio) as db_bio:
+                db_bio.fetch_all()
+                add_biomass_production(db_map,db_bio,config)
+                print("biomass_sector_added")
+                db_map.commit_session("biomass_sector_added")
 
         # Gas Sector Representation
         if config["user"]["pipelines"]["gas"]:
-            add_gas_sector(db_map,db_gas,config)
-            print("gas_sector_added")
-            db_map.commit_session("gas_sector_added")
-        
-        # Gas Pipelines Representation
-        if config["user"]["pipelines"]["gas_pipelines"]:
-            add_gas_pipelines(db_map,db_gas,config)
-            print("gas_pipelines_added")
-            db_map.commit_session("gas_pipelines_added")
+            with DatabaseMapping(url_db_gas) as db_gas:
+                db_gas.fetch_all()
+                add_gas_sector(db_map,db_gas,config)
+                print("gas_sector_added")
+                db_map.commit_session("gas_sector_added")
+    
+                if config["user"]["pipelines"]["gas_pipelines"]:
+                    add_gas_pipelines(db_map,db_gas,config)
+                    print("gas_pipelines_added")
+                    db_map.commit_session("gas_pipelines_added")
         
         # Transport Representation
         if config["user"]["pipelines"]["transport"]:
-            add_transport(db_map,db_veh,config)
-            print("transport_added")
-            db_map.commit_session("transport_added")
+            with DatabaseMapping(url_db_veh) as db_veh:
+                db_veh.fetch_all()
+                add_transport(db_map,db_veh,config)
+                print("transport_added")
+                db_map.commit_session("transport_added")
 
         # Heat Sector Representation
         if config["user"]["pipelines"]["heat"]:
-            add_heat_sector(db_map,db_hea,config)
-            print("heat_sector_added")
-            db_map.commit_session("heat_sector_added")
+            with DatabaseMapping(url_db_hea) as db_hea:
+                db_hea.fetch_all()
+                add_heat_sector(db_map,db_hea,config)
+                print("heat_sector_added")
+                db_map.commit_session("heat_sector_added")
 
         # Commodity Nodes parameters
-        add_nodes(db_map,db_com,config)
-        print("nodes_added")
-        db_map.commit_session("nodes_added")
+        with DatabaseMapping(url_db_com) as db_com:
+            db_com.fetch_all()
+            add_nodes(db_map,db_com,config)
+            print("nodes_added")
+            db_map.commit_session("nodes_added")
 
         # Policy Constraints
         add_policy_constraints(db_map,config)

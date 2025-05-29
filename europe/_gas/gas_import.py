@@ -144,7 +144,9 @@ def ch4_production(target_db,sheet):
                 pass
             add_entity(target_db,"commodity__to_technology",("fossil-CH4",tech))
             add_entity(target_db,"technology__to_commodity",(tech,"CH4"))
-    
+            add_entity(target_db,"commodity__to_technology__to_commodity",("fossil-CH4",tech,"CH4"))
+            add_parameter_value(target_db,"commodity__to_technology__to_commodity","conversion_rate","Base",("fossil-CH4",tech,"CH4"),1.0)
+
     for country in sheet["To Country"].unique():
         add_entity(target_db,"region",(country,))   
 
@@ -246,6 +248,8 @@ def h2_production(target_db,sheet):
                 pass
             add_entity(target_db,"commodity__to_technology",("global-H2",tech))
             add_entity(target_db,"technology__to_commodity",(tech,"H2"))
+            add_entity(target_db,"commodity__to_technology__to_commodity",("global-H2",tech,"H2"))
+            add_parameter_value(target_db,"commodity__to_technology__to_commodity","conversion_rate","Base",("global-H2",tech,"H2"),1.0)
 
     for country in sheet["Country"].unique():
         try:

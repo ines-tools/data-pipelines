@@ -2,17 +2,17 @@
 # countries : ["AL","DE","HU","MK","SE","AT","DK","IE","MT","SI","BA","EE","IT","NL","SK","BE","ES","LT","NO","TR","BG","FI","LU","PL","UA","CH","FR","LV","PT","UK","CY","GR","MD","RO","XK","CZ","HR","ME","RS"]
 
 pipelines:
-  power: False
-  vre: False
-  hydro: False
+  power: True
+  vre: True
+  hydro: True
   biomass: True
   electricity_transmission: False
-  residual_demand: False
-  gas: False
+  residual_demand: True
+  gas: True
   gas_pipelines: False
   industry: True
   heat: True
-  transport: False
+  transport: True
 
 model:
     type :  brownfield # greenfied
@@ -60,11 +60,11 @@ countries :
 # Sectors optimized
 commodity: 
   elec: 
-    status: False
+    status: True
   CH4: 
-    status: False
+    status: True
   H2: 
-    status: False
+    status: True
   CO2: 
     status: False
   bio: 
@@ -94,9 +94,9 @@ transmission:
   elec: 
     status: True
   CH4: 
-    status: False
+    status: True
   H2: 
-    status: False
+    status: True
   CO2: 
     status: False
 
@@ -105,13 +105,13 @@ storage:
     status: True
     investment_method : "no_limits"
   CH4-geo-formation : 
-    status: False 
+    status: True 
     investment_method : "not_allowed"
   H2-tank : 
     status: False 
     investment_method : "no_limits"
   salt-cavern :
-    status: False 
+    status: True 
     investment_method : "cumulative_limits"
   CO2-geo-formation :
     status: False 
@@ -311,13 +311,13 @@ technology:
     renewable : True
   # gas production
   SMR: 
-    status: False
+    status: True
     investment_method: "no_limits"
   SMR+CC:
-    status: False
+    status: True
     investment_method: "no_limits"
   PEM: 
-    status: False
+    status: True
     investment_method: "no_limits"
   AEC: 
     status: False
@@ -329,10 +329,10 @@ technology:
     status: False
     investment_method: "no_limits"
   methanation: 
-    status: False
+    status: True
     investment_method: "no_limits"
   bio-diges-up: 
-    status: False
+    status: True
     investment_method: "no_limits"
   bio-diges-up+CC: 
     status: False
@@ -350,34 +350,34 @@ technology:
     status: True
     investment_method: "no_limits"
   LNG-terminal:
-    status: False
+    status: True
     investment_method: "not_allowed"
   gas-extraction: 
-    status: False
+    status: True
     investment_method: "not_allowed"
   CH4-import-DZ: 
     status: False
     investment_method: "not_allowed"
   CH4-import-LY: 
-    status: False
+    status: True
     investment_method: "not_allowed"
   CH4-import-DZ: 
-    status: False
+    status: True
     investment_method: "not_allowed"
   CH4-import-MA: 
-    status: False
+    status: True
     investment_method: "not_allowed"
   CH4-import-BL: 
-    status: False
+    status: True
     investment_method: "not_allowed"
   CH4-import-RU: 
-    status: False
+    status: True
     investment_method: "not_allowed"
   H2-import-DZ: 
-    status: False
+    status: True
     investment_method: "not_allowed"
   LH2-terminal: 
-    status: False
+    status: True
     investment_method: "not_allowed"
   # heat sector
   gas-CHP:
