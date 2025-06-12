@@ -145,7 +145,7 @@ def demand_sectors(target_db,sheet):
             map_param["data"]["y2030"] = -1*multiplier*float(sheet.at[i,"2030"])
             map_param["data"]["y2050"] = -1*multiplier*float(sheet.at[i,"2050"])
             map_param["data"]["y2040"] = (map_param["data"]["y2030"] + map_param["data"]["y2050"])/2
-            add_parameter_value(target_db, entity_name, "demand", "Base", entity_byname, -1*multiplier*float(sheet.at[i,"2030"])) # same demand for every year
+            add_parameter_value(target_db, entity_name, "demand", "Base", entity_byname, -1*multiplier*(float(sheet.at[i,"2030"]) if sheet.at[i,"to_node"] != "HC" else float(sheet.at[i,"2030"])*0.2)) # same demand for every year
 
 def main():
 

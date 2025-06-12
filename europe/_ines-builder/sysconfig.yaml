@@ -174,6 +174,7 @@ hydro_systems:
           - [node_type,storage,[[1,2]]]
           - [storage_limit_method,lower_limit,[[1,2]]]
           - [storage_state_fix_method,fix_start,[[1,2]]]
+          - [storage_state_binding_method,leap_over_within_solve,[[1,2]]]
           - [flow_scaling_method,use_profile_directly,[[1,2]]]
           - [storage_investment_method,not_allowed,[[1,2]]]
     fixed:
@@ -290,6 +291,7 @@ biomass_production:
         node:
           - [node_type,storage,[[1]]]
           - [storage_state_fix_method,fix_start,[[1]]]
+          - [storage_state_fix,1.0,[[1]]]
         node__link__node:
           - [efficiency,1.0,[[1],[1,2],[2]]]
     dynamic:
@@ -297,7 +299,7 @@ biomass_production:
         node__link__node:
           operational_cost: [operational_cost,[[1],[1,2],[2]],[area,{}],null,PECD1]
         node:
-          annual_production: [storage_state_fix,[[1]],[area,{}],null,PECD1]
+          annual_production: [storage_capacity,[[1]],[area,{}],null,PECD1]
 
 # gas sector modelling
 gas_sector:
@@ -348,6 +350,7 @@ gas_sector:
         node:
           - [node_type,storage,[[1]]]
           - [storage_limit_method,upper_limit,[[1]]]
+          - [storage_state_binding_method,leap_over_within_solve,[[1]]]
     fixed:
       technology:
         unit:
@@ -366,6 +369,8 @@ gas_sector:
           investment_cost: [storage_investment_cost,1.0,[[1]]]
           fixed_cost: [storage_fixed_cost,1.0,[[1]]]
           lifetime: [storage_lifetime,1.0,[[1]]]
+          initial_state: [storage_state_fix,1.0,[[1]]]
+          capacity: [storage_capacity,1.0,[[1]]]
       storage_connection:
         link:
           investment_cost: [investment_cost,1.0,[[1,2]]]
@@ -445,12 +450,14 @@ transport_sector:
       commodity__vehicle__region:
         node:
           - [storage_investment_method,no_limits,[[2,3]],{node_type: storage}]
+          - [storage_limit_method,upper_limit,[[2,3]],{node_type: storage}]
+          - [storage_capacity,1.0,[[2,3]],{node_type: storage}]
           - [flow_scaling_method,scale_to_annual,[[2,3]],{}]
     fixed:
       commodity__vehicle__region:
         node:
           node_type: [node_type,1.0,[[2,3]]]
-          connected_vehicles: [storage_capacity,1.0,[[2,3]]]
+          connected_vehicles: [storage_state_upper_limit,1.0,[[2,3]]]
           energy_max: [storages_fix_cumulative,1.0,[[2,3]]]
           flow_profile: [flow_profile,-1.0,[[2,3]]]
           scale_demand: [flow_annual,1.0,[[2,3]]]

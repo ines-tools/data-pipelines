@@ -65,7 +65,6 @@ def main():
                 
                 value_converted = filter_db["quantity"].sum()*277777.77
                 add_parameter_value(db_map,"stock__to_commodity__region","annual_production",scenario+"_bio",("biomass-stock","bio",region),round(value_converted,1))
-
                 transport_cost = 7.0 # moving biomass to final destination, average value
                 value_converted = 1.32*np.dot(filter_db["quantity"].values,filter_db["roadsidecost"].values)/filter_db["quantity"].sum()/0.277778 + transport_cost if filter_db["quantity"].sum() > 0 else transport_cost
                 add_parameter_value(db_map,"stock__to_commodity__region","operational_cost",scenario+"_bio",("biomass-stock","bio",region),round(value_converted,1))

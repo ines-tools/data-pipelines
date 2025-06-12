@@ -54,7 +54,7 @@ def process_parameters(target_db, sheet):
         entity_byname = ("reservoir",country)
         add_entity(target_db, entity_name, entity_byname)
         for parameter in ["initial_capacity","minimum_capacity","capacity"]:
-            value_param = float(sheet.at[country,params[parameter]]) if parameter != "minimum_capacity" else round(float(sheet.at[country,params[parameter]])/float(sheet.at[country,params["capacity"]]),3)
+            value_param = float(sheet.at[country,params[parameter]]) if parameter == "capacity" else round(float(sheet.at[country,params[parameter]])/float(sheet.at[country,params["capacity"]]),3)
             add_parameter_value(target_db, entity_name, parameter, "Base", entity_byname, value_param)
         
         entity_name = "reservoir__to_technology__region"

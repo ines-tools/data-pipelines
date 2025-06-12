@@ -726,7 +726,9 @@ def add_gas_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                                         for value_ in values_:
                                             value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
                                             add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)
-                        
+                                            if param_list[param_source][0] == "storage_state_fix":
+                                                add_parameter_value(db_map,entity_class_target,"storage_state_fix_method",value_["alternative_name"],entity_target_name,"fix_start")
+                                            
                         # Regional Parameter
                         entity_class_region = f"{entity_class}__region"
                         if entity_class_region in config["sys"][db_name]["parameters"]["dynamic"]:
@@ -938,15 +940,17 @@ def add_heat_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, confi
                             
 def add_policy_constraints(db_map : DatabaseMapping, config : dict):
 
-    co2_budget = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":config["user"]["global_constraints"]["co2_annual_budget"][year]/1e3 for year in config["user"]["global_constraints"]["co2_annual_budget"]}}
+    co2_values = [config["user"]["global_constraints"]["co2_annual_budget"][year] for year in config["user"]["global_constraints"]["co2_annual_budget"]]
+    co2_years  = [f"y{year}" for year in config["user"]["global_constraints"]["co2_annual_budget"]]
+    co2_budget = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(co2_years,[round(value_/co2_values[0],3) for value_ in co2_values]))}
     # Atmosphere entity is created
     entity_name = "node"
     entity_byname = ("atmosphere",)
     add_entity(db_map,entity_name,entity_byname)
     add_parameter_value(db_map,entity_name,"node_type","Base",entity_byname,"storage")
-    add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,1e3)
-    add_parameter_value(db_map,entity_name,"storages_fix_cumulative","Base",entity_byname,co2_budget)
-    add_parameter_value(db_map,entity_name,"storage_investment_method","Base",entity_byname,"no_limits")
+    add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,co2_values[0])
+    add_parameter_value(db_map,entity_name,"storage_state_upper_limit","Base",entity_byname,co2_budget)
+    add_parameter_value(db_map,entity_name,"storage_limit_method","Base",entity_byname,"upper_limit")
 
     # co2 storage entity is created
     if not config["user"]["commodity"]["CO2"]["status"]:
@@ -996,6 +1000,7 @@ def main():
         add_superclass_subclass(db_map,"unit_flow","node__to_unit")
         add_superclass_subclass(db_map,"unit_flow","unit__to_node")
         print("ines_map_added")
+        db_map.refresh_session()
         db_map.commit_session("ines_map_added")
         
         # Base alternative

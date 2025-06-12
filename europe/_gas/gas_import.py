@@ -175,6 +175,7 @@ def ch4_storage(target_db,sheet):
     for tech in sheet.technology.unique():
         try:
             add_entity(target_db,"storage",(tech,))
+            add_parameter_value(target_db,"storage","initial_state","Base",(tech,),0.9)
             add_entity(target_db,"storage_connection",(tech,com))
             add_parameter_value(target_db,"storage_connection","efficiency_in","Base",(tech,com),1.0)
             add_parameter_value(target_db,"storage_connection","efficiency_out","Base",(tech,com),1.0)
