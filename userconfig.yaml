@@ -16,7 +16,7 @@ pipelines:
 
 model:
     type :  brownfield # greenfied
-    operations_resolution : "12h"
+    operations_resolution : "1h"
     planning_resolution : "365D"
     planning_years: 
       "2030": "2030-01-01T00:00:00"
@@ -221,7 +221,7 @@ technology:
     renewable : True
   nuclear-3:
     rename : "nuclear-3"
-    status: False
+    status: True
     investment_method: "no_limits"
     renewable : False
   nuclear-3-existing:
@@ -301,7 +301,7 @@ technology:
     renewable : True
   fuelcell:
     rename : "fuelcell"
-    status: True
+    status: False
     investment_method: "no_limits"
     renewable : False
   hydro-turbine:
@@ -389,13 +389,22 @@ technology:
   bio-boiler:
     status: True
     investment_method: "no_limits"
+  bio-boiler-existing:
+    status: True
+    investment_method: "not_allowed"
   gas-CHP+CC:
     status: False
     investment_method: "not_allowed"
   oil-boiler:
     status: True
     investment_method: "no_limits"
+  oil-boiler-existing:
+    status: True
+    investment_method: "not_allowed"
   bio-boiler-DH:
+    status: False
+    investment_method: "not_allowed"
+  bio-boiler-DH-existing:
     status: False
     investment_method: "not_allowed"
   fuelcell-CHP:
@@ -404,19 +413,34 @@ technology:
   gas-boiler-DH:
     status: False
     investment_method: "not_allowed"
+  gas-boiler-DH-existing:
+    status: False
+    investment_method: "not_allowed"
   heatpump-DH:
     status: False
     investment_method: "not_allowed"
-  elec-boiler:
-    status: True
-    investment_method: "no_limits"
+  heatpump-DH-existing:
+    status: False
+    investment_method: "not_allowed"
+  elec-boiler-DH:
+    status: False
+    investment_method: "not_allowed"
+  elec-boiler-DH:
+    status: False
+    investment_method: "not_allowed"
   coal-CHP+CC:
     status: False
     investment_method: "not_allowed"
   electric-heating:
     status: True
     investment_method: "no_limits"
+  electric-heating-existing:
+    status: True
+    investment_method: "not_allowed"
   solar-DH:
+    status: False
+    investment_method: "not_allowed"
+  solar-DH-existing:
     status: False
     investment_method: "not_allowed"
   air-heatpump-cool:
@@ -425,15 +449,30 @@ technology:
   air-heatpump:
     status: True
     investment_method: "no_limits"
+  air-heatpump-existing:
+    status: True
+    investment_method: "not_allowed"
   solar-heating:
+    status: False
+    investment_method: "not_allowed"
+  solar-heating-existing:
     status: False
     investment_method: "not_allowed"
   ground-heatpump: 
     status: True
     investment_method: "no_limits"
+  ground-heatpump-existing: 
+    status: True
+    investment_method: "not_allowed"
   gas-boiler:
     status: True
     investment_method: "no_limits"
+  gas-boiler-existing:
+    status: True
+    investment_method: "not_allowed"
+  coal-boiler-existing:
+    status: True
+    investment_method: "not_allowed"
   waste-CHP:
     status: False
     investment_method: "not_allowed"
@@ -443,13 +482,19 @@ technology:
   geothermal-DH:
     status: False
     investment_method: "not_allowed"
+  geothermal-DH-existing:
+    status: False
+    investment_method: "not_allowed"
   bio-CHP:
     status: False
     investment_method: "not_allowed"
   bio-CHP+CC:
     status: False
     investment_method: "not_allowed"
-  waste-DH:
+  waste-DH-existing:
+    status: False
+    investment_method: "not_allowed"
+  waste-CHP-existing:
     status: False
     investment_method: "not_allowed"
   # industrial routes

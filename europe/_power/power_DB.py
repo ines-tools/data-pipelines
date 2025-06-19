@@ -146,6 +146,7 @@ def existing_data(target_db,existing_tech,existing_param):
                     add_entity(target_db,"technology__to_commodity",(tech,"elec"))
                     add_parameter_value(target_db,"technology__to_commodity","capacity","Base",(tech,"elec"),1.0)  
                     add_parameter_value(target_db,"technology__to_commodity","operational_cost","Base",(tech,"elec"),float(existing_param.at[techname,"vom_cost"]))
+                    add_parameter_value(target_db,"technology__to_commodity","fixed_cost","Base",(tech,"elec"),float(existing_param.at[techname,"fom_cost"]))
                     add_entity(target_db,"commodity__to_technology",(from_node,tech))
                     add_entity(target_db,"commodity__to_technology__to_commodity",(from_node,tech,"elec"))
                     add_parameter_value(target_db,"commodity__to_technology__to_commodity","conversion_rate","Base",(from_node,tech,"elec"),float(existing_param.at[techname,"efficiency"]))

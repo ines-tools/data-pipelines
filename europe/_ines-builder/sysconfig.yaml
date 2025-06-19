@@ -556,7 +556,6 @@ heat_sector:
       technology__region:
         unit:
           units_existing: [units_existing,[[1]],[area,{}],null,PECD1]
-          efficiency: [efficiency,[[1]],[area,{}],null,PECD1]
       commodity__to_technology__to_commodity__region:
         unit_flow__unit_flow:
           conversion_rate: [equality_ratio,[[2],[3],[1],[2]],[area,{}],null,PECD1]

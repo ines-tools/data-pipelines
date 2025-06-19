@@ -942,15 +942,12 @@ def add_policy_constraints(db_map : DatabaseMapping, config : dict):
 
     co2_values = [config["user"]["global_constraints"]["co2_annual_budget"][year] for year in config["user"]["global_constraints"]["co2_annual_budget"]]
     co2_years  = [f"y{year}" for year in config["user"]["global_constraints"]["co2_annual_budget"]]
-    co2_budget = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(co2_years,[round(value_/co2_values[0],3) for value_ in co2_values]))}
+    co2_budget = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(co2_years,co2_values))}
     # Atmosphere entity is created
-    entity_name = "node"
+    entity_name = "set"
     entity_byname = ("atmosphere",)
     add_entity(db_map,entity_name,entity_byname)
-    add_parameter_value(db_map,entity_name,"node_type","Base",entity_byname,"storage")
-    add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,co2_values[0])
-    add_parameter_value(db_map,entity_name,"storage_state_upper_limit","Base",entity_byname,co2_budget)
-    add_parameter_value(db_map,entity_name,"storage_limit_method","Base",entity_byname,"upper_limit")
+    add_parameter_value(db_map,entity_name,"co2_max_cumulative","Base",entity_byname,co2_budget)
 
     # co2 storage entity is created
     if not config["user"]["commodity"]["CO2"]["status"]:
