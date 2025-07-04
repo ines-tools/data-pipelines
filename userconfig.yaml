@@ -279,6 +279,11 @@ technology:
     status: True
     investment_method: "no_limits"
     renewable : True
+  solar-PV-existing:
+    rename : "solar-PV"
+    status: True
+    investment_method: "not_allowed"
+    renewable : True
   solar-PV-no-tracking:
     rename : "solar-PV"
     status: True

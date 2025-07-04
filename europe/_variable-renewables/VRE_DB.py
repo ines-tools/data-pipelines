@@ -67,7 +67,7 @@ def main():
     vre_cost = pd.read_csv(path_to_file(sys.argv[1:],"VRE_costs.csv"),index_col=0)
 
     # Read availability data
-    availability = {tech: pd.read_csv(path_to_file(sys.argv[1:],f"{tech}.csv"), index_col=0) for tech in vre_cost.index}
+    availability = {tech: pd.read_csv(path_to_file(sys.argv[1:],f"{tech}.csv"), index_col=0) for tech in vre_cost.index if tech != "solar-PV-existing"}
 
     print("Data loaded")
 
@@ -102,24 +102,31 @@ def main():
             tech_type = "wind-on" if "wind-on" in tech else ("wind-off" if "wind-off" in tech else "solar-PV")
             add_entity(db_map,"technology_type__technology",(tech_type,tech))
 
-            # Investment costs
-            map_icost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"capex_"+year])*1e6,1) for year in ["2030","2040","2050"] if pd.notna(vre_cost.at[tech,"capex_"+year])}}
-            # Fixed costs 
-            map_fcost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"fom_"+year]),1) for year in ["2030","2040","2050"] if pd.notna(vre_cost.at[tech,"capex_"+year])}}
-            # Vom costs 
-            map_vcost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"vom_"+year]),1) for year in ["2030","2040","2050"] if pd.notna(vre_cost.at[tech,"capex_"+year]) and pd.notna(vre_cost.at[tech,"vom_"+year])}}
+            if "existing" in tech:
+                add_parameter_value(db_map,"technology__to_commodity","fixed_cost","Base",(tech,"elec"),round(float(vre_cost.at[tech,"fom_2030"]),1))
+                if pd.notna(vre_cost.at[tech,"vom_2030"]):
+                    add_parameter_value(db_map,"technology__to_commodity","operational_cost","Base",(tech,"elec"),round(float(vre_cost.at[tech,"vom_2030"]),1))
+            else:
+                # Investment costs
+                map_icost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"capex_"+year])*1e6,1) for year in ["2030","2040","2050"]}}
+                # Fixed costs 
+                map_fcost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"fom_"+year]),1) for year in ["2030","2040","2050"]}}
+                # Vom costs 
+                map_vcost = {"type":"map","index_type":"str","index_name":"period","data":{"y"+year:round(float(vre_cost.at[tech,"vom_"+year]),1) for year in ["2030","2040","2050"] if pd.notna(vre_cost.at[tech,"vom_"+year])}}
+                
+                add_parameter_value(db_map,"technology","lifetime","Base",(tech,),float(vre_cost.at[tech,"lifetime"]))
 
-            if bool(map_icost["data"]):
-                add_parameter_value(db_map,"technology__to_commodity","investment_cost","Base",(tech,"elec"),map_icost)
+                if bool(map_icost["data"]):
+                    add_parameter_value(db_map,"technology__to_commodity","investment_cost","Base",(tech,"elec"),map_icost)
+                
+                # Fixed cost
+                if bool(map_fcost["data"]):
+                    add_parameter_value(db_map,"technology__to_commodity","fixed_cost","Base",(tech,"elec"),map_fcost)
+                
+                if bool(map_vcost["data"]):
+                    add_parameter_value(db_map,"technology__to_commodity","operational_cost","Base",(tech,"elec"),map_vcost)
             
-            # Fixed cost
-            if bool(map_fcost["data"]):
-                add_parameter_value(db_map,"technology__to_commodity","fixed_cost","Base",(tech,"elec"),map_fcost)
             
-            if bool(map_vcost["data"]):
-                add_parameter_value(db_map,"technology__to_commodity","operational_cost","Base",(tech,"elec"),map_vcost)
-            add_parameter_value(db_map,"technology","lifetime","Base",(tech,),float(vre_cost.at[tech,"lifetime"]))
-
         ## ONSHORE EXISTING
         for poly in existing_wind_on.index:
             tech = "wind-on-existing"
@@ -141,7 +148,7 @@ def main():
                     add_technology_relationship(db_map, "wind-on", tech, poly, potential_wind_on.at[poly], availability[tech], CY_index)
         print("wind_on_future")
 
-        ## ONSHORE SOLAR
+        ## FUTURE ONSHORE SOLAR
         share = {"solar-PV-no-tracking":0.8,"solar-PV-rooftop":0.2,"solar-PV-tracking":0.0}
         technologies = ["solar-PV-no-tracking","solar-PV-rooftop","solar-PV-tracking"]
         for tech in technologies:
@@ -149,9 +156,17 @@ def main():
                 if poly in availability[tech].columns and poly in potential_solar_PV.index:
                     add_region(db_map, poly, "onshore", "PECD2")
                     add_technology_relationship(db_map, "solar-PV", tech, poly, potential_solar_PV.at[poly], availability[tech], CY_index)
+        
+        ## Existing SOLAR
+        technologies = ["solar-PV-existing"]
+        for tech in technologies:
+            for poly in existing_solar_PV.index:
+                if poly in availability["solar-PV-no-tracking"].columns and existing_solar_PV.round(2).at[poly,2030] > 0:
+                    add_region(db_map, poly, "onshore", "PECD2")
+                    add_technology_relationship(db_map, "solar-PV", tech, poly, potential_solar_PV.at[poly], availability["solar-PV-no-tracking"], CY_index)
 
                     add_entity(db_map,"technology__region",(tech,poly))
-                    map_existing = {"type":"map","index_type":"str","index_name":"period","data":{f"y{str(year)}":round(share[tech]*float(existing_solar_PV.at[poly,year]*1e3),1) for year in [2030,2040,2050]}}
+                    map_existing = {"type":"map","index_type":"str","index_name":"period","data":{f"y{str(year)}":round(float(existing_solar_PV.at[poly,year]*1e3),1) for year in [2030,2040,2050]}}
                     add_parameter_value(db_map,"technology__region","units_existing","Base",(tech,poly),map_existing)  
 
         print("Solar-PV")

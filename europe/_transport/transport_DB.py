@@ -95,8 +95,8 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):
                     data_flex_discharging  = sum(data[(region,vehicle,year,profile)]["Vehicle Discharge Power (kW)"].max()  for year in df_index["year"].unique())/len(df_index["year"].unique())
                     data_flex_cap          = sum(data[(region,vehicle,year,profile)]["Connected Battery capacity (kWh)"].max()  for year in df_index["year"].unique())/len(df_index["year"].unique())
                     data_flex_demand       = (sum(data[(region,vehicle,year,profile)]["Demand for next leg (kWh) (to vehicle)"].values for year in df_index["year"].unique())/len(df_index["year"].unique())).round(3)
-                    data_efficiency_in     = (sum(data[(region,vehicle,year,profile)]["Effective charging efficiency"].values for year in df_index["year"].unique())/len(df_index["year"].unique())).round(3)
-                    data_efficiency_out    = (sum(data[(region,vehicle,year,profile)]["Effective discharge efficiency"].values for year in df_index["year"].unique())/len(df_index["year"].unique())).round(3)
+                    data_efficiency_in     = {"y"+year: round(data[(region,vehicle,year,profile)]["Effective charging efficiency"].values.mean(),3) for year in df_index["year"].unique()}
+                    data_efficiency_out    = {"y"+year: round(data[(region,vehicle,year,profile)]["Effective discharge efficiency"].values.mean(),3) for year in df_index["year"].unique()}
                     data_connected         = (sum(data[(region,vehicle,year,profile)]["Connected vehicles (%)"].values for year in df_index["year"].unique())/len(df_index["year"].unique())).round(3)
                     if condition_:
                         try:
@@ -139,8 +139,8 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):
                         add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_profile)
                         map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(data_connected,cyears)}
                         add_parameter_value(target_db,entity_name,"connected_vehicles","Base",entity_byname,map_profile)
-                        add_parameter_value(target_db,entity_name,"efficiency_in","Base",entity_byname,round(data_efficiency_in.mean(),3))
-                        add_parameter_value(target_db,entity_name,"efficiency_out","Base",entity_byname,round(data_efficiency_out.mean(),3))
+                        add_parameter_value(target_db,entity_name,"efficiency_in","Base",entity_byname,{"type":"map","index_type":"str","index_name":"period","data":data_efficiency_in})
+                        add_parameter_value(target_db,entity_name,"efficiency_out","Base",entity_byname,{"type":"map","index_type":"str","index_name":"period","data":data_efficiency_out})
                     else:
                         print(vehicle,region,"elec not defined")
                 else:
