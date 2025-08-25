@@ -55,7 +55,9 @@ def process_storage_data(sheet, config_file, target_db,commodities):
             entity_byname = (storage_name, connected_to)
             add_entity(target_db, entity_name, entity_byname)
             process_single_parameter(sheet.T[storage_name], config_file, target_db, entity_name, entity_byname, "lifetime",)
-            for param_name in ["investment_cost", "fixed_cost", "operational_cost", "efficiency_in", "efficiency_out"]:
+            process_single_parameter(sheet.T[storage_name], config_file, target_db, entity_name, entity_byname, "efficiency_in",)
+            process_single_parameter(sheet.T[storage_name], config_file, target_db, entity_name, entity_byname, "efficiency_out",)
+            for param_name in ["investment_cost", "fixed_cost", "operational_cost"]:
                 multiplier = 1e6 if param_name == "investment_cost" else 1
                 process_map_parameter(sheet.T[storage_name], config_file, target_db, entity_name, entity_byname, param_name, multiplier)
 

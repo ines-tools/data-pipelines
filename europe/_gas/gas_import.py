@@ -138,12 +138,14 @@ def ch4_production(target_db,sheet):
     for tech in sheet.technology.unique():
         if tech not in ["bio-diges-up","methanation"]:
             add_entity(target_db,"technology",(tech,))
+            add_parameter_value(target_db,"technology","retirement_method","Base",(tech,),"not_retired")
             try:
                 add_entity(target_db,"commodity",("fossil-CH4",))
             except:
                 pass
             add_entity(target_db,"commodity__to_technology",("fossil-CH4",tech))
             add_entity(target_db,"technology__to_commodity",(tech,"CH4"))
+            add_parameter_value(target_db,"technology__to_commodity","capacity","Base",(tech,"CH4"),1.0)
             add_entity(target_db,"commodity__to_technology__to_commodity",("fossil-CH4",tech,"CH4"))
             add_parameter_value(target_db,"commodity__to_technology__to_commodity","conversion_rate","Base",("fossil-CH4",tech,"CH4"),1.0)
 
@@ -160,8 +162,10 @@ def ch4_production(target_db,sheet):
             map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity*1000/24,1) for year in ["2030"]}}
             add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_cap)
         else:
+            add_entity(target_db,"technology__region",(tech,country))
             add_entity(target_db,"technology__to_commodity__region",(tech,"CH4",country))
-            add_parameter_value(target_db,"technology__to_commodity__region","capacity","Base",(tech,"CH4",country),round(capacity*1000/24,1))
+            map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity*1e3/24,1) for year in ["2030"]}}
+            add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_cap)
             if pd.notna(cost) and cost != 0.0:
                 add_parameter_value(target_db,"technology__to_commodity__region","operational_cost","Base",(tech,"CH4",country),round(cost,2))
     try:
@@ -176,7 +180,10 @@ def ch4_storage(target_db,sheet):
         try:
             add_entity(target_db,"storage",(tech,))
             add_parameter_value(target_db,"storage","initial_state","Base",(tech,),0.9)
+            add_parameter_value(target_db,"storage","storage_retirement_method","Base",(tech,),"not_retired")
             add_entity(target_db,"storage_connection",(tech,com))
+            add_parameter_value(target_db,"storage_connection","retirement_method_in","Base",(tech,com),"not_retired")
+            add_parameter_value(target_db,"storage_connection","retirement_method_out","Base",(tech,com),"not_retired")
             add_parameter_value(target_db,"storage_connection","efficiency_in","Base",(tech,com),1.0)
             add_parameter_value(target_db,"storage_connection","efficiency_out","Base",(tech,com),1.0)
         except:
@@ -198,11 +205,17 @@ def ch4_storage(target_db,sheet):
         with_cost = row.iloc[7]
 
         add_entity(target_db,"storage__region",(tech,country))
-        add_parameter_value(target_db,"storage__region","capacity","Base",(tech,country),round(capacity*1e6,1))
+        map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity*1e6,1) for year in ["2030"]}}
+        add_parameter_value(target_db,"storage__region","storages_existing","Base",(tech,country),map_cap)
+        add_parameter_value(target_db,"storage__region","capacity","Base",(tech,country),1.0)
         
         add_entity(target_db,"storage_connection__region",(tech,com,country))
-        add_parameter_value(target_db,"storage_connection__region","capacity_in","Base",(tech,com,country),round(capacity_in*1000/24,1))
-        add_parameter_value(target_db,"storage_connection__region","capacity_out","Base",(tech,com,country),round(capacity_out*1000/24,1))
+        map_cap_in = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity_in*1e3/24,1) for year in ["2030"]}}
+        map_cap_out = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity_out*1e3/24,1) for year in ["2030"]}}
+        add_parameter_value(target_db,"storage_connection__region","links_existing_in","Base",(tech,com,country),map_cap_in)
+        add_parameter_value(target_db,"storage_connection__region","links_existing_out","Base",(tech,com,country),map_cap_out)
+        add_parameter_value(target_db,"storage_connection__region","capacity_in","Base",(tech,com,country),1.0)
+        add_parameter_value(target_db,"storage_connection__region","capacity_out","Base",(tech,com,country),1.0)
         add_parameter_value(target_db,"storage_connection__region","operational_cost_in","Base",(tech,com,country),round(inj_cost,2))
         add_parameter_value(target_db,"storage_connection__region","operational_cost_out","Base",(tech,com,country),round(with_cost,2))
 
@@ -230,7 +243,9 @@ def ch4_network(target_db,sheet):
 
         add_entity(target_db,"pipeline",(from_country,com,to_country))
         map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity*1e3/24,1) for year in ["2030"]}}
-        add_parameter_value(target_db,"pipeline","capacity","Base",(from_country,com,to_country),round(capacity*1e3/24,1))
+        add_parameter_value(target_db,"pipeline","links_existing","Base",(from_country,com,to_country),map_cap)
+        add_parameter_value(target_db,"pipeline","capacity","Base",(from_country,com,to_country),1.0)
+        add_parameter_value(target_db,"pipeline","retirement_method","Base",(from_country,com,to_country),"not_retired")
         map_cost = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(operational_cost,2)  for year in ["2030","2040","2050"]}}
         add_parameter_value(target_db,"pipeline","operational_cost","Base",(from_country,com,to_country),round(operational_cost,2))
     try:

@@ -36,20 +36,6 @@
     "parameter_definitions": [
         [
             "commodity__vehicle__region",
-            "capacity_in",
-            null,
-            null,
-            null
-        ],
-        [
-            "commodity__vehicle__region",
-            "capacity_out",
-            null,
-            null,
-            null
-        ],
-        [
-            "commodity__vehicle__region",
             "connected_vehicles",
             null,
             null,
@@ -79,6 +65,27 @@
         [
             "commodity__vehicle__region",
             "flow_profile",
+            null,
+            null,
+            null
+        ],
+        [
+            "commodity__vehicle__region",
+            "node_type",
+            null,
+            null,
+            null
+        ],
+        [
+            "commodity__vehicle__region",
+            "power_available",
+            null,
+            null,
+            null
+        ],
+        [
+            "commodity__vehicle__region",
+            "power_capacity",
             null,
             null,
             null

@@ -43,11 +43,17 @@ power_sector:
       node: 
         - [[1]]
     storage_connection:
-      link: 
+      unit: 
         - [[1,2]]
-      node__link__node: 
-        - [[1],[1,2],[2]]
-        - [[2],[1,2],[1]]
+      node__to_unit: 
+        - [[1],[1,2]]
+        - [[2],[1,2]]
+      unit__to_node:
+        - [[1,2],[2]]
+        - [[1,2],[1]] 
+      unit_flow__unit_flow:
+        - [[1,2],[2],[1],[1,2]]
+        - [[1,2],[1],[2],[1,2]]
 
   parameters:
     user:
@@ -58,7 +64,7 @@ power_sector:
         node:
           storage_investment_method: [storage,investment_method,[[1]],[[1]]]
       storage_connection:
-        link:
+        unit:
           investment_method: [storage,investment_method,[[1]],[[1,2]]]
     default:
       storage:
@@ -67,9 +73,10 @@ power_sector:
           - [storage_capacity,1.0,[[1]]]
           - [storage_limit_method,upper_limit,[[1]]]
       storage_connection:  
-        node__link__node:
-          - [capacity,1.0,[[1],[1,2],[2]]]
-          - [capacity,1.0,[[2],[1,2],[1]]]
+        node__to_unit:
+          - [capacity,1.0,[[2],[1,2]]]
+        unit__to_node:
+          - [capacity,1.0,[[1,2],[2]]]
     fixed:
       technology:
         unit:
@@ -89,14 +96,15 @@ power_sector:
           investment_cost: [storage_investment_cost,1.0,[[1]]]
           lifetime: [storage_lifetime,1.0,[[1]]]
       storage_connection:
-        link:
-          investment_cost: [investment_cost,1.0,[[1,2]]]
-          fixed_cost: [fixed_cost,1.0,[[1,2]]]
-          lifetime: [lifetime,1.0,[[1,2]]]
-        node__link__node:
-          operational_cost: [operational_cost,1.0,[[2],[1,2],[1]]]
-          efficiency_in: [efficiency,1.0,[[2],[1,2],[1]]]
-          efficiency_out: [efficiency,1.0,[[1],[1,2],[2]]]
+        unit:
+          lifetime: [lifetime,1.0,[[1,2]]] 
+        node__to_unit:
+          investment_cost: [investment_cost,1.0,[[2],[1,2]]]
+          fixed_cost: [fixed_cost,1.0,[[2],[1,2]]]     
+          operational_cost: [other_operational_cost,1.0,[[2],[1,2]]]
+        unit_flow__unit_flow:
+          efficiency_in: [equality_ratio,1.0,[[1,2],[1],[2],[1,2]]]
+          efficiency_out: [equality_ratio,1.0,[[1,2],[2],[1],[1,2]]]
     dynamic:
       technology__region:
         unit:
@@ -169,14 +177,18 @@ hydro_systems:
       technology__to_commodity__region:
         unit:
           - [investment_method,not_allowed,[[1,3]]]
+          - [retirement_method,not_retired,[[1,3]]]
+          - [units_existing,1.0,[[1,3]]]
       reservoir__region:
         node:
           - [node_type,storage,[[1,2]]]
+          - [storages_existing,1.0,[[1,2]]]
           - [storage_limit_method,lower_limit,[[1,2]]]
           - [storage_state_fix_method,fix_start,[[1,2]]]
-          - [storage_state_binding_method,leap_over_within_solve,[[1,2]]]
+          - [storage_state_binding_method,leap_over_within_period,[[1,2]]]
           - [flow_scaling_method,use_profile_directly,[[1,2]]]
           - [storage_investment_method,not_allowed,[[1,2]]]
+          - [storage_retirement_method,not_retired,[[1,2]]]
     fixed:
       reservoir__region:
         node:
@@ -291,7 +303,10 @@ biomass_production:
         node:
           - [node_type,storage,[[1]]]
           - [storage_state_fix_method,fix_start,[[1]]]
+          - [storage_retirement_method,not_retired,[[1]]]
+          - [storage_investment_method,not_allowed,[[1]]]
           - [storage_state_fix,1.0,[[1]]]
+          - [storages_existing,1.0,[[1]]]
         node__link__node:
           - [efficiency,1.0,[[1],[1,2],[2]]]
     dynamic:
@@ -350,11 +365,12 @@ gas_sector:
         node:
           - [node_type,storage,[[1]]]
           - [storage_limit_method,upper_limit,[[1]]]
-          - [storage_state_binding_method,leap_over_within_solve,[[1]]]
+          - [storage_state_binding_method,leap_over_within_period,[[1]]]
     fixed:
       technology:
         unit:
           lifetime: [lifetime,1.0,[[1]]]
+          retirement_method: [retirement_method,1.0,[[1]]]
       technology__to_commodity:
         unit__to_node:
           capacity: [capacity,1.0,[[1],[2]]]
@@ -366,6 +382,7 @@ gas_sector:
           conversion_rate: [equality_ratio,1.0,[[2],[3],[1],[2]]]
       storage:
         node:
+          storage_retirement_method: [storage_retirement_method,1.0,[[1]]]
           investment_cost: [storage_investment_cost,1.0,[[1]]]
           fixed_cost: [storage_fixed_cost,1.0,[[1]]]
           lifetime: [storage_lifetime,1.0,[[1]]]
@@ -373,8 +390,8 @@ gas_sector:
           capacity: [storage_capacity,1.0,[[1]]]
       storage_connection:
         link:
-          investment_cost: [investment_cost,1.0,[[1,2]]]
-          lifetime: [lifetime,1.0,[[1,2]]]
+          retirement_method_in: [retirement_method,1.0,[[2,1]]]
+          retirement_method_out: [retirement_method,1.0,[[1,2]]]
         node__link__node:
           capacity_in: [capacity,1.0,[[2],[2,1],[1]]]
           capacity_out: [capacity,1.0,[[1],[1,2],[2]]]  
@@ -426,6 +443,7 @@ gas_pipelines:
     fixed:
       pipeline:
         link:
+          retirement_method: [retirement_method,1.0,[[1,2,3]]]
           investment_cost: [investment_cost,1.0,[[1,2,3]]]
           lifetime: [lifetime,1.0,[[1,2,3]]]
           links_existing: [links_existing,1.0,[[1,2,3]]]
@@ -440,10 +458,20 @@ transport_sector:
         - [[[1,3]],{}]
         - [[[2,3]],{}]
       link:
-        - [[[1,2,3]],{}]
+        - [[[1,2,3]],{node_type: balance}]
       node__link__node:
-        - [[[1,3],[1,2,3],[2,3]],{}]
-        - [[[2,3],[1,2,3],[1,3]],{node_type: storage}]
+        - [[[1,3],[1,2,3],[2,3]],{node_type: balance}]
+      unit:
+        - [[[1,2,3]],{node_type: storage}]
+      node__to_unit:
+        - [[[2,3],[1,2,3]],{node_type: storage}]
+        - [[[1,3],[1,2,3]],{node_type: storage}]
+      unit__to_node:
+        - [[[1,2,3],[2,3]],{node_type: storage}]
+        - [[[1,2,3],[1,3]],{node_type: storage}]
+      unit_flow__unit_flow:
+        - [[[1,2,3],[2,3],[1,3],[1,2,3]],{node_type: storage}]
+        - [[[1,2,3],[1,3],[2,3],[1,2,3]],{node_type: storage}]
   parameters:
     user: null
     default:
@@ -453,6 +481,14 @@ transport_sector:
           - [storage_limit_method,upper_limit,[[2,3]],{node_type: storage}]
           - [storage_capacity,1.0,[[2,3]],{node_type: storage}]
           - [flow_scaling_method,scale_to_annual,[[2,3]],{}]
+        node__link__node:
+          - [efficiency,1.0,[[1,3],[1,2,3],[2,3]],{node_type: balance}]
+        unit:
+          - [investment_method,no_limits,[[1,2,3]],{node_type: storage}]
+        node__to_unit:
+          - [capacity,1.0,[[1,3],[1,2,3]],{node_type: storage}]
+        unit__to_node:
+          - [capacity,1.0,[[1,2,3],[1,3]],{node_type: storage}]
     fixed:
       commodity__vehicle__region:
         node:
@@ -461,13 +497,12 @@ transport_sector:
           energy_max: [storages_fix_cumulative,1.0,[[2,3]]]
           flow_profile: [flow_profile,-1.0,[[2,3]]]
           scale_demand: [flow_annual,1.0,[[2,3]]]
-        link:
-          connected_vehicles: [availability,1.0,[[1,2,3]]]
-        node__link__node:
-          efficiency_in: [efficiency,1.0,[[1,3],[1,2,3],[2,3]]]
-          capacity_in: [capacity,1.0,[[1,3],[1,2,3],[2,3]]]
-          efficiency_out: [efficiency,1.0,[[2,3],[1,2,3],[1,3]]]
-          capacity_out: [capacity,1.0,[[2,3],[1,2,3],[1,3]]]
+        unit:
+          power_available: [availability,1.0,[[1,2,3]]]
+          power_capacity: [units_fix_cumulative,1.0,[[1,2,3]]]
+        unit_flow__unit_flow:
+          efficiency_in: [equality_ratio,1.0,[[1,2,3],[2,3],[1,3],[1,2,3]]]
+          efficiency_out: [equality_ratio,1.0,[[1,2,3],[1,3],[2,3],[1,2,3]]]
 
 # Heat Sector Integration
 heat_sector:

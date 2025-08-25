@@ -51,7 +51,6 @@ def week_to_hourly(commodity,target_db,veh_type,data,key_df,factor,df_index,regi
 
         map_fixed_flow_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(output,cyears)}
         add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_fixed_flow_profile)
-        add_parameter_value(target_db,entity_name,"efficiency_in","Base",entity_byname,1.0)
         add_parameter_value(target_db,entity_name,"node_type","Base",entity_byname,"balance")
 
         for alternative_name in ["GA","DE"]:
@@ -91,13 +90,14 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):
                 if profile == "hourly":
                     condition_ = True
                     data_fixed_charging    = (sum(data[(region,vehicle,year,profile)]["Reference charge drawn from network (kWh)"].values for year in df_index["year"].unique())/len(df_index["year"].unique())).round(3)
-                    data_flex_charging     = sum(data[(region,vehicle,year,profile)]["Charging Power from Network (kW)"].max()  for year in df_index["year"].unique())/len(df_index["year"].unique())
-                    data_flex_discharging  = sum(data[(region,vehicle,year,profile)]["Vehicle Discharge Power (kW)"].max()  for year in df_index["year"].unique())/len(df_index["year"].unique())
-                    data_flex_cap          = sum(data[(region,vehicle,year,profile)]["Connected Battery capacity (kWh)"].max()  for year in df_index["year"].unique())/len(df_index["year"].unique())
+                    data_flex_charging     = {year: data[(region,vehicle,year,profile)]["Charging Power to Vehicles (kW)"].max()  for year in df_index["year"].unique()}
+                    data_power_av          = (sum(data[(region,vehicle,year,profile)]["Charging Power to Vehicles (kW)"].values/data[(region,vehicle,year,profile)]["Charging Power to Vehicles (kW)"].max() for year in df_index["year"].unique())/len(df_index["year"].unique())).round(3)
+                    data_flex_cap          = {year: data[(region,vehicle,year,profile)]["Connected Battery capacity (kWh)"].max()  for year in df_index["year"].unique()}
                     data_flex_demand       = (sum(data[(region,vehicle,year,profile)]["Demand for next leg (kWh) (to vehicle)"].values for year in df_index["year"].unique())/len(df_index["year"].unique())).round(3)
                     data_efficiency_in     = {"y"+year: round(data[(region,vehicle,year,profile)]["Effective charging efficiency"].values.mean(),3) for year in df_index["year"].unique()}
                     data_efficiency_out    = {"y"+year: round(data[(region,vehicle,year,profile)]["Effective discharge efficiency"].values.mean(),3) for year in df_index["year"].unique()}
                     data_connected         = (sum(data[(region,vehicle,year,profile)]["Connected vehicles (%)"].values for year in df_index["year"].unique())/len(df_index["year"].unique())).round(3)
+                    
                     if condition_:
                         try:
                             add_entity(target_db,"vehicle",(vehicle,))
@@ -108,7 +108,6 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):
                         add_entity(target_db,entity_name,entity_byname)
                         map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(data_fixed_charging,cyears)}
                         add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_profile)
-                        add_parameter_value(target_db,entity_name,"efficiency_in","Base",entity_byname,1.0)
                         add_parameter_value(target_db,entity_name,"node_type","Base",entity_byname,"balance")
 
                         for alternative_name in ["GA","DE"]:
@@ -119,6 +118,7 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):
                             add_entity(target_db,"vehicle",(vehicle+"-DR",))
                         except:
                             pass#print("entity created",vehicle)
+
                         entity_name   = "commodity__vehicle__region"
                         entity_byname = ("elec",vehicle+"-DR",region)
                         add_entity(target_db,entity_name,entity_byname)
@@ -126,19 +126,20 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):
 
                         for flex_scenario in ["0","10","20"]:
                             for alternative_name in ["GA","DE"]:
-                                map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round((float(flex_scenario)/1e2)*data_flex_charging*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"Total Fleet"]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"electricity proportion"]/1e3,1) for year in df_index["year"].unique()}}
-                                add_parameter_value(target_db,entity_name,"capacity_in",alternative_name+f"_flex{flex_scenario}",entity_byname,map_profile)
-                                map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round((float(flex_scenario)/1e2)*data_flex_discharging*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"Total Fleet"]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"electricity proportion"]/1e3,1) for year in df_index["year"].unique()}}
-                                add_parameter_value(target_db,entity_name,"capacity_out",alternative_name+f"_flex{flex_scenario}",entity_byname,map_profile)
-                                map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round((float(flex_scenario)/1e2)*data_flex_cap*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"Total Fleet"]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"electricity proportion"]/1e3,1) for year in df_index["year"].unique()}}
+                                map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round((float(flex_scenario)/1e2)*data_flex_charging[year]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"Total Fleet"]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"electricity proportion"]/1e3,1) for year in df_index["year"].unique()}}
+                                add_parameter_value(target_db,entity_name,"power_capacity",alternative_name+f"_flex{flex_scenario}",entity_byname,map_profile)
+                                map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round((float(flex_scenario)/1e2)*data_flex_cap[year]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"Total Fleet"]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"electricity proportion"]/1e3,1) for year in df_index["year"].unique()}}
                                 add_parameter_value(target_db,entity_name,"energy_max",alternative_name+f"_flex{flex_scenario}",entity_byname,map_profile)
                                 map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round((float(flex_scenario)/1e2)*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"Total Fleet"]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"electricity proportion"]/1e3,1) for year in df_index["year"].unique()}}
                                 add_parameter_value(target_db,entity_name,"scale_demand",alternative_name+f"_flex{flex_scenario}",entity_byname,map_profile)
+                        
                         # historical data
                         map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(data_flex_demand,cyears)}
                         add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_profile)
                         map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(data_connected,cyears)}
                         add_parameter_value(target_db,entity_name,"connected_vehicles","Base",entity_byname,map_profile)
+                        map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(data_power_av,cyears)}
+                        add_parameter_value(target_db,entity_name,"power_available","Base",entity_byname,map_profile)
                         add_parameter_value(target_db,entity_name,"efficiency_in","Base",entity_byname,{"type":"map","index_type":"str","index_name":"period","data":data_efficiency_in})
                         add_parameter_value(target_db,entity_name,"efficiency_out","Base",entity_byname,{"type":"map","index_type":"str","index_name":"period","data":data_efficiency_out})
                     else:

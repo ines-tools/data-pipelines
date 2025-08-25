@@ -190,7 +190,7 @@ def add_timeline(db_map : DatabaseMapping,config : dict):
     wy_dict = {"type": "array","value_type": "date_time","data": [config["user"]["timeline"]["historical_alt"][i]["start"] for i in config["user"]["timeline"]["historical_alt"]]}
     add_entity(db_map, "solve_pattern", ("capacity_planning",))
     add_parameter_value(db_map,"solve_pattern","time_resolution","Base",("capacity_planning",),{"type":"duration","data":config["user"]["model"]["operations_resolution"]})
-    add_parameter_value(db_map,"solve_pattern","duration","Base",("capacity_planning",),config["user"]["model"]["planning_resolution"])
+    add_parameter_value(db_map,"solve_pattern","duration","Base",("capacity_planning",),{"type":"duration","data":config["user"]["model"]["capacity_resolution"]})
     add_parameter_value(db_map,"solve_pattern","period","Base",("capacity_planning",),period_dict)
     add_parameter_value(db_map,"solve_pattern","start_time","Base",("capacity_planning",),wy_dict)
 
@@ -662,12 +662,8 @@ def add_gas_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                 if "technology" in entity_class_elements and definition_condition == True:
                     for index_in_class in [i for i in range(len(entity_class_elements)) if entity_class_elements[i]=="technology"]:
                         entity_name_for_capacity = [i for i in db_source.get_entity_items(entity_class_name = "technology__to_commodity") if entity_names[index_in_class] in i["entity_byname"]][0]["name"]
-                        capacity_dict = region_params.get("technology__to_commodity",{}).get("capacity",{}).get(entity_name_for_capacity,{})
                         existing_dict = region_params.get("technology",{}).get("units_existing",{}).get(entity_names[index_in_class],{})
-                        if capacity_dict and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
-                            if sum((capacity_dict[poly][alternative] if isinstance(capacity_dict[poly][alternative],float) else sum(capacity_dict[poly][alternative]["data"].values())) for alternative in capacity_dict[poly]) == 0.0:
-                                definition_condition *= False
-                        elif existing_dict and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
+                        if existing_dict and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
                             if sum(sum(existing_dict[poly][alternative]["data"].values()) for alternative in existing_dict[poly]) == 0.0:
                                 definition_condition *= False
                         elif config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
@@ -675,12 +671,8 @@ def add_gas_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                         
                 if "storage" in entity_class_elements and definition_condition == True:
                     for index_in_class in [i for i in range(len(entity_class_elements)) if entity_class_elements[i]=="storage"]:
-                        capacity_dict = region_params["storage"]["capacity"].get(entity_names[index_in_class],{})
                         existing_dict = region_params["storage"]["storages_existing"].get(entity_names[index_in_class],{})
-                        if capacity_dict and config["user"]["storage"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
-                            if sum(capacity_dict[poly][alternative] for alternative in capacity_dict[poly]) == 0.0:
-                                definition_condition *= False
-                        elif existing_dict and config["user"]["storage"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
+                        if existing_dict and config["user"]["storage"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
                             if sum(sum(existing_dict[poly][alternative]["data"].values()) for alternative in existing_dict[poly]) == 0.0:
                                 definition_condition *= False
                         elif config["user"]["storage"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
@@ -724,7 +716,10 @@ def add_gas_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                                     values_ = db_source.get_parameter_value_items(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name=param_source)
                                     if values_:
                                         for value_ in values_:
-                                            value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                            if value_["type"] != "str":
+                                                value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                            else:
+                                                value_param = value_["parsed_value"]
                                             add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)
                                             if param_list[param_source][0] == "storage_state_fix":
                                                 add_parameter_value(db_map,entity_class_target,"storage_state_fix_method",value_["alternative_name"],entity_target_name,"fix_start")
@@ -777,7 +772,10 @@ def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, con
                                 values_ = db_source.get_parameter_value_items(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name=param_source)
                                 if values_:
                                     for value_ in values_:
-                                        value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                        if value_["type"] != "str":
+                                            value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                        else:
+                                            value_param = value_["parsed_value"]
                                         add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)                       
 
 def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
@@ -854,8 +852,8 @@ def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config 
                                             value_param = param_list[param_source][1]*value_["parsed_value"]
                                         elif value_["type"] == "str":
                                             value_param = value_["parsed_value"]
-                                        add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)                       
-
+                                        add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)  
+                                                                                                        
 def add_heat_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
 
     for alternative_i in db_source.get_alternative_items():
@@ -958,9 +956,13 @@ def add_policy_constraints(db_map : DatabaseMapping, config : dict):
         except:
             pass
         add_parameter_value(db_map,entity_name,"node_type","Base",entity_byname,"storage")
+        add_parameter_value(db_map,entity_name,"storage_investment_method","Base",entity_byname,"not_allowed")
+        add_parameter_value(db_map,entity_name,"storage_retirement_method","Base",entity_byname,"not_retired")
         add_parameter_value(db_map,entity_name,"storage_state_fix_method","Base",entity_byname,"fix_start")
         add_parameter_value(db_map,entity_name,"storage_state_fix","Base",entity_byname,0.0)
-        add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,float(config["user"]["global_constraints"]["co2_annual_sequestration"]))
+        co2_storage = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(co2_years,[float(config["user"]["global_constraints"]["co2_annual_sequestration"]/1000) for _ in range(3)]))}
+        add_parameter_value(db_map,entity_name,"storages_existing","Base",entity_byname,co2_storage)
+        add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,float(1000))
               
 def main():
 

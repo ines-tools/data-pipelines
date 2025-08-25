@@ -93,20 +93,6 @@
     ],
     "parameter_definitions": [
         [
-            "region",
-            "GIS_level",
-            "PECD1",
-            "gis_levels",
-            null
-        ],
-        [
-            "region",
-            "type",
-            "onshore",
-            null,
-            null
-        ],
-        [
             "reservoir__region",
             "capacity",
             null,
@@ -213,18 +199,6 @@
         ]
     ],
     "parameter_types": [
-        [
-            "region",
-            "GIS_level",
-            "str",
-            0
-        ],
-        [
-            "region",
-            "type",
-            "str",
-            0
-        ],
         [
             "reservoir__region",
             "capacity",

@@ -3,16 +3,16 @@
 
 pipelines:
   power: True
-  vre: True
+  vre: False
   hydro: True
   biomass: True
   electricity_transmission: False
   residual_demand: True
   gas: True
   gas_pipelines: False
-  industry: True
-  heat: True
-  transport: True
+  industry: False
+  heat: False
+  transport: False
 
 model:
     type :  brownfield # greenfied
