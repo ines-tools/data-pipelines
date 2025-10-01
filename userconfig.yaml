@@ -3,16 +3,16 @@
 
 pipelines:
   power: True
-  vre: False
+  vre: True
   hydro: True
   biomass: True
   electricity_transmission: False
   residual_demand: True
   gas: True
   gas_pipelines: False
-  industry: False
-  heat: False
-  transport: False
+  industry: True
+  heat: True
+  transport: True
 
 model:
     type :  brownfield # greenfied
@@ -22,7 +22,7 @@ model:
       "2030": "2030-01-01T00:00:00"
       "2040": "2041-01-01T00:00:00"
       "2050": "2050-01-01T00:00:00"
-    years_represented: 1
+    years_represented: 10.0
 
 timeline:
   historical_alt : 

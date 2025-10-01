@@ -60,8 +60,6 @@ def process_parameters(target_db, sheet):
         entity_name = "reservoir__to_technology__region"
         entity_byname = ("reservoir","hydro-turbine",country)
         add_entity(target_db, entity_name, entity_byname)
-        for parameter in ["minimum_discharge","maximum_discharge"]:
-            add_parameter_value(target_db, entity_name, parameter, "Base", entity_byname, float(sheet.at[country,params[parameter]]))
         
         entity_name = "reservoir__to_technology__to_commodity__region"
         entity_byname = ("reservoir","hydro-turbine","elec",country)
@@ -74,6 +72,11 @@ def process_parameters(target_db, sheet):
         add_parameter_value(target_db, entity_name, "efficiency", "Base", entity_byname, efficiency)
         efficiency_map = {"type": "map", "index_type": "str", "index_name": "MWh", "data": dict(zip([dis1,dis1+dis2],[eff1,eff2]))}
         add_parameter_value(target_db, entity_name, "efficiency_curve", "Base", entity_byname, efficiency_map)
+
+        entity_name = "technology__to_commodity__region"
+        entity_byname = ("hydro-turbine","elec",country)
+        for parameter in ["maximum_discharge"]:
+            add_parameter_value(target_db, entity_name, {"maximum_discharge":"capacity"}[parameter], "Base", entity_byname, float(efficiency*sheet.at[country,params[parameter]]))
 
 def ror_parameters(target_db, sheet):
 

@@ -190,7 +190,7 @@ def add_timeline(db_map : DatabaseMapping,config : dict):
     wy_dict = {"type": "array","value_type": "date_time","data": [config["user"]["timeline"]["historical_alt"][i]["start"] for i in config["user"]["timeline"]["historical_alt"]]}
     add_entity(db_map, "solve_pattern", ("capacity_planning",))
     add_parameter_value(db_map,"solve_pattern","time_resolution","Base",("capacity_planning",),{"type":"duration","data":config["user"]["model"]["operations_resolution"]})
-    add_parameter_value(db_map,"solve_pattern","duration","Base",("capacity_planning",),{"type":"duration","data":config["user"]["model"]["capacity_resolution"]})
+    add_parameter_value(db_map,"solve_pattern","duration","Base",("capacity_planning",),{"type":"duration","data":config["user"]["model"]["planning_resolution"]})
     add_parameter_value(db_map,"solve_pattern","period","Base",("capacity_planning",),period_dict)
     add_parameter_value(db_map,"solve_pattern","start_time","Base",("capacity_planning",),wy_dict)
 
