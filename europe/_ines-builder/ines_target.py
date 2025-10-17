@@ -182,8 +182,8 @@ def add_timeline(db_map : DatabaseMapping,config : dict):
     period_dict = {"type": "array","value_type": "str","data": []}
     for year in config["user"]["model"]["planning_years"]:
         add_entity(db_map, "period", ("y"+year,))
-        add_parameter_value(db_map,"period","years_represented","Base",("y"+year,),10.0)
-        add_parameter_value(db_map,"period","start_time","Base",("y"+year,),{"type":"date_time","data":config["user"]["model"]["planning_years"][year]})
+        add_parameter_value(db_map,"period","years_represented","Base",("y"+year,),config["user"]["model"]["planning_years"][year][1])
+        add_parameter_value(db_map,"period","start_time","Base",("y"+year,),{"type":"date_time","data":config["user"]["model"]["planning_years"][year][0]})
         period_dict["data"].append("y"+year)
 
     # temporality

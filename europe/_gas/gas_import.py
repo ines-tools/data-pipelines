@@ -265,6 +265,8 @@ def h2_production(target_db,sheet):
             add_entity(target_db,"commodity__to_technology",("global-H2",tech))
             add_entity(target_db,"technology__to_commodity",(tech,"H2"))
             add_entity(target_db,"commodity__to_technology__to_commodity",("global-H2",tech,"H2"))
+            add_parameter_value(target_db,"technology","retirement_method","Base",(tech,),"not_retired")
+            add_parameter_value(target_db,"technology__to_commodity","capacity","Base",(tech,"H2"),1.0)
             add_parameter_value(target_db,"commodity__to_technology__to_commodity","conversion_rate","Base",("global-H2",tech,"H2"),1.0)
 
     for country in sheet["Country"].unique():
@@ -284,9 +286,11 @@ def h2_production(target_db,sheet):
             add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_cap)
         else:
             add_entity(target_db,"technology__to_commodity__region",(tech,"H2",country))
+            add_entity(target_db,"technology__region",(tech,country))
             if pd.notna(cost) and cost != 0.0:
                 add_parameter_value(target_db,"technology__to_commodity__region","operational_cost","Base",(tech,"H2",country),round(cost,2))
-            add_parameter_value(target_db,"technology__to_commodity__region","capacity","Base",(tech,"H2",country),round(capacity,1))
+            map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity,1) for year in ["2030"]}}
+            add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_cap)
     try:
         target_db.commit_session("Added H2 production")
     except DBAPIError as e:
