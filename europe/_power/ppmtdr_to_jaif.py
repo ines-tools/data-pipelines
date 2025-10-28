@@ -4,9 +4,11 @@
 
 """
 To Do:
-- [ ] CC and H2
-- [ ] storage parameters
-- [ ] check datavalues (e.g. kW vs MW)
+- [ ] merge files from Alvaro
+- [ ] see what data there is for CC and H2 in our csv files and add to the code accordingly
+- [ ] similar for storage parameters
+- [ ] check consistency of datavalues for all data (e.g. kW vs MW)
+- [ ] if there is data/technologies missing, put them in a list for Fortum
 
 Optional:
 - [ ] Currently, for some parameters that only require 1 value in jaif, new units use the first milestoneyear for its value  while in some instances it probably should use the average over the years.
