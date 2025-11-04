@@ -5,10 +5,26 @@
 """
 To Do:
 - [ ] merge files from Alvaro
-- [ ] see what data there is for CC and H2 in our csv files and add to the code accordingly
-- [ ] similar for storage parameters
-- [ ] check consistency of datavalues for all data (e.g. kW vs MW)
-- [ ] if there is data/technologies missing, put them in a list for Fortum
+- [X] see what data there is for CC and H2 in our csv files and add to the code accordingly
+- [X] similar for storage parameters
+- [X] check consistency of datavalues for all data (e.g. kW vs MW)
+- [X] if there is data/technologies missing, put them in a list for Fortum
+    - Missing technologies:
+        - OCGT-H2 not listed in tdr
+        - H2 not specified as a fuel type in ppm
+        - No CC found in ppm
+    - Missing data:
+        - Battery efficiency
+        - Battery capacity - energy
+        - Operational cost
+            ○ CCGT+CC
+            ○ CCGT-H2
+            ○ OCGT+CC
+            ○ SCPC+CC
+            ○ bioST
+            ○ bioST+CC
+            ○ Fuelcell
+            ○ Geothermal
 
 Optional:
 - [ ] Currently, for some parameters that only require 1 value in jaif, new units use the first milestoneyear for its value  while in some instances it probably should use the average over the years.
@@ -30,32 +46,39 @@ import spinedb_api as api
 def main(geo,inf,rfy,msy,ppm,spd,
     geolevel="PECD1",#"PECD1",# "PECD2",# "NUTS2",# "NUTS3",#
     referenceyear="y2025",
-    units_existing=['bioST','CCGT',"nuclear-3","oil-eng","SCPC","wasteST","geothermal"],
-    units_new=['bioST','bioST+CC','CCGT',"CCGT+CC","CCGT-H2",'fuelcell',"geothermal","nuclear-3","OCGT","OCGT+CC","oil-eng","SCPC","SCPC+CC","wasteST"],#"hydro-turbine"
+    units_existing=['bioST','CCGT',"nuclear-3","oil-eng","SCPC","wasteST","geothermal", "battery-storage"],
+    units_new=['bioST','bioST+CC','CCGT',"CCGT+CC","CCGT-H2",'fuelcell',"geothermal","nuclear-3","OCGT","OCGT+CC","oil-eng","SCPC","SCPC+CC","wasteST", "battery-storage"],#"hydro-turbine"
     units_CC=[],
     units_H2=[],
     commodities=[],
     #parameters_existing=["conversion_rate","operational_cost","capacity"],
     #parameters_new=["lifetime","investment_cost","fixed_cost","operational_cost","CO2_captured","conversion_rate"],
 ):
-    #initialise jaif
+    # initialise jaif structure
     jaif = { # dictionary for intermediate data format
         "entities":[
             [
                 "commodity",
                 "elec",
                 None
-            ]
+            ],
+            [
+                "commodity",
+                "CO2",
+                None
+            ],
         ],
         "parameter_values":[]
     }
 
-    #load data
+    # load data
     geomap = gpd.read_file(geo)
     geomap = geomap[geomap["level"]==geolevel]#used by units existing
     regions = geomap["id"].to_list()#used by units new
+    # print("Regions")
+    # pprint(regions)#debugline
     
-    #format data
+    # format data
     existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,list(msy.keys()),units_existing,commodities)
     new_units(jaif,msy,regions,units_new,commodities)
 
@@ -68,8 +91,18 @@ def main(geo,inf,rfy,msy,ppm,spd,
         target_db.commit_session("Purged entities and parameter values")
         importlog = api.import_data(target_db, **jaif)
         target_db.refresh_session()
-        target_db.commit_session("Added pypsa data")
+        try:
+            target_db.commit_session("Added pypsa data")
+        except api.exception.NothingToCommit:
+            print("Warning: No new data was added to commit. This might indicate:")
+            print("- No matching data found in the input files")
+            print("- All data was filtered out during processing")
+            print("- Data format issues preventing import")
+            print("Import will continue without committing.")
     return importlog
+
+#######################################################################################################################################################
+#######################################################################################################################################################
 
 def existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,milestoneyears,units_existing,commodities):
     """
@@ -84,7 +117,7 @@ def existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,milestoneyears,units_ex
     """
     # load data
     yearly_inflation={}
-    with open(inf,'r') as file:
+    with open(inf,'r', encoding='utf-8') as file:
         csvreader = csv.reader(file)
         next(csvreader)
         for line in csvreader:# next to skip header
@@ -96,7 +129,7 @@ def existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,milestoneyears,units_ex
     #could be done differently as unit_types[line[0]][line[1]][year][line[2]]
     for year,path in rfy.items():#only one entry
         datayear=year
-        with open(path, 'r') as file:
+        with open(path, 'r', encoding='utf-8') as file:
             unit_types[year]={}
             for line in csv.reader(file):
                 line = map_tdr_jaif(line)
@@ -105,12 +138,15 @@ def existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,milestoneyears,units_ex
                         unit_types[year][line[0]]={}
                     unit_types[year][line[0]][line[1]]=line[2]
                     #unit_types[year][line[0]][line[1]+'_description']=line[3]+' '+line[4]+' '+line[5]
-    #print(unit_types)#debugline
+    print("Unit Types")
+    pprint(unit_types)#debugline
 
     with open(ppm, mode='r') as file:
         unit_instances = list(csv.DictReader(file))
     #print(unit_instances)#debugline
-    #aggregate and clean units
+    print("Total units before aggregation:", len(unit_instances))#debugline
+
+    # aggregate and clean units
     unit_instances = aggregate_units(unit_instances, unit_types, units_existing, referenceyear, datayear, milestoneyears, geomap)
     #pprint(unit_instances)#debugline
     #pprint(unit_types)
@@ -120,6 +156,7 @@ def existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,milestoneyears,units_ex
     technologylist = []
     #unit_type_key_list = [] # for debugging
     years = [referenceyear].extend(milestoneyears)
+
     for unit in unit_instances:
         #print([unit["region"],unit["commodity"],unit["technology"]])#debugline
         if unit["region"] not in regionlist:
@@ -140,6 +177,7 @@ def existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,milestoneyears,units_ex
                     unit["commodity"],
                     None
                 ])
+        
         # power plant
         if unit["entityclass"]=="PP":
             if unit["technology"] not in technologylist:
@@ -159,6 +197,7 @@ def existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,milestoneyears,units_ex
                         None
                     ],
                 ])
+                # map technology to commodity
                 if unit["commodity"]:
                     jaif["entities"].extend([
                         [
@@ -178,7 +217,17 @@ def existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,milestoneyears,units_ex
                             ],
                             None
                         ],
+                        [
+                            "commodity__to_technology__to_commodity",
+                            [
+                                unit["commodity"],
+                                unit["technology"]+"-existing",
+                                "CO2"
+                            ],
+                            None
+                        ],
                     ])
+
                 jaif["parameter_values"].extend([
                     [
                         "technology__to_commodity",
@@ -211,31 +260,36 @@ def existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,milestoneyears,units_ex
                         "Base"
                     ],
                 ])
+
                 if unit["commodity"]:
-                    jaif["parameter_values"].extend([
-                        [
+                    conversion_rate = search_data(unit, unit_types, unit["technology"], [datayear], "conversion_rate")
+                    if conversion_rate is not None:
+                        jaif["parameter_values"].append([
+                                "commodity__to_technology__to_commodity",
+                                [
+                                    unit["commodity"],
+                                    unit["technology"]+"-existing",
+                                    "elec"
+                                ],
+                                "conversion_rate",
+                                conversion_rate,
+                                "Base"
+                            ])
+                    
+                    co2_captured = search_data(unit, unit_types, unit["technology"], [datayear], "CO2_captured")
+                    if co2_captured is not None:
+                        jaif["parameter_values"].append([
                             "commodity__to_technology__to_commodity",
                             [
                                 unit["commodity"],
                                 unit["technology"]+"-existing",
-                                "elec"
-                            ],
-                            "conversion_rate",
-                            search_data(unit, unit_types, unit["technology"], [datayear], "conversion_rate"),
-                            "Base"
-                        ],
-                        [
-                            "commodity__to_technology__to_commodity",
-                            [
-                                unit["commodity"],
-                                unit["technology"]+"-existing",
-                                "elec"
+                                "CO2"
                             ],
                             "CO2_captured",
-                            search_data(unit, unit_types, unit["technology"], [datayear], "CO2_captured"),
+                            co2_captured,
                             "Base"
-                        ],
-                    ])
+                        ])
+            
             jaif["entities"].extend([
                 [
                     "technology__region",
@@ -246,6 +300,7 @@ def existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,milestoneyears,units_ex
                     None
                 ],
             ])
+
             jaif["parameter_values"].extend([
                 [
                     "technology__region",
@@ -260,6 +315,7 @@ def existing_units(jaif,inf,rfy,ppm,geomap,referenceyear,milestoneyears,units_ex
             ])
             #pprint(year_data(unit, unit_types,unit_types_key, "efficiency"))
         #if unit["entityclass"]=="CHP": # skip
+
         # storage
         if unit["entityclass"]=="Store":
             #map_tdr needs to be updated with storage bicharging and storage and so does this part
@@ -367,7 +423,7 @@ def new_units(jaif,msy,regions,units_new,commodities):
     unit_types={}
     #could be done differently as unit_types[line[0]][line[1]][year][line[2]]
     for year,path in msy.items():#only one entry
-        with open(path, 'r') as file:
+        with open(path, 'r', encoding='utf-8') as file:
             unit_types[year]={}
             for line in csv.reader(file):
                 line = map_tdr_jaif(line)
@@ -376,7 +432,8 @@ def new_units(jaif,msy,regions,units_new,commodities):
                         unit_types[year][line[0]]={}
                     unit_types[year][line[0]][line[1]]=line[2]
                     #unit_types[year][line[0]][line[1]+'_description']=line[3]+' '+line[4]+' '+line[5]
-    #print(unit_types)#debugline
+    print("Unit Types")
+    pprint(unit_types)#debugline
 
     unit_instances = generate_unit_instances(regions,units_new)
 
@@ -409,6 +466,7 @@ def new_units(jaif,msy,regions,units_new,commodities):
         if unit["entityclass"]=="PP":
             if unit["technology"] not in technologylist:
                 technologylist.append(unit["technology"])
+
                 jaif["entities"].extend([
                     [
                         "technology",
@@ -424,6 +482,7 @@ def new_units(jaif,msy,regions,units_new,commodities):
                         None
                     ],
                 ])
+
                 if unit["commodity"]:
                     jaif["entities"].extend([
                         [
@@ -443,7 +502,20 @@ def new_units(jaif,msy,regions,units_new,commodities):
                             ],
                             None
                         ],
+                        [
+                            "commodity__to_technology__to_commodity",
+                            [
+                                unit["commodity"],
+                                unit["technology"],
+                                "CO2"
+                            ],
+                            None
+                        ],
                     ])
+                
+                # Calculate investment and fixed costs
+                invest_cost, fixed_cost = calculate_investment_and_fixed_costs(unit, unit_types, years)
+
                 jaif["parameter_values"].extend([
                     [
                         "technology",
@@ -469,7 +541,7 @@ def new_units(jaif,msy,regions,units_new,commodities):
                             "elec"
                         ],
                         "investment_cost",
-                        search_data(unit, unit_types, unit["technology"], years, "investment_cost"),
+                        invest_cost,
                         "Base"
                     ],
                     [
@@ -479,7 +551,7 @@ def new_units(jaif,msy,regions,units_new,commodities):
                             "elec"
                         ],
                         "fixed_cost",
-                        search_data(unit, unit_types, unit["technology"], years, "fixed_cost"),
+                        fixed_cost,
                         "Base"
                     ],
                     [
@@ -493,31 +565,36 @@ def new_units(jaif,msy,regions,units_new,commodities):
                         "Base"
                     ],
                 ])
+
                 if unit["commodity"]:
-                    jaif["parameter_values"].extend([
-                        [
+                    conversion_rate = search_data(unit, unit_types, unit["technology"], [years[0]], "conversion_rate")
+                    if conversion_rate is not None:
+                        jaif["parameter_values"].append([
+                                "commodity__to_technology__to_commodity",
+                                [
+                                    unit["commodity"],
+                                    unit["technology"],
+                                    "elec"
+                                ],
+                                "conversion_rate",
+                                conversion_rate,
+                                "Base"
+                            ])
+
+                    co2_captured = search_data(unit, unit_types, unit["technology"], [years[0]], "CO2_captured")
+                    if co2_captured is not None:
+                        jaif["parameter_values"].append([
                             "commodity__to_technology__to_commodity",
                             [
                                 unit["commodity"],
                                 unit["technology"],
-                                "elec"
-                            ],
-                            "conversion_rate",
-                            search_data(unit, unit_types, unit["technology"], [years[0]], "conversion_rate"),
-                            "Base"
-                        ],
-                        [
-                            "commodity__to_technology__to_commodity",
-                            [
-                                unit["commodity"],
-                                unit["technology"],
-                                "elec"
+                                "CO2"
                             ],
                             "CO2_captured",
-                            search_data(unit, unit_types, unit["technology"], [years[0]], "CO2_captured"),
+                            co2_captured,
                             "Base"
-                        ],
-                    ])
+                        ])
+            
             jaif["entities"].extend([
                 [
                     "technology__region",
@@ -530,6 +607,7 @@ def new_units(jaif,msy,regions,units_new,commodities):
             ])
             #pprint(year_data(unit, unit_types,unit_types_key, "efficiency"))
         #if unit["entityclass"]=="CHP": # skip
+
         # storage
         if unit["entityclass"]=="Store":
             #map_tdr needs to be updated with storage bicharging and storage and so does this part
@@ -550,6 +628,7 @@ def new_units(jaif,msy,regions,units_new,commodities):
                         None
                     ],
                 ])
+
                 jaif["parameter_values"].extend([
                     [
                         "storage_connection",
@@ -572,6 +651,10 @@ def new_units(jaif,msy,regions,units_new,commodities):
                         "Base"
                     ],
                 ])
+
+                # Calculate storage investment and fixed costs
+                storage_invest_cost, storage_fixed_cost = calculate_investment_and_fixed_costs(unit, unit_types, years)
+
                 jaif["parameter_values"].extend([
                     [
                         "storage",
@@ -587,7 +670,7 @@ def new_units(jaif,msy,regions,units_new,commodities):
                             "elec"
                         ],
                         "investment_cost",
-                        search_data(unit, unit_types, unit["technology"], years, "investment_cost"),
+                        storage_invest_cost,
                         "Base"
                     ],
                     [
@@ -597,10 +680,11 @@ def new_units(jaif,msy,regions,units_new,commodities):
                             "elec"
                         ],
                         "fixed_cost",
-                        search_data(unit, unit_types, unit["Technolgy"], years, "fixed_cost"),
+                        storage_fixed_cost,
                         "Base"
                     ],
                 ])
+
             jaif["entities"].extend([
                 [
                     "storage__region",
@@ -681,12 +765,17 @@ def generate_unit_instances(regions,units):
             "technology":"SCPC+CC",
             "entityclass":"PP",
         },
+        "battery-storage":{
+            "commodity":"elec",
+            "technology":"battery-storage",
+            "entityclass":"Store",
+        },
     }
     unit_instances = []
     for region in regions:
         for unit in units:
             if unit in map_jaif:
-                unit_jaif = map_jaif[unit]
+                unit_jaif = map_jaif[unit].copy()  # Create a copy instead of referencing the original
                 unit_jaif["region"]=region
                 unit_instances.append(unit_jaif)
     return unit_instances
@@ -701,7 +790,22 @@ def aggregate_units(unit_instances, unit_types, units, referenceyear, datayear, 
     """
     aggregated_units = {}
     for unit in unit_instances:
+        original_unit = unit.copy()  # Keep original for debugging
         unit = map_ppm_jaif(unit)
+        
+        # Debug: Check if mapping worked for storage - ONLY for 'Other' fuel type
+        # if original_unit.get('Set') == 'Store' and original_unit.get('Fueltype') == 'Other':
+        #     fuel = original_unit.get('Fueltype')
+        #     tech = original_unit.get('Technology')
+        #     set_val = original_unit.get('Set')
+        #     print(f"OTHER STORAGE MAPPING: Key=({fuel}, {tech}, {set_val})")
+        #     print(f"  -> Mapped=({unit.get('commodity')}, {unit.get('technology')}, {unit.get('entityclass')})")
+        #     if unit.get('commodity') == 'unknown':
+        #         print(f"  -> MAPPING FAILED! No mapping found for key ({fuel}, {tech}, {set_val})")
+        
+        # if unit["entityclass"] == "Store":
+        #     print(f"STORAGE UNIT FOUND: {unit['commodity']}, {unit['technology']}, {unit['entityclass']}, Region: {unit.get('region', 'NOT_SET')}") #debugline
+
         if unit["technology"] in units:
             #clean parameter fields
             unit["region"]=get_region(unit,geomap)
@@ -763,7 +867,12 @@ def get_region(unit,geomap):
     lat = float(unit["lat"])
     lon = float(unit["lon"])
     point = Point(lon,lat)
-    poly_index = geomap.distance(point).sort_values().index[0]
+    #poly_index = geomap.distance(point).sort_values().index[0] # original line, does not work with geographic crs
+    # Convert to projected CRS for accurate distance calculation
+    point_gdf = gpd.GeoDataFrame([1], geometry=[point], crs='EPSG:4326')
+    geomap_projected = geomap.to_crs('EPSG:3857')  # Web Mercator projection
+    point_projected = point_gdf.to_crs('EPSG:3857')
+    poly_index = geomap_projected.distance(point_projected.geometry.iloc[0]).sort_values().index[0]
     poly = geomap.loc[poly_index]
     region = poly["id"]
     #print(unit["region"])#debugline
@@ -864,8 +973,11 @@ def map_ppm_jaif(unit_ppm):
         #('Waste', None, 'CHP'):("","",""),
         #('Solar', 'PV', 'PP'):("","",""),
         #('Solar', 'CSP', 'PP'):("","",""),
+        ('Other', None, 'Store'):("elec","battery-storage","Store"),#assumption
+        ('Other', '', 'Store'):("elec","battery-storage","Store"),#if technology is empty string
     }
-    unknown=['Other'," ","","unknown","Unknown","not found","Not Found"]
+
+    unknown=[" ","","unknown","Unknown","not found","Not Found"]
     if unit_ppm["Technology"] in unknown:
         tech = None
     else:
@@ -875,6 +987,7 @@ def map_ppm_jaif(unit_ppm):
     else:
         fuel = unit_ppm["Fueltype"]
     (fuel_ppm,tech_ppm,set_ppm) = map_ppm.get((fuel,tech,unit_ppm["Set"]),("unknown","unknown","unknown"))
+
     try:
         eta_ppm=float(unit_ppm["Efficiency"])
     except:
@@ -891,6 +1004,7 @@ def map_ppm_jaif(unit_ppm):
         dateout_ppm=float("DateOut")
     except:
         dateout_ppm=None
+    
     unit_jaif = {
         "commodity":fuel_ppm,
         "technology":tech_ppm,
@@ -905,8 +1019,11 @@ def map_ppm_jaif(unit_ppm):
     return unit_jaif
 
 def map_tdr_jaif(line_tdr):
-    #dictionary with name of technology in datafile to name in intermediate format
+    # dictionary with name of technology in datafile to name in intermediate format
+
+    # technology mapping
     map_tdr0={
+        "battery storage":"battery-storage",
         "biogas":"bioST",
         "biogas CC":"bioST+CC",
         #"biogas plus hydrogen":"bioST-H2"
@@ -937,6 +1054,8 @@ def map_tdr_jaif(line_tdr):
 
         "direct air capture":"CC",
     }
+
+    # parameter mapping
     map_tdr1={
         "FOM":"fixed_cost",
         "investment":"investment_cost",
@@ -950,6 +1069,8 @@ def map_tdr_jaif(line_tdr):
         "capacity":"capacity",
         #"fuel":"operational_cost",
     }
+
+    # value mapping
     try:
         map_tdr2 = float(line_tdr[2])
     except:
@@ -962,6 +1083,78 @@ def map_tdr_jaif(line_tdr):
     ]
     #print(f"replacing {line_tdr} for {line_jaif}")#debugline
     return line_jaif
+
+def calculate_investment_and_fixed_costs(unit, unit_types, years):
+    """
+    Calculate investment and fixed costs for any unit (PP or storage)
+    Returns tuple: (investment_cost, fixed_cost)
+    - Investment cost: converted from kWh to MWh 
+    - Fixed cost: converted from percentage to absolute currency units (EUR/MWh)
+    """
+    invest_cost = search_data(unit, unit_types, unit["technology"], years, "investment_cost", modifier=1000.0) # convert kWh to MWh
+    fixed_cost_pct = search_data(unit, unit_types, unit["technology"], years, "fixed_cost")
+    
+    # Calculate fixed cost: percentage * investment cost / 100
+    if isinstance(invest_cost, dict) and isinstance(fixed_cost_pct, dict):
+        # Both are multi-year data (maps)
+        fixed_cost_data = []
+        for year_data in invest_cost["data"]:
+            year = year_data[0]
+            invest_val = year_data[1]
+            # Find corresponding fixed cost percentage for this year
+            fixed_pct_val = None
+            for fc_data in fixed_cost_pct["data"]:
+                if fc_data[0] == year:
+                    fixed_pct_val = fc_data[1]
+                    break
+            if invest_val is not None and fixed_pct_val is not None:
+                fixed_cost_data.append([year, invest_val * fixed_pct_val / 100])
+            else:
+                fixed_cost_data.append([year, None])
+        
+        fixed_cost = {
+            "index_type": "str",
+            "rank": 1,
+            "index_name": "year", 
+            "type": "map",
+            "data": fixed_cost_data
+        }
+    elif isinstance(invest_cost, dict):
+        # Investment cost is multi-year, fixed cost is single value
+        if fixed_cost_pct is not None:
+            fixed_cost_data = [[year_data[0], year_data[1] * fixed_cost_pct / 100 if year_data[1] is not None else None] 
+                             for year_data in invest_cost["data"]]
+            fixed_cost = {
+                "index_type": "str",
+                "rank": 1,
+                "index_name": "year",
+                "type": "map", 
+                "data": fixed_cost_data
+            }
+        else:
+            fixed_cost = None
+    elif isinstance(fixed_cost_pct, dict):
+        # Fixed cost is multi-year, investment cost is single value
+        if invest_cost is not None:
+            fixed_cost_data = [[year_data[0], invest_cost * year_data[1] / 100 if year_data[1] is not None else None]
+                             for year_data in fixed_cost_pct["data"]]
+            fixed_cost = {
+                "index_type": "str",
+                "rank": 1,
+                "index_name": "year",
+                "type": "map",
+                "data": fixed_cost_data
+            }
+        else:
+            fixed_cost = None
+    else:
+        # Both are single values
+        if invest_cost is not None and fixed_cost_pct is not None:
+            fixed_cost = invest_cost * fixed_cost_pct / 100
+        else:
+            fixed_cost = None
+    
+    return invest_cost, fixed_cost
 
 def search_data(unit, unit_types, unit_type_key, years, parameter, data=None, modifier=1.0):
     if not data:
