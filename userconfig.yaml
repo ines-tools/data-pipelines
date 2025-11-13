@@ -52,7 +52,7 @@ global_constraints:
 
 # Define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
-  ES : 
+  ES: 
     onshore:  "PECD1"
     offshore: "OFF2"
 
@@ -60,34 +60,46 @@ countries :
 commodity: 
   elec: 
     status: True
+    node_type: balance
   CH4: 
     status: True
+    node_type: balance
   H2: 
     status: True
+    node_type: balance
   CO2: 
     status: False
+    node_type: storage
   bio: 
-    status: True
-  HC: 
-    status: True
-  NH3: 
     status: False
+    node_type: balance
+  HC: 
+    status: False
+    node_type: balance
   MeOH: 
-    status: True
+    status: False
+    node_type: balance
   fossil-CH4: 
     status: False
+    node_type: commodity
   fossil-HC: 
     status: False
+    node_type: commodity
   global-H2: 
     status: False
+    node_type: commodity
   crude: 
     status: False
+    node_type: commodity
   coal: 
     status: False
+    node_type: commodity
   U-92: 
     status: False
+    node_type: commodity
   waste: 
     status: False
+    node_type: commodity
 
 transmission: 
   elec: 
@@ -503,141 +515,141 @@ technology:
     investment_method: "not_allowed"
   # industrial routes
   ((BM)MeOH)O:
-    status: false
+    status: true
   ((BM+H2)MeOH)O:
-    status: false
+    status: true
   ((COEL)MeOH)O-MEA:
-    status: false
+    status: true
   (BM)FT:
     status: true
   (BM)MeOH:
-    status: false
+    status: true
   (BM)NH3:
-    status: false
+    status: true
   (COEL)FT-MEA:
-    status: false
+    status: true
   (COEL)MeOH-MEA:
-    status: false
+    status: true
   (EL):
-    status: false
+    status: true
   (EL)-CC:
-    status: false
+    status: true
   (EL)PE:
-    status: false
+    status: true
   (EL)PEA:
-    status: false
+    status: true
   (H2):
-    status: false
+    status: true
   (H2)-CC:
-    status: false
+    status: true
   (H2)DRI-EAF:
-    status: false
+    status: true
   (H2)FT-DC:
     status: true
   (H2)MeOH-DC:
     status: true
   (H2)NH3:
-    status: false
+    status: true
   (H2)PE:
-    status: false
+    status: true
   (H2)PEA:
-    status: false
+    status: true
   (LN)O:
-    status: false
+    status: true
   (LN)O-MEA:
-    status: false
+    status: true
   (LN+EL)O:
-    status: false
+    status: true
   (MeOH)O-MEA:
     status: true
   (NG):
     status: true
   (NG)-CC:
-    status: false
+    status: true
   (NG)DRI-EAF:
-    status: false
+    status: true
   (NG)DRI-EAF-MEA:
-    status: false
+    status: true
   (NG)NH3:
     status: true
   (NG)NH3-DEA:
-    status: false
+    status: true
   (NG)NH3-MEA-DEA:
-    status: false
+    status: true
   (NG)NH3-MVR-DEA:
-    status: false
+    status: true
   (NG)NH3-MVR-MEA-DEA:
-    status: false
+    status: true
   (NG)PE:
     status: true
   (NG)PE-MEA:
-    status: false
+    status: true
   (NG)PEA:
     status: true
   (NG)PEA-MEA:
-    status: false
+    status: true
   BF-BOF:
     status: true
   BF-BOF-MEA:
-    status: false
+    status: true
   CEM2-(Afm):
-    status: false
+    status: true
   CEM2-(Afm)CaL:
-    status: false
+    status: true
   CEM2-(Afm)MEA:
-    status: false
+    status: true
   CEM2-(Afm)Oxy-CaL:
-    status: false
+    status: true
   CEM2-(BMW):
-    status: false
+    status: true
   CEM2-(BMW)CaL:
-    status: false
+    status: true
   CEM2-(BMW)MEA:
-    status: false
+    status: true
   CEM2-(BMW)Oxy-CaL:
-    status: false
+    status: true
   CEM2-(BMW)Oxy-MEA:
     status: true
   CEM2-(Coal):
-    status: false
+    status: true
   CEM2-(Coal)CaL:
-    status: false
+    status: true
   CEM2-(Coal)Oxy-CaL:
-    status: false
+    status: true
   EU-mix-2018:
-    status: false
+    status: true
   LC3-(Afm)CaL:
-    status: false
+    status: true
   LC3-(Afm)MEA:
-    status: false
+    status: true
   LC3-(Afm)Oxy-CaL:
-    status: false
+    status: true
   LC3-(Afm)Oxy-MEA:
-    status: false
+    status: true
   LC3-(BMW)Oxy-CaL:
-    status: false
+    status: true
   LC3-(BMW)Oxy-MEA:
-    status: false
+    status: true
   LC3-(Coal)CaL:
-    status: false
+    status: true
   LC3-(NG)CaL:
-    status: false
+    status: true
   LC3-(NG)MEA:
-    status: false
+    status: true
   LC3-(NG)Oxy-CaL:
-    status: false
+    status: true
   MOE:
-    status: false
+    status: true
   REF(H2):
-    status: false
+    status: true
   REF-SMR:
     status: true
   REF-SMR-MEA:
-    status: false
+    status: true
   Scraps-EAF:
     status: true
   WPI-BOF-MEA:
-    status: false
+    status: true
 
 end-use:
   nonres-cool:
@@ -721,6 +733,18 @@ vehicle:
   bus-LNG:
     status: True
   bus-LPG:
+    status: True
+  aviation:
+    status: True
+  int-aviation:
+    status: True
+  maritime:
+    status: True
+  int-maritime:
+    status: True
+  rail:
+    status: True
+  thermal-rail:
     status: True
   
 

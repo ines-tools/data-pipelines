@@ -200,19 +200,20 @@ def add_nodes(db_map : DatabaseMapping, db_com : DatabaseMapping, config : dict)
     entity_nodes = [entity_i["name"] for entity_i in db_map.get_entity_items(entity_class_name = entity_class) if not db_map.get_parameter_value_item(entity_class_name="node",entity_byname=(entity_i["name"],),parameter_definition_name="node_type",alternative_name="Base")]
     for entity_node in entity_nodes:
         list_names = entity_node.split("_")
-        if len(list_names) > 1:
+        if list_names[0] in config["user"]["commodity"]:
+            add_parameter_value(db_map,"node","node_type","Base",(entity_node,),config["user"]["commodity"][list_names[0]]["node_type"])
+            if config["user"]["commodity"][list_names[0]]["node_type"] == "commodity":
+                param_list = config["sys"]["commodities"]["commodity"][entity_class]
+                for param_source in param_list:
+                    param_target = param_list[param_source][0]
+                    multiplier = param_list[param_source][1]
+                    values_ = db_com.get_parameter_value_items(entity_class_name="commodity",entity_byname=(list_names[0],),parameter_definition_name=param_source)
+                    if values_:
+                        for value_ in values_:
+                            value_param = multiplier*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:multiplier*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                            add_parameter_value(db_map,entity_class,param_target,value_["alternative_name"],(entity_node,),value_param)
+        else:
             add_parameter_value(db_map,"node","node_type","Base",(entity_node,),"balance")
-        elif entity_node != "CO2":
-            add_parameter_value(db_map,"node","node_type","Base",(entity_node,),"commodity")
-            param_list = config["sys"]["commodities"]["commodity"][entity_class]
-            for param_source in param_list:
-                param_target = param_list[param_source][0]
-                multiplier = param_list[param_source][1]
-                values_ = db_com.get_parameter_value_items(entity_class_name="commodity",entity_byname=(list_names[0],),parameter_definition_name=param_source)
-                if values_:
-                    for value_ in values_:
-                        value_param = multiplier*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:multiplier*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
-                        add_parameter_value(db_map,entity_class,param_target,value_["alternative_name"],(entity_node,),value_param)
 
 def add_electricity_demand(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
     db_name = "elec_demand"
@@ -535,7 +536,7 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
                     
                     if definition_condition == False:
                         technology_connected = [entity_i["element_name_list"][1] for entity_i in db_source.get_entity_items(entity_class_name = "commodity__to_technology") if entity_i["element_name_list"][0] == technology_node]
-                        if technology_connected and config["user"]["commodity"][technology_node]["status"] == True:
+                        if technology_connected and config["user"]["commodity"][technology_node]["node_type"] == "balance":
                             definition_condition = True
 
                 # print(entity_target_names,definition_condition)
@@ -798,17 +799,17 @@ def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config 
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if entity_names[2] in config["onshore_polygons"] and config["user"]["vehicle"][entity_names[1]]["status"] == True and config["user"]["commodity"][entity_names[0]]["status"] == True:             
+            if entity_names[2] in config["onshore_polygons"] and config["user"]["vehicle"][entity_names[1]]["status"] == True and config["user"]["commodity"][entity_names[0]]["node_type"] == "balance":             
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_items in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
                             entity_target_building, dict_condition = entity_target_items
-                            entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in entity_target_building])
+                            entity_target_name = tuple(["_".join(([entity_names[0]] if (len(k) == 2 and k[0]==1 and config["user"]["commodity"][entity_names[0]]["status"] == False) else [entity_names[i-1] for i in k])) for k in entity_target_building])
                             if not dict_condition:
                                 try:
                                     add_entity(db_map,entity_class_target,entity_target_name)
                                 except RuntimeError:
-                                    print(f"Repeated Entity {entity_class} {entity_name}, then not added")
+                                    print(f"Repeated Entity {entity_class} {entity_names} in , then not added")
                                     pass
                             else:
                                 for dict_parameter  in dict_condition:
@@ -824,7 +825,7 @@ def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config 
                     if entity_class in config["sys"][db_name]["parameters"]["default"]:
                         if entity_class_target in config["sys"][db_name]["parameters"]["default"][entity_class]:
                             for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
-                                entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_items[2]])
+                                entity_target_name = tuple(["_".join(([entity_names[0]] if (len(k) == 2 and k[0]==1 and config["user"]["commodity"][entity_names[0]]["status"] == False) else [entity_names[i-1] for i in k])) for k in param_items[2]])
                                 if not param_items[3]:
                                     add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
                                 else:
@@ -838,7 +839,7 @@ def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config 
                         if entity_class_target in config["sys"][db_name]["parameters"]["fixed"][entity_class]:
                             param_list = config["sys"][db_name]["parameters"]["fixed"][entity_class][entity_class_target]
                             for param_source in param_list:
-                                entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_list[param_source][2]])
+                                entity_target_name = tuple(["_".join(([entity_names[0]] if (len(k) == 2 and k[0]==1 and config["user"]["commodity"][entity_names[0]]["status"] == False) else [entity_names[i-1] for i in k])) for k in param_list[param_source][2]])
                                 values_ = db_source.get_parameter_value_items(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name=param_source)
                                 if values_:
                                     for value_ in values_:
@@ -955,7 +956,6 @@ def add_policy_constraints(db_map : DatabaseMapping, config : dict):
             add_entity(db_map,entity_name,entity_byname)
         except:
             pass
-        add_parameter_value(db_map,entity_name,"node_type","Base",entity_byname,"storage")
         add_parameter_value(db_map,entity_name,"storage_investment_method","Base",entity_byname,"not_allowed")
         add_parameter_value(db_map,entity_name,"storage_retirement_method","Base",entity_byname,"not_retired")
         add_parameter_value(db_map,entity_name,"storage_state_fix_method","Base",entity_byname,"fix_start")

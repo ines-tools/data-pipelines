@@ -1,0 +1,3 @@
+MeOH: 2 # €/(MWh.km) average cost taking into account freight transport and shipping
+bio: 3 # €/(MWh.km) average cost taking into account freight transport and shipping
+HC: 2.5 # €/(MWh.km) average cost taking into account freight transport and shipping

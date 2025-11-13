@@ -154,13 +154,72 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):
                     week_to_hourly("CH4",target_db,vehicle+"-LNG",data,"LNG consumption kg",LNG_factor,df_index,region,vehicle,profile,cyears,scenario_fleet,"LNG proportion")
                     week_to_hourly("HC",target_db,vehicle+"-LPG",data,"LPG consumption litres",LPG_factor,df_index,region,vehicle,profile,cyears,scenario_fleet,"LPG proportion")
 
+def add_nonroad_timeseries(target_db,data):
+
+    cyears = ["1995","2008","2009"]
+    factor = 277777.78
+
+    df_index = pd.DataFrame(data.keys(),columns=["region","year"])
+    for region in df_index["region"].unique():
+        try:
+            add_entity(target_db,"region",(region,))
+        except:
+            pass
+
+        veh_headers = ["domestic-aviation_thermal_PJ","domestic-navigation_thermal_PJ","international-aviation_thermal_PJ","international-maritime-bunkers_thermal_PJ","rail_non_thermal_PJ","rail_thermal_PJ"]
+        veh_types = ["aviation","maritime","int-aviation","int-maritime","rail","thermal-rail"]
+        veh_fuels = ["HC","HC","HC","HC","elec","HC"]
+        veh_map = dict(zip(veh_headers,veh_types))
+        fuel_map = dict(zip(veh_types,veh_fuels))
+        
+        for key_df in veh_map.keys():
+            veh_type = veh_map[key_df]
+            condition_ = False
+            try:
+                output = {}
+                annual_scale = {}
+                for year in df_index["year"].unique():
+                    value_df    = factor*data[(region,year)][key_df].values
+                    value_array = value_df/(168*np.ones(53))
+                    value_lists = [[value_array[ien]]*int(ven) for ien,ven in enumerate(np.concatenate((168*np.ones(52),24*np.ones(1))))]
+                    output_array = np.array(sum(value_lists, [])).round(3)
+                    output[year] = output_array/output_array.sum()*1000 if output_array.sum() > 0.0 else output_array
+                    annual_scale[year] = output_array.sum()/1000
+                if all(output[year].sum() > 0.0 for year in df_index["year"].unique()):
+                    condition_ = True
+            except:
+                print(region,veh_type,key_df,"does not exist")
+
+            if condition_:
+                print(region,veh_type)
+                try:
+                    add_entity(target_db,"vehicle",(veh_type,))
+                except:
+                    pass
+
+                entity_name   = "commodity__vehicle__region"
+                entity_byname = (fuel_map[veh_type],veh_type,region)
+                add_entity(target_db,entity_name,entity_byname)
+
+                for year in df_index["year"].unique():
+                    if output[year].sum() > 0.0:
+                        year_selected = year
+                map_fixed_flow_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(output[year_selected].round(3),cyears)}
+                add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_fixed_flow_profile)
+                add_parameter_value(target_db,entity_name,"node_type","Base",entity_byname,"balance")
+
+                map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(annual_scale[year],1) for year in df_index["year"].unique()}}
+                add_parameter_value(target_db,entity_name,"scale_demand","Base",entity_byname,map_profile)
+
 def main():
 
     # Spine Inputs
     url_db_out = sys.argv[1]
-
+    print(" "*10)
+    print("road transport")
+    print("-"*20)
     data = {}
-    path = "../../../Transport"
+    path = "../../../Transport/road"
     files = [os.path.join(path,filename) for filename in os.listdir(path) if "profile" in filename or "weekly" in filename]
 
     print("Loading all the CSV files")
@@ -169,7 +228,7 @@ def main():
         data_type = "hourly" if "profile" in elements[3] else "weekly"
         data[(elements[0],elements[1],elements[2],data_type)] = pd.read_csv(file,index_col=0)
 
-    scenario_fleet = pd.read_csv(os.path.join(path,"fleets_per_scenario.csv"),index_col=[0,1,2,3])
+    scenario_fleet = pd.read_csv(os.path.join("../../../Transport","fleets_per_scenario.csv"),index_col=[0,1,2,3])
 
     with DatabaseMapping(url_db_out) as target_db:
 
@@ -196,6 +255,25 @@ def main():
         print("parameters added for transport")        
         target_db.commit_session("parameters_added")  
     
+    print("-"*20)
+    print("non-road transport")
+    print("-"*20)
+
+    data = {}
+    path = "../../../Transport/non-road"
+    files = [os.path.join(path,filename) for filename in os.listdir(path)]
+
+    print("Loading all the CSV files")
+    for file in files:
+        elements = file.split("\\")[-1].split(".")[0].split("_")
+        data[(elements[0],elements[1])] = pd.read_csv(file,index_col=0)
+
+    with DatabaseMapping(url_db_out) as target_db:
+
+        add_nonroad_timeseries(target_db,data)
+        print("parameters added for nonroad transport")        
+        target_db.commit_session("parameters_added")
+
 if __name__ == "__main__":
     main()
 
