@@ -474,7 +474,7 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if entity_names[0] in config["onshore_polygons"] and entity_names[-1] in config["onshore_polygons"] and config["user"][entity_class_elements[1]][entity_names[2]]["status"]:               
+            if entity_names[0] in config["onshore_polygons"] and entity_names[-1] in config["onshore_polygons"] and config["user"]["transmission"][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["node_type"] == "balance":               
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
@@ -747,7 +747,7 @@ def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, con
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if entity_names[0] in config["onshore_polygons"] and entity_names[-1] in config["onshore_polygons"] and config["user"]["transmission"][entity_names[1]]["status"]:               
+            if entity_names[0] in config["onshore_polygons"] and entity_names[-1] in config["onshore_polygons"] and config["user"]["transmission"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance" and config["user"][entity_class_elements[1]][entity_names[1]]["status"]:               
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
@@ -936,7 +936,49 @@ def add_heat_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, confi
                                 entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_values[1]])
                                 for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
-                            
+
+def add_cargo_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+
+    db_name = "cargo_transport"
+    print(db_name,"WARNING: Source DB must be in the user-defined target resolution")
+    print("ADDING CARGO TRANSPORT")
+    for entity_class in config["sys"][db_name]["entities"]:
+        entities = db_source.get_entity_items(entity_class_name = entity_class)
+        
+        for entity in entities:
+            entity_name = entity["name"]
+            entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
+            entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
+
+            if entity_names[0] in config["onshore_polygons"] and entity_names[-1] in config["onshore_polygons"] and config["user"]["cargo"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance":               
+                for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
+                    if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
+                        for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
+                            entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in entity_target_building])
+                            add_entity(db_map,entity_class_target,entity_target_name)
+
+                    # Default Parameters
+                    if entity_class in config["sys"][db_name]["parameters"]["default"]:
+                        if entity_class_target in config["sys"][db_name]["parameters"]["default"][entity_class]:
+                            for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
+                                entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_items[2]])
+                                if param_items[0] == "investment_method": # Particular Case Screening Out
+                                    if not db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name="links_potentials",alternative_name="Base"):
+                                        param_items[1] = "not_allowed"
+                                add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
+                    
+                    # Fixed Parameters
+                    if entity_class in config["sys"][db_name]["parameters"]["fixed"]:
+                        if entity_class_target in config["sys"][db_name]["parameters"]["fixed"][entity_class]:
+                            param_list = config["sys"][db_name]["parameters"]["fixed"][entity_class][entity_class_target]
+                            for param_source in param_list:
+                                entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_list[param_source][2]])
+                                values_ = db_source.get_parameter_value_items(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name=param_source)
+                                if values_:
+                                    for value_ in values_:
+                                        value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                        add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)
+          
 def add_policy_constraints(db_map : DatabaseMapping, config : dict):
 
     co2_values = [config["user"]["global_constraints"]["co2_annual_budget"][year] for year in config["user"]["global_constraints"]["co2_annual_budget"]]
@@ -978,6 +1020,7 @@ def main():
     url_db_gas = sys.argv[10]
     url_db_veh = sys.argv[11]
     url_db_hea = sys.argv[12]
+    url_db_car = sys.argv[13]
 
     with open("ines_structure.json", 'r') as f:
         ines_spec = json.load(f)
@@ -1094,6 +1137,14 @@ def main():
                 add_heat_sector(db_map,db_hea,config)
                 print("heat_sector_added")
                 db_map.commit_session("heat_sector_added")
+
+        # Cargo Sector Representation
+        if config["user"]["pipelines"]["cargo"]:
+            with DatabaseMapping(url_db_car) as db_car:
+                db_car.fetch_all()
+                add_cargo_sector(db_map,db_car,config)
+                print("cargo_sector_added")
+                db_map.commit_session("cargo_sector_added")
 
         # Commodity Nodes parameters
         with DatabaseMapping(url_db_com) as db_com:

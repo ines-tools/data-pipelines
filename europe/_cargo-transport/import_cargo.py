@@ -7,6 +7,7 @@ from openpyxl.utils import get_column_letter
 import yaml
 import pandas as pd
 import os
+import numpy as np
 
 def add_entity(db_map : DatabaseMapping, class_name : str, element_names : tuple) -> None:
     _, error = db_map.add_entity_item(entity_byname=element_names, entity_class_name=class_name)
@@ -31,20 +32,21 @@ def add_network(target_db, network,cost):
         print(commodity)
         for idx, row in network.iterrows():
             try:
-                add_entity(target_db,"region",(row[0],))
+                add_entity(target_db,"region",(row.iloc[0],))
             except:
                 pass
 
             try:
-                add_entity(target_db,"region",(row[1],))
+                add_entity(target_db,"region",(row.iloc[1],))
             except:
                 pass
 
-            print(row[0],commodity,row[1])
+            print(row.iloc[0],commodity,row.iloc[1])
             entity_class  = "region__commodity__region"
-            entity_byname = (row[0],commodity,row[1])
+            entity_byname = (row.iloc[0],commodity,row.iloc[1])
             add_entity(target_db,entity_class,entity_byname)
-            add_parameter_value(target_db,entity_class,"operational_cost","Base",entity_byname,round(cost[commodity]*row[2],1))
+            sea_condition = "road" if row.iloc[3] else "maritime"
+            add_parameter_value(target_db,entity_class,"operational_cost","Base",entity_byname,round(np.mean(cost[commodity][sea_condition])*row.iloc[2],1))
 
 def main():
 

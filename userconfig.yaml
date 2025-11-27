@@ -6,13 +6,14 @@ pipelines:
   vre: True
   hydro: True
   biomass: True
-  electricity_transmission: False
+  electricity_transmission: True
   residual_demand: True
   gas: True
-  gas_pipelines: False
+  gas_pipelines: True
   industry: True
   heat: True
   transport: True
+  cargo: True
 
 model:
     type :  brownfield # greenfied
@@ -55,6 +56,12 @@ countries :
   ES: 
     onshore:  "PECD1"
     offshore: "OFF2"
+  FR: 
+    onshore:  "PECD1"
+    offshore: "OFF2"
+  PT: 
+    onshore:  "PECD1"
+    offshore: "OFF2"
 
 # Sectors optimized
 commodity: 
@@ -71,13 +78,13 @@ commodity:
     status: False
     node_type: storage
   bio: 
-    status: False
+    status: True
     node_type: balance
   HC: 
-    status: False
+    status: True
     node_type: balance
   MeOH: 
-    status: False
+    status: True
     node_type: balance
   fossil-CH4: 
     status: False
@@ -110,6 +117,14 @@ transmission:
     status: True
   CO2: 
     status: False
+
+cargo: 
+  MeOH: 
+    status: True
+  HC: 
+    status: True
+  bio: 
+    status: True
 
 storage:
   large-battery :

@@ -601,3 +601,24 @@ heat_sector:
         node:
           flow_profile: [flow_profile,[[1]],[population,{}],null,PECD1]
           annual_scale: [flow_annual,[[1]],[population,{}],null,PECD1]
+
+# cargo transport map
+cargo_transport:
+  entities:
+    region__commodity__region:
+      link:
+        - [[1,2,3]]
+      node__link__node:
+        - [[2,1],[1,2,3],[2,3]]
+        - [[2,3],[1,2,3],[2,1]]
+  parameters:
+    user: null
+    default:
+      region__commodity__region:
+        link:
+          - [efficiency,1.0,[[1,2,3]]]
+    fixed:
+      region__commodity__region:
+        link:
+          operational_cost: [operational_cost,1.0,[[1,2,3]]]
+          
