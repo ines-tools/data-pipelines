@@ -1,0 +1,32 @@
+wind-on: Onshore Wind
+wind-off: Offshore Wind
+solar-PV: Solar
+bio-ST: Biomass Steam Turbine
+nuclear: Nuclear
+SCPC: Coal PP
+CCGT: Gas Turbine
+waste-ST: Waste Steam Turbine
+oil-eng: Diesel Group
+hydro-turbine: Hydro Turbine
+RoR: Run-of-River
+oil-boiler: Diesel Boiler
+bio-boiler: Biomass Boiler
+gas-boiler: Gas Boiler
+coal-boiler: Coal Boiler
+air-heatpump: Air HP
+air-heatpump-cool: Cooling Unit
+ground-heatpump: Ground HP
+electric-heating: Electric Heater
+large-battery: Battery Charger
+PEM: Electrolyzer
+SMR: Steam Methane Reforming
+REF-SMR: Refinery
+(BM)FT: Biofuel Production
+(H2)FT-DC: Synfuel Production
+(COEL)FT-MEA: Synfuel Production
+CH4-import: Gas Imports
+LNG-terminal: LNG Terminals
+gas-extraction: Gas Extractions
+bio-diges-up: Bio-digestion and Upgrading
+methanation: Methanation
+(H2)MeOH-DC: Syn-production of Methanol
