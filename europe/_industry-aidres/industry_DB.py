@@ -3,6 +3,7 @@ from spinedb_api import DatabaseMapping
 import sys
 import pandas as pd
 import numpy as np
+import json
 
 def add_entity(db_map : DatabaseMapping, class_name : str, element_names : tuple) -> None:
     _, error = db_map.add_entity_item(entity_byname=element_names, entity_class_name=class_name)
@@ -163,6 +164,14 @@ def main():
         target_db.purge_items('alternative')
         target_db.purge_items('scenario')
         target_db.refresh_session()
+
+        with open("industry_template_DB.json", 'r') as f:
+            db_template = json.load(f)
+        # Importing Map
+        api.import_data(target_db,
+                    entity_classes=db_template["entity_classes"],
+                    parameter_definitions=db_template["parameter_definitions"],
+                    )
 
         for alternative_name in ["Base"]:
             add_alternative(target_db,alternative_name)

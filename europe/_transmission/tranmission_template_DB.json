@@ -36,20 +36,6 @@
     ],
     "parameter_definitions": [
         [
-            "region",
-            "GIS_level",
-            null,
-            null,
-            null
-        ],
-        [
-            "region",
-            "type",
-            null,
-            null,
-            null
-        ],
-        [
             "region__transmission__commodity__region",
             "connection_type",
             null,

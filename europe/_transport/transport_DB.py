@@ -239,6 +239,14 @@ def main():
         target_db.purge_items('scenario')
         target_db.refresh_session()
 
+        with open("transport_template_DB.json", 'r') as f:
+            db_template = json.load(f)
+        # Importing Map
+        api.import_data(target_db,
+                    entity_classes=db_template["entity_classes"],
+                    parameter_definitions=db_template["parameter_definitions"],
+                    )
+
         add_entity(target_db,"commodity",("elec",))
         add_entity(target_db,"commodity",("H2",))
         add_entity(target_db,"commodity",("HC",))

@@ -43,16 +43,6 @@
             true
         ]
     ],
-    "parameter_value_lists": [
-        [
-            "gis_levels",
-            "PECD1"
-        ],
-        [
-            "gis_levels",
-            "NUTS3"
-        ]
-    ],
     "parameter_definitions": [
         [
             "stock__to_commodity__region",

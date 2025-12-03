@@ -1025,7 +1025,7 @@ def main():
     with open("ines_structure.json", 'r') as f:
         ines_spec = json.load(f)
 
-    config = {"sys":yaml.safe_load(open("sysconfig.yaml", "rb")),"user":yaml.safe_load(open("userconfig.yaml", "rb"))}
+    config = {"sys":yaml.safe_load(open("sysconfig.yaml", "rb")),"user":yaml.safe_load(open(sys.argv[14], "rb"))}
     config["transformer"] = pd.read_excel("region_transformation.xlsx",sheet_name=None)
     polygons = define_polygons(config["user"],config["transformer"])
     config["onshore_polygons"]  = polygons["onshore"]

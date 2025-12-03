@@ -197,6 +197,14 @@ def main():
         target_db.purge_items('scenario')
         target_db.refresh_session()
 
+        with open("power_template_DB.json", 'r') as f:
+            db_template = json.load(f)
+        # Importing Map
+        api.import_data(target_db,
+                    entity_classes=db_template["entity_classes"],
+                    parameter_definitions=db_template["parameter_definitions"],
+                    )
+
         for alternative_name in ["Base"]:
             add_alternative(target_db,alternative_name)
 

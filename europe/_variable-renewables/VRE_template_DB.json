@@ -80,59 +80,7 @@
             true
         ]
     ],
-    "parameter_value_lists": [
-        [
-            "GIS_level_list",
-            "PECD1"
-        ],
-        [
-            "GIS_level_list",
-            "PECD2"
-        ],
-        [
-            "GIS_level_list",
-            "NUTS2"
-        ],
-        [
-            "GIS_level_list",
-            "NUTS3"
-        ],
-        [
-            "GIS_level_list",
-            "OFF1"
-        ],
-        [
-            "GIS_level_list",
-            "OFF2"
-        ],
-        [
-            "GIS_level_list",
-            "OFF3"
-        ],
-        [
-            "region_type",
-            "onshore"
-        ],
-        [
-            "region_type",
-            "offshore"
-        ]
-    ],
     "parameter_definitions": [
-        [
-            "region",
-            "GIS_level",
-            null,
-            "GIS_level_list",
-            null
-        ],
-        [
-            "region",
-            "type",
-            null,
-            "region_type",
-            null
-        ],
         [
             "technology",
             "lifetime",
@@ -144,6 +92,13 @@
             "technology__region",
             "units_existing",
             0.0,
+            null,
+            null
+        ],
+        [
+            "technology__to_commodity",
+            "capacity",
+            null,
             null,
             null
         ],

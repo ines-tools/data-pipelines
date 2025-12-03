@@ -73,24 +73,6 @@
             true
         ]
     ],
-    "parameter_value_lists": [
-        [
-            "gis_levels",
-            "PECD1"
-        ],
-        [
-            "gis_levels",
-            "PECD2"
-        ],
-        [
-            "gis_levels",
-            "NUTS2"
-        ],
-        [
-            "gis_levels",
-            "NUTS3"
-        ]
-    ],
     "parameter_definitions": [
         [
             "reservoir__region",

@@ -174,6 +174,13 @@
             null
         ],
         [
+            "pipeline",
+            "retirement_method",
+            null,
+            null,
+            null
+        ],
+        [
             "storage",
             "capacity",
             null,
@@ -189,6 +196,13 @@
         ],
         [
             "storage",
+            "initial_state",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage",
             "investment_cost",
             null,
             null,
@@ -197,6 +211,13 @@
         [
             "storage",
             "lifetime",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage",
+            "storage_retirement_method",
             null,
             null,
             null
@@ -252,20 +273,6 @@
         ],
         [
             "storage_connection",
-            "investment_cost",
-            null,
-            null,
-            null
-        ],
-        [
-            "storage_connection",
-            "lifetime",
-            null,
-            null,
-            null
-        ],
-        [
-            "storage_connection",
             "operational_cost_in",
             null,
             null,
@@ -274,6 +281,20 @@
         [
             "storage_connection",
             "operational_cost_out",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage_connection",
+            "retirement_method_in",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage_connection",
+            "retirement_method_out",
             null,
             null,
             null
@@ -337,6 +358,13 @@
         [
             "technology",
             "lifetime",
+            null,
+            null,
+            null
+        ],
+        [
+            "technology",
+            "retirement_method",
             null,
             null,
             null

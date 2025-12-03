@@ -36,6 +36,14 @@ def main():
         db_map.purge_items('scenario')
         db_map.refresh_session()
 
+        with open("transmission_template_DB.json", 'r') as f:
+            db_template = json.load(f)
+        # Importing Map
+        api.import_data(db_map,
+                    entity_classes=db_template["entity_classes"],
+                    parameter_definitions=db_template["parameter_definitions"],
+                    )
+        
         # Base alternative
         add_alternative(db_map,"Base")
 
