@@ -22,6 +22,7 @@ from matplotlib.patches import Wedge
 import geopandas as gpd
 import sys
 from streamlit.web import cli as stcli
+import dill
 
 url_results = sys.argv[1]
 result_db = DatabaseMapping(url_results)
@@ -80,6 +81,8 @@ def from_DB_to_df(map_years):
                 latest_alternatives[name] = timestamp
 
     years = list(map_years.values())
+    start_date = {2030:"2030-01-01 00:00:00",2041:"2040-12-31 23:00:00",2050:"2049-12-31 23:00:00"}
+    years_index = [pd.Timestamp(i) for year in map_years for i in pd.date_range(start=start_date[year],end=str(year)+"-12-31 23:00:00",freq="1h")]
 
     rps = get_representative_periods()
     analyzed_nodes = ["elec","HC","H2","CH4","heat","cool","MeOH"]#,"steel-primary","steel-secondary","MeOH","glass-float","glass-container","glass-fibre","fertiliser-ammonia-NH3","chemical-PE","chemical-PEA","chemical-olefins","cement"]
@@ -92,7 +95,8 @@ def from_DB_to_df(map_years):
     units_cap     = {name:pd.DataFrame(columns=["unit_name"]+years) for name in latest_alternatives}
     units_inv     = {name:pd.DataFrame(columns=["unit_name"]+years) for name in latest_alternatives}
     units_dec     = {name:pd.DataFrame(columns=["unit_name"]+years) for name in latest_alternatives}
-    
+    node_state    = {name:pd.DataFrame(index=years_index) for name in latest_alternatives}
+
     for param_map in result_db.get_parameter_value_items(parameter_definition_name = "unit_flow"):
         scenario_name, timestamp = param_map["alternative_name"].split("@")
         timestamp = pd.Timestamp(timestamp)
@@ -244,7 +248,20 @@ def from_DB_to_df(map_years):
                 
                 units_dec[alte_name].loc[units_inv[alte_name].shape[0],:] = [unit_name] + (capacity_value*data[unit_name]).to_list()
 
-    return unit_to_flows, energy_map, unit_to_node_map, emission_map, units_cap, units_inv, units_dec, flows_map, flows_sto
+    for param_map in result_db.get_parameter_value_items(parameter_definition_name = "node_state"):
+        scenario_name, timestamp = param_map["alternative_name"].split("@")
+        timestamp = pd.Timestamp(timestamp)
+        if scenario_name in latest_alternatives:
+            if timestamp == latest_alternatives[scenario_name]:
+                storage_name = param_map["entity_byname"][1]
+
+                map_table = convert_map_to_table(param_map["parsed_value"])
+                index_names = nested_index_names(param_map["parsed_value"])
+                data = pd.DataFrame(map_table, columns=index_names + [storage_name]).set_index(index_names[0])[storage_name]
+                data.index = [pd.Timestamp(i) for i in data.index.astype("string")]
+                node_state[scenario_name].loc[data.index,storage_name] = data.values
+
+    return unit_to_flows, energy_map, unit_to_node_map, emission_map, units_cap, units_inv, units_dec, flows_map, flows_sto, node_state
 
 def df_to_sankey(energy_df, emission_df, years_map):
  
@@ -381,7 +398,10 @@ def main():
 
     resolution = 1
     map_years = {2030:"y2030",2041:"y2040",2050:"y2050"}
-    unit_to_flows, energy_map, unit_to_node_map, emission_map, units_cap, units_inv, units_dec, flows_map, flows_sto = copy.deepcopy(from_DB_to_df(map_years))
+    unit_to_flows, energy_map, unit_to_node_map, emission_map, units_cap, units_inv, units_dec, flows_map, flows_sto, node_state = copy.deepcopy(from_DB_to_df(map_years))
+
+    with open('files_out/node_state.dill', 'wb') as file:
+        dill.dump(node_state,file)
 
     energy_list   = []
     emission_list = []
@@ -486,4 +506,4 @@ def main():
     
 if __name__ == "__main__":
     main()
-    run_streamlit_app("app.py")
+    # run_streamlit_app("app.py")

@@ -136,14 +136,14 @@ def update_parameters():
 
     with DatabaseMapping(url_spineopt) as sopt_db:
 
-        resolution_ = "1h"
+        resolution_ = "24h"
 
         add_or_update_parameter_value(sopt_db, "temporal_block", "resolution", "Base", ("operations_y2030", ),  {"type":"duration","data":resolution_})
         add_or_update_parameter_value(sopt_db, "temporal_block", "resolution", "Base", ("operations_y2040", ),  {"type":"duration","data":resolution_})
         add_or_update_parameter_value(sopt_db, "temporal_block", "resolution", "Base", ("operations_y2050", ),  {"type":"duration","data":resolution_})
-        add_or_update_parameter_value(sopt_db, "node", "initial_storages_invested_available", "Base", ("CO2", ), 0.2*1e6/15)
-        add_or_update_parameter_value(sopt_db, "node", "fix_storages_invested_available", "Base", ("CO2", ), 0.2*1e6/15)
-        add_or_update_parameter_value(sopt_db, "node", "node_state_cap", "Base", ("atmosphere", ), 2.2*1e9/15)
+        add_or_update_parameter_value(sopt_db, "node", "initial_storages_invested_available", "Base", ("CO2", ), 0.2*1e6/30)
+        add_or_update_parameter_value(sopt_db, "node", "fix_storages_invested_available", "Base", ("CO2", ), 0.2*1e6/30)
+        add_or_update_parameter_value(sopt_db, "node", "node_state_cap", "Base", ("atmosphere", ), 2.2*1e9/30)
 
         try:
             sopt_db.commit_session("Update Investment Costs")
@@ -170,7 +170,7 @@ def air_ground_heatpump():
 def scenario_development():
     with DatabaseMapping(url_spineopt) as sopt_db:
         alt_names = ["wy2009","2030_wy2009","2040_wy2009","2050_wy2009","medium_bio","current","GA","GA_flex0","Base"]
-        # alt_names = ["wy2009","medium_bio","current","GA","GA_flex0","Base"]
+        alt_names = ["wy2009","medium_bio","current","GA","GA_flex0","Base"]
         # alt_names = ["Base"]
         scenario_name = "__".join(alt_names)
         add_scenario(sopt_db,scenario_name)
@@ -305,9 +305,9 @@ def main():
     print("storage_setup")
     storage_setup()
     print("hydro_temporal_block")
-    # hydro_TB()
+    hydro_TB()
     print("industry_temporal_block")
-    # industry_TB()
+    industry_TB()
     print("updating_parameters")
     update_parameters()
 

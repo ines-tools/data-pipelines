@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import dill
+import numpy as np
 
 st.set_page_config(page_title="Capacity Dashboard", layout="wide")
 
@@ -347,17 +349,38 @@ else:
                 inv_tech = inv_year[inv_year["technology"] == tech]
                 dec_tech = dec_year[dec_year["technology"] == tech]
                 
-                if not inv_tech.empty:
+               
+                has_inv = not inv_tech.empty
+                has_dec = not dec_tech.empty
+
+                # --- INVESTMENTS: si existe, pinta y crea leyenda ---
+                if has_inv:
                     fig_change.add_trace(go.Bar(
                         x=inv_tech[x_col],
                         y=inv_tech["Value"],
                         name=tech,
                         marker_color=color_map[tech],
                         legendgroup=tech,
-                        showlegend=True
+                        showlegend=True      # leyenda por tecnología aquí
                     ))
-                
-                if not dec_tech.empty:
+                # --- DUMMY: solo si NO hay inv pero SÍ hay decommissions ---
+                elif has_dec:
+                    # x válido para la dummy: si x_col == "technology", usa la propia tecnología;
+                    # en otro caso, usa el primer elemento de x_order (si existe).
+                    dummy_x = [tech] if x_col == "technology" else ([x_order[0]] if x_order else [""])
+                    fig_change.add_trace(go.Bar(
+                        x=dummy_x,
+                        y=[0],                         # barra invisible
+                        name=tech,
+                        marker_color=color_map[tech],  # color de la tecnología
+                        legendgroup=tech,
+                        showlegend=True,               # siembra la leyenda
+                        marker_opacity=0.0,            # que no se vea
+                        hoverinfo='skip'               # sin tooltip
+                    ))
+
+                # --- DECOMMISSIONS: pinta siempre que haya, pero sin crear leyenda ---
+                if has_dec:
                     fig_change.add_trace(go.Bar(
                         x=dec_tech[x_col],
                         y=dec_tech["Value"],
@@ -365,8 +388,9 @@ else:
                         marker_color=color_map[tech],
                         marker_pattern_shape="/",
                         legendgroup=tech,
-                        showlegend=False
+                        showlegend=False               # no duplica leyenda
                     ))
+
             
             fig_change.update_layout(
                 barmode='relative',
@@ -424,6 +448,57 @@ else:
         
         st.plotly_chart(fig_change, width="stretch")
 
+
+# ----------------------
+# Plot 4: Storage
+# ----------------------
+
+def load_dill(path: str) -> dict:
+    with open(path, "rb") as f:
+        return dill.load(f)
+
+# Cargar diccionario con escenarios
+storage_dict = load_dill("files_out/node_state.dill")  # Ajusta la ruta
+
+# --- Sidebar para filtros ---
+scenario_storage = scenario
+year_storage = year_option
+storage_types = list(set([col.split("_")[0] for col in storage_dict[scenario_storage].columns]))
+selected_storage_types = st.sidebar.multiselect("Storage Types", storage_types, default=["reservoir"])
+
+# --- Filtrar datos ---
+df_storage = storage_dict[scenario_storage].copy()
+if year_storage != "All Years":
+    df_storage = df_storage[df_storage.index.year == int(year_storage if year_storage != "2040" else "2041")]
+
+# Filtrar columnas por storage y país
+cols_to_plot = []
+for col in df_storage.columns:
+    if len(col.split("_")) > 1 and "All Europe" not in selected_countries:
+        storage_type, country = col.split("_")
+        if storage_type in selected_storage_types and country in selected_countries:
+            cols_to_plot.append(col)
+    else:
+        storage_type = col.split("_")[0]
+        if storage_type in selected_storage_types:
+            cols_to_plot.append(col)
+
+filtered_storage = df_storage[cols_to_plot]
+
+# --- Plot con Plotly ---
+st.subheader("Node State by Storage Type and Country")
+if filtered_storage.empty:
+    st.info("No data for selected filters.")
+else:
+    fig_storage = px.line(
+        filtered_storage,
+        x=filtered_storage.index,
+        y=filtered_storage.columns,
+        title=f"Node State for {', '.join(selected_storage_types)} in {', '.join(selected_countries)} ({scenario_storage})",
+    )
+    fig_storage.update_traces(connectgaps=True)
+    fig_storage.update_layout(xaxis_title="Time",yaxis_title="Energy (MWh)",template="plotly_white", height=600, legend_title_text="Storage_Country")
+    st.plotly_chart(fig_storage, width="stretch")
 
 # ----------------------
 # Download buttons
