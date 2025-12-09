@@ -760,9 +760,11 @@ def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, con
                             for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
                                 entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_items[2]])
                                 if param_items[0] == "investment_method": # Particular Case Screening Out
-                                    if not db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name="potentials",alternative_name="Base"):
-                                        param_items[1] = "not_allowed"
-                                add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
+                                    original_parameter = db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name="potentials",alternative_name="Base")
+                                    value_default = "not_allowed" if not original_parameter else param_items[1]
+                                else:
+                                    value_default = param_items[1]
+                                add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,value_default)
                     
                     # Fixed Parameters
                     if entity_class in config["sys"][db_name]["parameters"]["fixed"]:
