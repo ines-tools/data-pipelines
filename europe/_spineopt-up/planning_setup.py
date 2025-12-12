@@ -113,14 +113,15 @@ def investment_cost_update():
                     add_or_update_parameter_value(sopt_db, parameter_map["entity_class_name"], fcost[index], fom_dict["alternative_name"], fom_dict["entity_byname"], (fom_cost.values[2] if fom_dict["type"]=="time_series" else fom_cost))
 
                 
-                dates = ["2030-01-01T00:00:00","2040-01-01T00:00:00","2050-01-01T00:00:00","2051-01-01T00:00:00"]
+                dates = ["2030-01-01T00:00:00","2040-01-01T00:00:00","2050-01-01T00:00:00","2060-01-01T00:00:00"]
+                year_dur = [30,20,10]
                 if parameter_map["type"] == "float":
                     annual_cost = (parameter_map["parsed_value"] * annuity_factor)
-                    new_values  = [annual_cost*min(lifetime,21),annual_cost*min(lifetime,11),annual_cost*min(lifetime,1),annual_cost*min(lifetime,1)]
+                    new_values  = [annual_cost*min(lifetime,year_dur[0]),annual_cost*min(lifetime,year_dur[1]),annual_cost*min(lifetime,year_dur[2]),annual_cost*min(lifetime,year_dur[2])]
                     new_value   = {"type":"time_series","data":dict(zip(dates,new_values))}
                 else:
                     annual_cost = parameter_map["parsed_value"].values * annuity_factor
-                    new_values = [(annual_cost[0] + ((fom_cost.values[0] - fom_cost.values[2])*8760 if fom_cost_condition else 0.0))*min(lifetime,21),(annual_cost[1] + ((fom_cost.values[1] - fom_cost.values[2])*8760 if fom_cost_condition else 0.0))*min(lifetime,11),annual_cost[2]*min(lifetime,1),annual_cost[2]*min(lifetime,1)]
+                    new_values = [(annual_cost[0] + ((fom_cost.values[0] - fom_cost.values[2])*8760 if fom_cost_condition else 0.0))*min(lifetime,year_dur[0]),(annual_cost[1] + ((fom_cost.values[1] - fom_cost.values[2])*8760 if fom_cost_condition else 0.0))*min(lifetime,year_dur[1]),annual_cost[2]*min(lifetime,year_dur[2]),annual_cost[2]*min(lifetime,year_dur[2])]
                     new_value = {"type":parameter_map["type"], "data": dict(zip(dates,new_values))}   
                 
                 # print("new value for the value cost", parameter_map["entity_class_name"], parameter_map["parameter_definition_name"], parameter_map["alternative_name"], parameter_map["entity_byname"], new_value)
@@ -136,7 +137,7 @@ def update_parameters():
 
     with DatabaseMapping(url_spineopt) as sopt_db:
 
-        resolution_ = "24h"
+        resolution_ = "12h"
 
         add_or_update_parameter_value(sopt_db, "temporal_block", "resolution", "Base", ("operations_y2030", ),  {"type":"duration","data":resolution_})
         add_or_update_parameter_value(sopt_db, "temporal_block", "resolution", "Base", ("operations_y2040", ),  {"type":"duration","data":resolution_})
@@ -245,6 +246,7 @@ def hydro_TB():
             block_end = json.loads(sopt_db.get_parameter_value_item(entity_class_name = "temporal_block",entity_byname = entity_tb["entity_byname"], alternative_name = "Base", parameter_definition_name = "block_end")["value"])["data"]
             add_parameter_value(sopt_db,"temporal_block","block_start","Base",("hydro_"+entity_tb["name"],),{"type":"date_time","data":block_start})
             add_parameter_value(sopt_db,"temporal_block","block_end","Base",("hydro_"+entity_tb["name"],),{"type":"date_time","data":block_end})
+            add_parameter_value(sopt_db,"temporal_block","weight","Base",("hydro_"+entity_tb["name"],),10.0)
             add_parameter_value(sopt_db,"temporal_block","has_free_start","Base",("hydro_"+entity_tb["name"],),True)
 
             for alternative_name in ["wy1995","wy2008","wy2009"]:
@@ -281,6 +283,7 @@ def industry_TB():
             block_end = json.loads(sopt_db.get_parameter_value_item(entity_class_name = "temporal_block",entity_byname = entity_tb["entity_byname"], alternative_name = "Base", parameter_definition_name = "block_end")["value"])["data"]
             add_parameter_value(sopt_db,"temporal_block","block_start","Base",("industry_"+entity_tb["name"],),{"type":"date_time","data":block_start})
             add_parameter_value(sopt_db,"temporal_block","block_end","Base",("industry_"+entity_tb["name"],),{"type":"date_time","data":block_end})
+            add_parameter_value(sopt_db,"temporal_block","weight","Base",("industry_"+entity_tb["name"],),10.0)
             add_parameter_value(sopt_db,"temporal_block","has_free_start","Base",("industry_"+entity_tb["name"],),True)
             add_parameter_value(sopt_db,"temporal_block","resolution","Base",("industry_"+entity_tb["name"],),{"type":"duration","data":"365D"})
             for inode in inodes:

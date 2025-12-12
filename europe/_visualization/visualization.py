@@ -95,7 +95,7 @@ def from_DB_to_df(map_years):
     units_cap     = {name:pd.DataFrame(columns=["unit_name"]+years) for name in latest_alternatives}
     units_inv     = {name:pd.DataFrame(columns=["unit_name"]+years) for name in latest_alternatives}
     units_dec     = {name:pd.DataFrame(columns=["unit_name"]+years) for name in latest_alternatives}
-    node_state    = {name:pd.DataFrame(index=years_index) for name in latest_alternatives}
+    node_state    = {name:pd.DataFrame() for name in latest_alternatives}
 
     for param_map in result_db.get_parameter_value_items(parameter_definition_name = "unit_flow"):
         scenario_name, timestamp = param_map["alternative_name"].split("@")
@@ -259,8 +259,8 @@ def from_DB_to_df(map_years):
                 index_names = nested_index_names(param_map["parsed_value"])
                 data = pd.DataFrame(map_table, columns=index_names + [storage_name]).set_index(index_names[0])[storage_name]
                 data.index = [pd.Timestamp(i) for i in data.index.astype("string")]
-                node_state[scenario_name].loc[data.index,storage_name] = data.values
-
+                node_state[scenario_name] = pd.concat([node_state[scenario_name],data],ignore_index=False)
+            node_state[scenario_name] = node_state[scenario_name].sort_index()
     return unit_to_flows, energy_map, unit_to_node_map, emission_map, units_cap, units_inv, units_dec, flows_map, flows_sto, node_state
 
 def df_to_sankey(energy_df, emission_df, years_map):

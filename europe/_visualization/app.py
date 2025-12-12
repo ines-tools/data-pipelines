@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import json
+import geopandas as gpd
 import dill
 import numpy as np
 
@@ -160,6 +162,9 @@ else:
     agg_installed = filtered.groupby(group_cols, as_index=False)["Installed"].sum().rename(columns={"Installed":"Capacity (GW)"})
     agg_installed = agg_installed[agg_installed["Capacity (GW)"].fillna(0) > 0]
 
+    years = sorted(agg_installed["year"].dropna().unique())  # e.g., [2030, 2040, 2050]
+    YEAR_ORDER = list(map(int, years))
+
     if agg_installed.empty:
         st.info("No installed capacity data for the selected filters.")
     else:
@@ -175,7 +180,7 @@ else:
                 fig_installed = px.bar(
                     agg_installed, x="polygon", y="Capacity (GW)", color="technology",
                     color_discrete_map=color_map, barmode="stack", facet_row="year",
-                    category_orders={"polygon": order_polygons, "technology": TECH_ORDER},
+                    category_orders={"polygon": order_polygons, "technology": TECH_ORDER, "year": YEAR_ORDER},
                     title=f"Installed Capacity by Country per Year ({scenario})"
                 )
             else:
@@ -231,6 +236,12 @@ else:
 
     agg_flows = filtered.groupby(group_cols, as_index=False)["UnitFlows"].sum().rename(columns={"UnitFlows":"Flows (TWh)"})
     agg_flows = agg_flows[agg_flows["Flows (TWh)"].fillna(0) > 0]
+
+    
+    years = sorted(agg_flows["year"].dropna().unique())  # e.g., [2030, 2040, 2050]
+    YEAR_ORDER = list(map(int, years))
+
+
     if agg_flows.empty:
         st.info("No unit to flows data for the selected filters.")
     else:
@@ -246,7 +257,7 @@ else:
                 fig_flows = px.bar(
                     agg_flows, x="polygon", y="Flows (TWh)", color="technology",
                     color_discrete_map=color_map, barmode="stack", facet_row="year",
-                    category_orders={"polygon": order_polygons, "technology": TECH_ORDER},
+                    category_orders={"polygon": order_polygons, "technology": TECH_ORDER, "year": YEAR_ORDER},
                     title=f"Unit to Flows by Country per Year ({scenario})"
                 )
             else:
@@ -447,6 +458,84 @@ else:
         fig_change.update_xaxes(categoryorder="array", categoryarray=x_order)
         
         st.plotly_chart(fig_change, width="stretch")
+
+
+# ----------------------------
+# Plot: Installed Capacity Map (GeoPandas + Plotly)
+# ----------------------------
+
+st.subheader("Installed Capacity Map Comparison")
+
+# --- Map-specific filters ---
+st.sidebar.markdown("### Map Filters")
+map_scenario = st.sidebar.selectbox("Map Scenario (Geo)", scenarios, index=0)
+map_year = st.sidebar.selectbox("Map Year (Geo)", years, index=0)  # 'years' is already sorted ints
+
+# Technology options (keep "All Technologies" first)
+map_tech = st.sidebar.selectbox("Map Technology (Geo)", ["All Technologies"] + TECH_ORDER, index=0)
+
+# --- Load GeoJSON with GeoPandas ---
+# Set this to your feature property that matches CSV's polygon names
+POLY_COL = "id"                     # e.g., "name" or "polygon"
+geojson_path = "onshore_PECD1.geojson"
+gdf = gpd.read_file(geojson_path).to_crs(epsg=4326)
+
+# --- Build capacity table from your already-prepared 'merged' DataFrame ---
+# (uses GW units because you converted earlier)
+df_cap = merged[(merged["scenario"] == map_scenario) & (merged["year"] == int(map_year))].copy()
+if map_tech != "All Technologies":
+    df_cap = df_cap[df_cap["technology"] == map_tech]
+
+cap_by_polygon = (
+    df_cap.groupby("polygon", as_index=False)["Installed"]
+          .sum()
+          .rename(columns={"Installed": "Capacity (GW)"})
+)
+
+# Ensure ALL GeoJSON polygons appear; fill missing capacities with 0
+gdf_plot = gdf.merge(cap_by_polygon, left_on=POLY_COL, right_on="polygon", how="left")
+gdf_plot["Capacity (GW)"] = gdf_plot["Capacity (GW)"].fillna(0)
+
+# --- Choropleth (dark theme) ---
+geojson_obj = json.loads(gdf_plot.to_json())
+max_cap = float(gdf_plot["Capacity (GW)"].max())
+
+
+fig_map = px.choropleth(
+    gdf_plot,
+    geojson=geojson_obj,
+    locations=POLY_COL,
+    featureidkey=f"properties.{POLY_COL}",
+    color="Capacity (GW)",
+    color_continuous_scale="Cividis",               # good on dark backgrounds
+    range_color=(0, max_cap if max_cap > 0 else 1), # stable color scale
+    hover_name=POLY_COL,
+    hover_data={"Capacity (GW)": ":.2f"},
+    projection="natural earth",                     # nicer than flat mercator
+)
+
+
+# Show a dark map frame with ocean & land
+fig_map.update_geos(
+    fitbounds="locations",
+    visible=True,
+    showframe=True,
+    showcoastlines=True,
+    showcountries=True,
+    showocean=True,
+    oceancolor="#1b2a34",
+    showland=True,
+    landcolor="#243647",
+    lataxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.08)", dtick=5),
+    lonaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.08)", dtick=5),
+)
+
+st.plotly_chart(fig_map, width="stretch")
+
+# Reuse downloader if present
+if 'download_plot' in globals():
+    download_plot(fig_map, "installed_capacity_map_dark")
+
 
 
 # ----------------------
