@@ -61,21 +61,21 @@ merged["UnitFlows"] = merged["UnitFlows"] / 1e6
 # ----------------------
 # Sidebar filters
 # ----------------------
-st.sidebar.header("Filters")
+st.sidebar.header("Global Filters")
 scenarios = sorted(merged["scenario"].dropna().unique())
 countries = sorted(merged["polygon"].dropna().unique())
 nodes = sorted(merged["node"].dropna().unique())
 years = sorted(merged["year"].dropna().unique())
 
 scenario = st.sidebar.selectbox("Scenario", scenarios)
-selected_countries = st.sidebar.multiselect("Countries", ["All Europe"] + countries, default=countries)
+selected_countries = st.sidebar.multiselect("Countries", ["Europe"] + countries, default=countries)
 selected_node = st.sidebar.selectbox("Node", ["All"] + nodes)
 year_option = st.sidebar.selectbox("Year", ["All Years"] + [str(y) for y in years])
 
 # Filter data
-if "All Europe" in selected_countries:
+if "Europe" in selected_countries:
     filtered = merged[merged["scenario"] == scenario].copy()
-    selected_countries_display = ["All Europe"]
+    selected_countries_display = ["Europe"]
 else:
     filtered = merged[(merged["scenario"] == scenario) & (merged["polygon"].isin(selected_countries))].copy()
     selected_countries_display = selected_countries
@@ -131,7 +131,7 @@ def assign_color_by_technology(tech_name):
 TECH_ORDER = sorted(merged["technology"].dropna().unique())
 color_map = {tech: assign_color_by_technology(tech) for tech in TECH_ORDER}
 
-if "All Europe" not in selected_countries:
+if "Europe" not in selected_countries:
     order_polygons = (filtered.groupby("polygon")["Installed"]
                       .sum()
                       .sort_values(ascending=False)
@@ -154,7 +154,7 @@ else:
     group_cols = ["technology"]
     if year_option == "All Years":
         group_cols.append("year")
-    if len(selected_countries_display) > 1 and "All Europe" not in selected_countries:
+    if len(selected_countries_display) > 1 and "Europe" not in selected_countries:
         group_cols.append("polygon")
     if selected_node == "All":
         group_cols.append("node")
@@ -168,7 +168,7 @@ else:
     if agg_installed.empty:
         st.info("No installed capacity data for the selected filters.")
     else:
-        if (len(selected_countries_display) == 1 or "All Europe" in selected_countries) and year_option != "All Years" and selected_node != "All":
+        if (len(selected_countries_display) == 1 or "Europe" in selected_countries) and year_option != "All Years" and selected_node != "All":
             agg_installed["year"] = year_option
             fig_installed = px.bar(
                 agg_installed, x="year", y="Capacity (GW)", color="technology",
@@ -176,7 +176,7 @@ else:
                 title=f"Installed Capacity in {', '.join(selected_countries_display)} - {selected_node} - {year_option} ({scenario})"
             )
         elif year_option == "All Years":
-            if len(selected_countries_display) > 1 and "All Europe" not in selected_countries:
+            if len(selected_countries_display) > 1 and "Europe" not in selected_countries:
                 fig_installed = px.bar(
                     agg_installed, x="polygon", y="Capacity (GW)", color="technology",
                     color_discrete_map=color_map, barmode="stack", facet_row="year",
@@ -191,7 +191,7 @@ else:
                     title=f"Installed Capacity in {', '.join(selected_countries_display)} ({scenario})"
                 )
         else:
-            if len(selected_countries_display) > 1 and "All Europe" not in selected_countries:
+            if len(selected_countries_display) > 1 and "Europe" not in selected_countries:
                 fig_installed = px.bar(
                     agg_installed, x="polygon", y="Capacity (GW)", color="technology",
                     color_discrete_map=color_map, barmode="stack",
@@ -229,7 +229,7 @@ else:
     group_cols = ["technology"]
     if year_option == "All Years":
         group_cols.append("year")
-    if len(selected_countries_display) > 1 and "All Europe" not in selected_countries:
+    if len(selected_countries_display) > 1 and "Europe" not in selected_countries:
         group_cols.append("polygon")
     if selected_node == "All":
         group_cols.append("node")
@@ -245,7 +245,7 @@ else:
     if agg_flows.empty:
         st.info("No unit to flows data for the selected filters.")
     else:
-        if (len(selected_countries_display) == 1 or "All Europe" in selected_countries) and year_option != "All Years" and selected_node != "All":
+        if (len(selected_countries_display) == 1 or "Europe" in selected_countries) and year_option != "All Years" and selected_node != "All":
             agg_flows["year"] = year_option
             fig_flows = px.bar(
                 agg_flows, x="year", y="Flows (TWh)", color="technology",
@@ -253,7 +253,7 @@ else:
                 title=f"Unit to Flows in {', '.join(selected_countries_display)} - {selected_node} - {year_option} ({scenario})"
             )
         elif year_option == "All Years":
-            if len(selected_countries_display) > 1 and "All Europe" not in selected_countries:
+            if len(selected_countries_display) > 1 and "Europe" not in selected_countries:
                 fig_flows = px.bar(
                     agg_flows, x="polygon", y="Flows (TWh)", color="technology",
                     color_discrete_map=color_map, barmode="stack", facet_row="year",
@@ -268,7 +268,7 @@ else:
                     title=f"Unit to Flows in {', '.join(selected_countries_display)} ({scenario})"
                 )
         else:
-            if len(selected_countries_display) > 1 and "All Europe" not in selected_countries:
+            if len(selected_countries_display) > 1 and "Europe" not in selected_countries:
                 fig_flows = px.bar(
                     agg_flows, x="polygon", y="Flows (TWh)", color="technology",
                     color_discrete_map=color_map, barmode="stack",
@@ -305,8 +305,8 @@ fig_height = 600
 if filtered.empty:
     st.info("No data for the selected filters.")
 else:
-    # ===== NUEVO: lógica para "All Europe" =====
-    if "All Europe" in selected_countries:
+    # ===== NUEVO: lógica para "Europe" =====
+    if "Europe" in selected_countries:
         agg = filtered.groupby(["technology", "year", "node"], as_index=False)[["Invested", "Decommissioned"]].sum()
     else:
         agg = filtered.groupby(["technology", "year", "polygon", "node"], as_index=False)[["Invested", "Decommissioned"]].sum()
@@ -320,11 +320,11 @@ else:
     multiple_plots = None
 
     # ===== Ajustar x_col según selección =====
-    if "All Europe" in selected_countries:
+    if "Europe" in selected_countries:
         if year_option == "All Years":
             x_col = "year"
         else:
-            # ===== NUEVO: si All Europe + un año + todos los nodos → agregamos por tecnología =====
+            # ===== NUEVO: si Europe + un año + todos los nodos → agregamos por tecnología =====
             if selected_node == "All":
                 x_col = "technology"
                 invested_data = invested_data.groupby(["technology"], as_index=False)["Value"].sum()
@@ -461,81 +461,58 @@ else:
 
 
 # ----------------------------
-# Plot: Installed Capacity Map (GeoPandas + Plotly)
+# Plot: Installed Capacity Map (Optimized)
 # ----------------------------
+
+# Cache geodata loading
+@st.cache_data
+def load_geodata(path, poly_col):
+    gdf = gpd.read_file(path).to_crs(epsg=4326)
+    gdf['geometry'] = gdf['geometry'].simplify(tolerance=0.01)
+    return json.loads(gdf.to_json()), gdf
+
+POLY_COL = "id"
+geojson_obj, gdf_base = load_geodata("onshore_PECD1.geojson", POLY_COL)
 
 st.subheader("Installed Capacity Map Comparison")
 
-# --- Map-specific filters ---
-st.sidebar.markdown("### Map Filters")
-map_scenario = st.sidebar.selectbox("Map Scenario (Geo)", scenarios, index=0)
-map_year = st.sidebar.selectbox("Map Year (Geo)", years, index=0)  # 'years' is already sorted ints
+# Filters on top
+col1, col2 = st.columns(2)
+with col1:
+    map_year = st.selectbox("Year", years, index=0)
+with col2:
+    map_tech = st.selectbox("Technology", ["All Technologies"] + TECH_ORDER, index=0)
 
-# Technology options (keep "All Technologies" first)
-map_tech = st.sidebar.selectbox("Map Technology (Geo)", ["All Technologies"] + TECH_ORDER, index=0)
-
-# --- Load GeoJSON with GeoPandas ---
-# Set this to your feature property that matches CSV's polygon names
-POLY_COL = "id"                     # e.g., "name" or "polygon"
-geojson_path = "onshore_PECD1.geojson"
-gdf = gpd.read_file(geojson_path).to_crs(epsg=4326)
-
-# --- Build capacity table from your already-prepared 'merged' DataFrame ---
-# (uses GW units because you converted earlier)
-df_cap = merged[(merged["scenario"] == map_scenario) & (merged["year"] == int(map_year))].copy()
+# Filter and aggregate data
+df_cap = merged[(merged["scenario"] == scenario) & (merged["year"] == int(map_year))].copy()
 if map_tech != "All Technologies":
     df_cap = df_cap[df_cap["technology"] == map_tech]
 
-cap_by_polygon = (
-    df_cap.groupby("polygon", as_index=False)["Installed"]
-          .sum()
-          .rename(columns={"Installed": "Capacity (GW)"})
-)
+cap_by_polygon = df_cap.groupby("polygon", as_index=False)["Installed"].sum().rename(columns={"Installed": "Capacity (GW)"})
 
-# Ensure ALL GeoJSON polygons appear; fill missing capacities with 0
-gdf_plot = gdf.merge(cap_by_polygon, left_on=POLY_COL, right_on="polygon", how="left")
+# Merge with geodata
+gdf_plot = gdf_base[[POLY_COL, 'geometry']].merge(cap_by_polygon, left_on=POLY_COL, right_on="polygon", how="left")
 gdf_plot["Capacity (GW)"] = gdf_plot["Capacity (GW)"].fillna(0)
-
-# --- Choropleth (dark theme) ---
-geojson_obj = json.loads(gdf_plot.to_json())
 max_cap = float(gdf_plot["Capacity (GW)"].max())
 
-
+# Create map
 fig_map = px.choropleth(
-    gdf_plot,
-    geojson=geojson_obj,
-    locations=POLY_COL,
-    featureidkey=f"properties.{POLY_COL}",
-    color="Capacity (GW)",
-    color_continuous_scale="Cividis",               # good on dark backgrounds
-    range_color=(0, max_cap if max_cap > 0 else 1), # stable color scale
-    hover_name=POLY_COL,
-    hover_data={"Capacity (GW)": ":.2f"},
-    projection="natural earth",                     # nicer than flat mercator
+    gdf_plot, geojson=geojson_obj, locations=POLY_COL, featureidkey=f"properties.{POLY_COL}",
+    color="Capacity (GW)", color_continuous_scale="Cividis", range_color=(0, max_cap if max_cap > 0 else 1),
+    hover_name=POLY_COL, hover_data={"Capacity (GW)": ":.2f"}, projection="natural earth"
 )
 
-
-# Show a dark map frame with ocean & land
 fig_map.update_geos(
-    fitbounds="locations",
-    visible=True,
-    showframe=True,
-    showcoastlines=True,
-    showcountries=True,
-    showocean=True,
-    oceancolor="#1b2a34",
-    showland=True,
-    landcolor="#243647",
+    fitbounds="locations", visible=True, showframe=True, showcoastlines=True, showcountries=True,
+    showocean=True, oceancolor="#1b2a34", showland=True, landcolor="#243647",
     lataxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.08)", dtick=5),
-    lonaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.08)", dtick=5),
+    lonaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.08)", dtick=5)
 )
 
 st.plotly_chart(fig_map, width="stretch")
 
-# Reuse downloader if present
 if 'download_plot' in globals():
-    download_plot(fig_map, "installed_capacity_map_dark")
-
+    download_plot(fig_map, "installed_capacity_map")
 
 
 # ----------------------
@@ -549,11 +526,13 @@ def load_dill(path: str) -> dict:
 # Cargar diccionario con escenarios
 storage_dict = load_dill("files_out/node_state.dill")  # Ajusta la ruta
 
+st.subheader("Node State by Storage Type and Country")
+
 # --- Sidebar para filtros ---
 scenario_storage = scenario
 year_storage = year_option
 storage_types = list(set([col.split("_")[0] for col in storage_dict[scenario_storage].columns]))
-selected_storage_types = st.sidebar.multiselect("Storage Types", storage_types, default=["reservoir"])
+selected_storage_types = st.multiselect("Storage Types", storage_types, default=["reservoir"])
 
 # --- Filtrar datos ---
 df_storage = storage_dict[scenario_storage].copy()
@@ -563,7 +542,7 @@ if year_storage != "All Years":
 # Filtrar columnas por storage y país
 cols_to_plot = []
 for col in df_storage.columns:
-    if len(col.split("_")) > 1 and "All Europe" not in selected_countries:
+    if len(col.split("_")) > 1 and "Europe" not in selected_countries:
         storage_type, country = col.split("_")
         if storage_type in selected_storage_types and country in selected_countries:
             cols_to_plot.append(col)
@@ -575,7 +554,6 @@ for col in df_storage.columns:
 filtered_storage = df_storage[cols_to_plot]
 
 # --- Plot con Plotly ---
-st.subheader("Node State by Storage Type and Country")
 if filtered_storage.empty:
     st.info("No data for selected filters.")
 else:
@@ -589,26 +567,6 @@ else:
     fig_storage.update_layout(xaxis_title="Time",yaxis_title="Energy (MWh)",template="plotly_white", height=600, legend_title_text="Storage_Country")
     st.plotly_chart(fig_storage, width="stretch")
 
-# ----------------------
-# Download buttons
-# ----------------------
-st.markdown("### Download Plots")
-def download_plot(fig, name):
-    html_bytes = fig.to_html().encode()
-    try:
-        png_bytes = fig.to_image(format="png")
-        st.download_button(label=f"Download {name} (PNG)", data=png_bytes,
-                           file_name=f"{name}.png", mime="image/png")
-    except Exception:
-        st.caption("PNG export requires `kaleido`. Install it via `pip install kaleido`.")
-    st.download_button(label=f"Download {name} (HTML)", data=html_bytes,
-                       file_name=f"{name}.html", mime="text/html")
-
-if 'fig_installed' in locals():
-    download_plot(fig_installed, "installed_capacity")
-if 'fig_change' in locals():
-    download_plot(fig_change, "invested_vs_decommissioned")
-
 # -------------------------------
 # Sankey Diagrams
 # -------------------------------
@@ -619,10 +577,13 @@ energy_flows = load_csv("files_out/energy_flows.csv")
 crossborder_flows = load_csv("files_out/crossborder_flows.csv")
 emissions_flows = load_csv("files_out/emissions_flows.csv")
 
-st.sidebar.markdown("### Sankey Filters")
-region_option = st.sidebar.selectbox("Region", ["Europe"] + countries)
-year_sankey = st.sidebar.selectbox("Year for Sankey", [str(y) for y in years])
-sankey_type = st.sidebar.selectbox("Sankey Type", ["Energy Flows", "Emissions Flows"])
+col1, col2, col3 = st.columns(3)
+with col1: 
+    region_option = st.selectbox("Year for Sankey", ["Europe"] + countries)
+with col2:
+    year_sankey = st.selectbox("Year for Sankey", [str(y) for y in years])
+with col3:
+    sankey_type = st.selectbox("Sankey Type", ["Energy Flows", "Emissions Flows"])
 
 def build_sankey(region, year, scenario_selected, flow_data, cb_data, title_prefix):
     year_col = f"y{year}"
@@ -709,3 +670,29 @@ if year_sankey:
                            mime="image/png")
     except Exception:
         st.caption("PNG export requires `kaleido`. Install it via `pip install kaleido`.")
+
+# ----------------------
+# Download buttons
+# ----------------------
+st.markdown("### Download Plots")
+def download_plot(fig, name):
+    html_bytes = fig.to_html().encode()
+    try:
+        png_bytes = fig.to_image(format="png")
+        st.download_button(label=f"Download {name} (PNG)", data=png_bytes,
+                           file_name=f"{name}.png", mime="image/png")
+    except Exception:
+        st.caption("PNG export requires `kaleido`. Install it via `pip install kaleido`.")
+    st.download_button(label=f"Download {name} (HTML)", data=html_bytes,
+                       file_name=f"{name}.html", mime="text/html")
+
+if 'fig_installed' in locals():
+    download_plot(fig_installed, "installed_capacity")
+if 'fig_flows' in locals():
+    download_plot(fig_flows, "technology_flows")
+if 'fig_change' in locals():
+    download_plot(fig_change, "invested_vs_decommissioned")
+if 'fig_map' in locals():
+    download_plot(fig_map, "capacity_map")
+if 'fig_storage' in locals():
+    download_plot(fig_storage, "storage_state")

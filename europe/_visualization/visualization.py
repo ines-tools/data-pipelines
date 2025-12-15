@@ -39,6 +39,8 @@ with open("node_mapping_sankey.yml","r") as file:
     node_map_sankey = yaml.safe_load(file)
 with open("unit_mapping.yml","r") as file:
     unit_map = yaml.safe_load(file)
+with open("scenario_mapping.yml","r") as file:
+    scenario_map = yaml.safe_load(file)
         
 
 def extract_polygon(unit_name: str):
@@ -400,6 +402,7 @@ def main():
     map_years = {2030:"y2030",2041:"y2040",2050:"y2050"}
     unit_to_flows, energy_map, unit_to_node_map, emission_map, units_cap, units_inv, units_dec, flows_map, flows_sto, node_state = copy.deepcopy(from_DB_to_df(map_years))
 
+    node_state = {scenario_map.get(k, k): v for k, v in node_state.items()}
     with open('files_out/node_state.dill', 'wb') as file:
         dill.dump(node_state,file)
 
@@ -431,6 +434,8 @@ def main():
 
     energy_df = pd.concat(energy_list,axis=0,ignore_index=True)
     emission_df = pd.concat(emission_list,axis=0,ignore_index=True)
+    energy_df["scenario"] = energy_df["scenario"].map(scenario_map)
+    emission_df["scenario"] = emission_df["scenario"].map(scenario_map)
     energy_df.to_csv(f"files_out/energy_flows.csv")
     emission_df.to_csv(f"files_out/emissions_flows.csv")
 
@@ -445,6 +450,7 @@ def main():
     installed_cap_df = pd.concat(installed_cap,axis=0,ignore_index=True)
     installed_cap_df['polygon'] = installed_cap_df["unit_name"].map(extract_polygon)
     installed_cap_df['technology'] = installed_cap_df["unit_name"].map(apply_unit_name)
+    installed_cap_df["scenario"] = installed_cap_df["scenario"].map(scenario_map)
     installed_cap_df.round(2).to_csv("files_out/installed_capacity.csv")
 
     invested_cap = []
@@ -458,6 +464,7 @@ def main():
     invested_cap_df = pd.concat(invested_cap,axis=0,ignore_index=True)
     invested_cap_df['polygon'] = invested_cap_df["unit_name"].map(extract_polygon)
     invested_cap_df['technology'] = invested_cap_df["unit_name"].map(apply_unit_name)
+    invested_cap_df["scenario"] = invested_cap_df["scenario"].map(scenario_map)
     invested_cap_df.round(2).to_csv("files_out/invested_capacity.csv")
 
     decommissioned = []
@@ -471,6 +478,7 @@ def main():
     decommissioned_df = pd.concat(decommissioned,axis=0,ignore_index=True)
     decommissioned_df['polygon'] = decommissioned_df["unit_name"].map(extract_polygon)
     decommissioned_df['technology'] = decommissioned_df["unit_name"].map(apply_unit_name)
+    decommissioned_df["scenario"] = decommissioned_df["scenario"].map(scenario_map)
     decommissioned_df.round(2).to_csv("files_out/decommissioned_capacity.csv")
 
     unit2node_flow = []
@@ -482,6 +490,7 @@ def main():
     unit2node_flow_df = pd.concat(unit2node_flow,axis=0,ignore_index=True)
     unit2node_flow_df['polygon'] = unit2node_flow_df["unit_name"].map(extract_polygon)
     unit2node_flow_df['technology'] = unit2node_flow_df["unit_name"].map(apply_unit_name)
+    unit2node_flow_df["scenario"] = unit2node_flow_df["scenario"].map(scenario_map)
     unit2node_flow_df.round(2).to_csv("files_out/unit_to_flows.csv")
 
     flows = []
@@ -499,6 +508,7 @@ def main():
         flows_map[alternative_name] = flows_map[alternative_name][["source","target","commodity","y2030","y2040","y2050","scenario"]]
         flows.append(flows_map[alternative_name])
     flows_df = pd.concat(flows,axis=0,ignore_index=True)
+    flows_df["scenario"] = flows_df["scenario"].map(scenario_map)
     flows_df.to_csv("files_out/crossborder_flows.csv")
 
     #df_to_plots(installed_cap_df, invested_cap_df, decommissioned_df, flows, map_years, "node")
