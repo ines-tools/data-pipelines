@@ -451,6 +451,8 @@ def main():
     installed_cap_df['polygon'] = installed_cap_df["unit_name"].map(extract_polygon)
     installed_cap_df['technology'] = installed_cap_df["unit_name"].map(apply_unit_name)
     installed_cap_df["scenario"] = installed_cap_df["scenario"].map(scenario_map)
+    installed_cap_df_total = (installed_cap_df.groupby(["node","technology","scenario"], dropna=False)[["y2030","y2040","y2050"]].sum().reset_index()).assign(polygon="Europe", unit_name="EU_total")
+    installed_cap_df = pd.concat([installed_cap_df,installed_cap_df_total],ignore_index=True)
     installed_cap_df.round(2).to_csv("files_out/installed_capacity.csv")
 
     invested_cap = []
@@ -465,6 +467,8 @@ def main():
     invested_cap_df['polygon'] = invested_cap_df["unit_name"].map(extract_polygon)
     invested_cap_df['technology'] = invested_cap_df["unit_name"].map(apply_unit_name)
     invested_cap_df["scenario"] = invested_cap_df["scenario"].map(scenario_map)
+    invested_cap_df_total = (invested_cap_df.groupby(["node","technology","scenario"], dropna=False)[["y2030","y2040","y2050"]].sum().reset_index()).assign(polygon="Europe", unit_name="EU_total")
+    invested_cap_df = pd.concat([invested_cap_df,invested_cap_df_total],ignore_index=True)
     invested_cap_df.round(2).to_csv("files_out/invested_capacity.csv")
 
     decommissioned = []
@@ -479,6 +483,8 @@ def main():
     decommissioned_df['polygon'] = decommissioned_df["unit_name"].map(extract_polygon)
     decommissioned_df['technology'] = decommissioned_df["unit_name"].map(apply_unit_name)
     decommissioned_df["scenario"] = decommissioned_df["scenario"].map(scenario_map)
+    decommissioned_df_total = (decommissioned_df.groupby(["node","technology","scenario"], dropna=False)[["y2030","y2040","y2050"]].sum().reset_index()).assign(polygon="Europe", unit_name="EU_total")
+    decommissioned_df = pd.concat([decommissioned_df,decommissioned_df_total],ignore_index=True)
     decommissioned_df.round(2).to_csv("files_out/decommissioned_capacity.csv")
 
     unit2node_flow = []
@@ -491,6 +497,8 @@ def main():
     unit2node_flow_df['polygon'] = unit2node_flow_df["unit_name"].map(extract_polygon)
     unit2node_flow_df['technology'] = unit2node_flow_df["unit_name"].map(apply_unit_name)
     unit2node_flow_df["scenario"] = unit2node_flow_df["scenario"].map(scenario_map)
+    unit2node_flow_df_total = (unit2node_flow_df.groupby(["node","technology","scenario"], dropna=False)[["y2030","y2040","y2050"]].sum().reset_index()).assign(polygon="Europe", unit_name="EU_total")
+    unit2node_flow_df = pd.concat([unit2node_flow_df,unit2node_flow_df_total],ignore_index=True)
     unit2node_flow_df.round(2).to_csv("files_out/unit_to_flows.csv")
 
     flows = []
