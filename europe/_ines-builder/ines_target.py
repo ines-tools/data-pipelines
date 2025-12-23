@@ -32,14 +32,55 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
         raise RuntimeError(error)
 
 def define_polygons(config : dict, region_data : dict) -> dict:
+    
+    countries = [
+        "AT",  # Austria
+        "BE",  # Belgium
+        "BG",  # Bulgaria
+        "HR",  # Croatia
+        "CY",  # Cyprus
+        "CZ",  # Czech Republic
+        "DK",  # Denmark
+        "EE",  # Estonia
+        "FI",  # Finland
+        "FR",  # France
+        "DE",  # Germany
+        "GR",  # Greece
+        "HU",  # Hungary
+        "IE",  # Ireland
+        "IT",  # Italy
+        "LV",  # Latvia
+        "LT",  # Lithuania
+        "LU",  # Luxembourg
+        "MT",  # Malta
+        "NL",  # Netherlands
+        "PL",  # Poland
+        "PT",  # Portugal
+        "RO",  # Romania
+        "SK",  # Slovakia
+        "SI",  # Slovenia
+        "ES",  # Spain
+        "SE",  # Sweden
+        "CH",  # Switzerland
+        "UK",  # United Kingdom
+        "NO"   # Norway
+    ]
     polygons={"onshore":{},"offshore":{}}
-    for country in config["countries"]:
-        on_level  = config["countries"][country]["onshore"]
-        off_level = config["countries"][country]["offshore"]
-        on_poly   = region_data[on_level][region_data[on_level].country == country].id.tolist()
-        off_poly  = region_data[off_level][region_data[off_level].country == country].id.tolist()
-        polygons["onshore"].update(dict(zip(on_poly,[config["countries"][country]["onshore"]]*len(on_poly))))
-        polygons["offshore"].update({item_p:[off_level,region_data[off_level+"_map"][region_data[off_level+"_map"].source==item_p][on_level].tolist()[0]] for item_p in off_poly})
+    for country_id in countries:
+        if country_id not in config["countries"] and "Europe" in config["countries"]:
+            on_level  = config["countries"]["Europe"]["onshore"]
+            off_level = config["countries"]["Europe"]["offshore"]
+            on_poly   = region_data[on_level][region_data[on_level].country == country_id].id.tolist()
+            off_poly  = region_data[off_level][region_data[off_level].country == country_id].id.tolist()
+            polygons["onshore"].update(dict(zip(on_poly,[on_level]*len(on_poly))))
+            polygons["offshore"].update({item_p:[off_level,region_data[off_level+"_map"][region_data[off_level+"_map"].source==item_p][on_level].tolist()[0]] for item_p in off_poly})
+        else:
+            on_level  = config["countries"][country_id]["onshore"]
+            off_level = config["countries"][country_id]["offshore"]
+            on_poly   = region_data[on_level][region_data[on_level].country == country_id].id.tolist()
+            off_poly  = region_data[off_level][region_data[off_level].country == country_id].id.tolist()
+            polygons["onshore"].update(dict(zip(on_poly,[on_level]*len(on_poly))))
+            polygons["offshore"].update({item_p:[off_level,region_data[off_level+"_map"][region_data[off_level+"_map"].source==item_p][on_level].tolist()[0]] for item_p in off_poly})
     return polygons
 
 def user_entity_condition(config,entity_class_elements,entity_names,poly,poly_type):
@@ -354,20 +395,26 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                 # checking hard-coding conditions
                 if "technology" in entity_class_elements and definition_condition == True:
                     for index_in_class in [i for i in range(len(entity_class_elements)) if entity_class_elements[i]=="technology"]:
-                        entity_name_for_capacity = [i for i in db_source.get_entity_items(entity_class_name = "technology__to_commodity") if entity_names[index_in_class] in i["entity_byname"]][0]["name"]
-                        capacity_dict = region_params.get("technology__to_commodity",{}).get("capacity",{}).get(entity_name_for_capacity,{})
+                        entity_name_for_potential = [i["entity_byname"][0] for i in db_source.get_entity_items(entity_class_name = "technology_type__technology") if entity_names[index_in_class] in i["entity_byname"]][0]
+                        potential_dict= region_params.get("technology_type",{}).get("potential",{}).get(entity_name_for_potential,{}).get(poly,{})
                         existing_dict = region_params.get("technology",{}).get("units_existing",{}).get(entity_names[index_in_class],{})
-                        if capacity_dict and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
-                            if sum((capacity_dict[poly][alternative] if isinstance(capacity_dict[poly][alternative],float) else sum(capacity_dict[poly][alternative]["data"].values())) for alternative in capacity_dict[poly]) == 0.0:
+                        if potential_dict:
+                            if existing_dict and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
+                                if sum(sum(existing_dict[poly][alternative]["data"].values()) for alternative in existing_dict[poly]) == 0.0:
+                                    definition_condition *= False
+                            elif config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
                                 definition_condition *= False
-                        elif existing_dict and config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
-                            if sum(sum(existing_dict[poly][alternative]["data"].values()) for alternative in existing_dict[poly]) == 0.0:
-                                definition_condition *= False
-                        elif config["user"]["technology"][entity_names[index_in_class]]["investment_method"] == "not_allowed":
+                        else:
                             definition_condition *= False
                     if not region_params["technology__to_commodity"]["profile_limit_upper"][entity_names[entity_class_elements.index("technology")]+"__elec"][poly]:
                         definition_condition *= False
-
+                
+                if "technology_type" in entity_class_elements:
+                    for index_in_class in [i for i in range(len(entity_class_elements)) if entity_class_elements[i]=="technology_type"]:
+                        potential_dict = region_params.get("technology_type",{}).get("potential",{}).get(entity_names[index_in_class],{}).get(poly,{})
+                        if not potential_dict:
+                            definition_condition *=False
+                        
                 # print(entity_name, definition_condition)
                 if definition_condition == True:
                     for entity_class_target in config["sys"]["vre"]["entities"][entity_class]:
@@ -487,9 +534,11 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
                             for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
                                 entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in param_items[2]])
                                 if param_items[0] == "investment_method": # Particular Case Screening Out
-                                    if not db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name="links_potentials",alternative_name="Base"):
-                                        param_items[1] = "not_allowed"
-                                add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
+                                    original_parameter = db_source.get_parameter_value_item(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name="links_potentials",alternative_name="Base")
+                                    value_default = "not_allowed" if not original_parameter else param_items[1]
+                                else:
+                                    value_default = param_items[1]
+                                add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,value_default)
                     
                     # Fixed Parameters
                     if entity_class in config["sys"][db_name]["parameters"]["fixed"]:

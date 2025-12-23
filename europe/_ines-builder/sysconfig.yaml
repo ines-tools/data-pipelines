@@ -152,7 +152,7 @@ vre:
           profile_limit_upper: [profile_limit_upper,[[1],[2]],[potential,{existing: capacity}],null,{"on": PECD2, "off": OFF3}]
       technology_type__region:
         set:
-          potential: [max_cumulative,[[1]],[area,{}],0.0,{"on": PECD2, "off": OFF3}]
+          potential: [max_cumulative,[[1]],[area,{}],null,{"on": PECD2, "off": OFF3}]
 
 # Hydro systems
 hydro_systems:

@@ -137,17 +137,17 @@ def update_parameters():
 
     with DatabaseMapping(url_spineopt) as sopt_db:
 
-        resolution_ = "12h"
+        resolution_ = "1h"
 
         add_or_update_parameter_value(sopt_db, "temporal_block", "resolution", "Base", ("operations_y2030", ),  {"type":"duration","data":resolution_})
         add_or_update_parameter_value(sopt_db, "temporal_block", "resolution", "Base", ("operations_y2040", ),  {"type":"duration","data":resolution_})
         add_or_update_parameter_value(sopt_db, "temporal_block", "resolution", "Base", ("operations_y2050", ),  {"type":"duration","data":resolution_})
-        add_or_update_parameter_value(sopt_db, "node", "initial_storages_invested_available", "Base", ("CO2", ), 0.2*1e6/30)
-        add_or_update_parameter_value(sopt_db, "node", "fix_storages_invested_available", "Base", ("CO2", ), 0.2*1e6/30)
-        add_or_update_parameter_value(sopt_db, "node", "node_state_cap", "Base", ("atmosphere", ), 2.2*1e9/30)
+        #add_or_update_parameter_value(sopt_db, "node", "initial_storages_invested_available", "Base", ("CO2", ), 0.2*1e6/30)
+        #add_or_update_parameter_value(sopt_db, "node", "fix_storages_invested_available", "Base", ("CO2", ), 0.2*1e6/30)
+        #add_or_update_parameter_value(sopt_db, "node", "node_state_cap", "Base", ("atmosphere", ), 2.2*1e9/30)
 
         try:
-            sopt_db.commit_session("Update Investment Costs")
+            sopt_db.commit_session("Update parameters")
         except DBAPIError as e:
             print("###################################################################### commit error")  
 
@@ -171,7 +171,7 @@ def air_ground_heatpump():
 def scenario_development():
     with DatabaseMapping(url_spineopt) as sopt_db:
         alt_names = ["wy2009","2030_wy2009","2040_wy2009","2050_wy2009","medium_bio","current","GA","GA_flex0","Base"]
-        alt_names = ["wy2009","medium_bio","current","GA","GA_flex0","Base"]
+        # alt_names = ["wy2009","medium_bio","current","GA","GA_flex0","Base"]
         # alt_names = ["Base"]
         scenario_name = "__".join(alt_names)
         add_scenario(sopt_db,scenario_name)
@@ -187,7 +187,8 @@ def manage_output():
         add_entity(sopt_db,"model__report",("capacity_planning",report_name))
         outputs = ["unit_capacity","connection_capacity","node_state_cap","demand",
                    "connections_invested","connections_invested_available","connections_decommissioned","units_invested","units_invested_available","units_mothballed",
-                   "storages_invested","storages_invested_available","storages_decommissioned","unit_flow","connection_flow","node_state","node_injection","weight","fractional_demand"]
+                   "storages_invested","storages_invested_available","storages_decommissioned","unit_flow","connection_flow","node_state","node_injection","weight","fractional_demand",
+                   "unit_investment_cost","connection_investment_costs","storage_investment_costs","fixed_om_costs","variable_om_costs","fuel_costs","connection_flow_costs"]
         
         for output in outputs:
             add_entity(sopt_db,"output",(output,))
@@ -308,11 +309,11 @@ def main():
     print("storage_setup")
     storage_setup()
     print("hydro_temporal_block")
-    hydro_TB()
+    # hydro_TB()
     print("industry_temporal_block")
-    industry_TB()
+    # industry_TB()
     print("updating_parameters")
-    update_parameters()
+    # update_parameters()
 
 if __name__ == "__main__":
     main()

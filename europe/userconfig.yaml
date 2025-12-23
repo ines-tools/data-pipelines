@@ -6,14 +6,14 @@ pipelines:
   vre: True
   hydro: True
   biomass: True
-  electricity_transmission: False
+  electricity_transmission: True
   residual_demand: True
   gas: True
-  gas_pipelines: False
+  gas_pipelines: True
   industry: True
   heat: True
   transport: True
-  cargo: False
+  cargo: True
 
 model:
     type :  brownfield # greenfied
@@ -53,7 +53,7 @@ global_constraints:
 
 # Define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
-  ES: 
+  Europe: 
     onshore:  "PECD1"
     offshore: "OFF2"
 
@@ -151,7 +151,7 @@ storage:
 technology:
   oil-eng: 
     rename : "oil-eng"
-    status: False
+    status: True
     investment_method: "no_limits"
     renewable : False
   oil-eng-existing: 

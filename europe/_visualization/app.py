@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import math
+from plotly.colors import sample_colorscale
 from plotly.subplots import make_subplots
 import json
 import geopandas as gpd
@@ -306,13 +308,14 @@ def main():
     st.header("European Model Statistics")
     scenario = st.selectbox("Scenario", scenarios)
 
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
         "📊 Installed Capacity", 
         "🔄 Energy Production", 
         "📈 Invested vs Decommissioned",
         "🗺️ Capacity Map",
         "🔋 Storage Analysis",
-        "🌊 Sankey Diagrams"
+        "🌊 Sankey Diagrams",
+        "🗺️ Flow Map"
     ])
 
     # ----------------------
@@ -331,15 +334,20 @@ def main():
         else:
             df = filtered.rename(columns={"Installed": "Capacity (GW)"}).copy()
             df["year"] = df["year"].astype(int)
-            df["technology"] = pd.Categorical(df["technology"], categories=TECH_ORDER, ordered=True)
+            present_tech = (df.loc[df["Capacity (GW)"] > 0.001, "technology"].dropna().unique().tolist())
+            if not present_tech:
+                st.info("No technologies with installed capacity for the selected filters.")
+                st.stop()
+            TECH_ORDER_NODE = [t for t in TECH_ORDER if t in present_tech]
+            df["technology"] = pd.Categorical(df["technology"], categories=TECH_ORDER_NODE, ordered=True)
             POLY_ORDER = sorted(sorted(df["polygon"].dropna().unique()), key=lambda x: (x != "Europe", x))
-            full_idx = pd.MultiIndex.from_product([POLY_ORDER, TECH_ORDER, YEAR_ORDER],names=["polygon", "technology", "year"])
+            full_idx = pd.MultiIndex.from_product([POLY_ORDER, TECH_ORDER_NODE, YEAR_ORDER],names=["polygon", "technology", "year"])
             agg_installed = (df.pivot_table(index=["polygon", "technology", "year"],values="Capacity (GW)",aggfunc="sum",observed=False).reindex(full_idx, fill_value=0).reset_index() )
             agg_installed["polygon"] = pd.Categorical(agg_installed["polygon"], categories=POLY_ORDER, ordered=True)
             agg_installed["technology"] = pd.Categorical(agg_installed["technology"], categories=TECH_ORDER, ordered=True)
             agg_installed["year"] = pd.Categorical(agg_installed["year"], categories=YEAR_ORDER, ordered=True)
             agg_installed["anim_id"] = agg_installed["polygon"].astype(str) + " | " + agg_installed["technology"].astype(str)
-            fig_installed = px.bar(agg_installed,x="polygon",y="Capacity (GW)",color="technology",animation_frame="year",animation_group="anim_id", color_discrete_map=color_map,barmode="stack",category_orders={"polygon": POLY_ORDER,"technology": TECH_ORDER,"year": YEAR_ORDER,},title=f"Installed Capacity by Country ({scenario})")
+            fig_installed = px.bar(agg_installed,x="polygon",y="Capacity (GW)",color="technology",animation_frame="year",animation_group="anim_id", color_discrete_map=color_map,barmode="stack",category_orders={"polygon": POLY_ORDER,"technology": TECH_ORDER_NODE,"year": YEAR_ORDER,},title=f"Installed Capacity by Country ({scenario})")
             fig_installed.update_layout(height=height_value, bargap=0.15,template="plotly_white",legend_title_text="Technology")
             year_totals = agg_installed.pivot_table(index=["year", "polygon"], values="Capacity (GW)", aggfunc="sum", observed=False)
             year_max = year_totals.groupby("year", observed=False).max()
@@ -373,15 +381,20 @@ def main():
             df = filtered.rename(columns={"UnitFlows": "Flows (TWh)"}).copy()
             POLY_ORDER = sorted(sorted(df["polygon"].dropna().unique()), key=lambda x: (x != "Europe", x))
             df["year"] = df["year"].astype(int)
-            df["technology"] = pd.Categorical(df["technology"], categories=TECH_ORDER, ordered=True)
+            present_tech = (df.loc[df["Flows (TWh)"] > 0.001, "technology"].dropna().unique().tolist())
+            if not present_tech:
+                st.info("No technologies with installed capacity for the selected filters.")
+                st.stop()
+            TECH_ORDER_NODE = [t for t in TECH_ORDER if t in present_tech]
+            df["technology"] = pd.Categorical(df["technology"], categories=TECH_ORDER_NODE, ordered=True)
             full_idx = pd.MultiIndex.from_product([POLY_ORDER, TECH_ORDER, YEAR_ORDER],names=["polygon", "technology", "year"])
             # create those rows that do not exist
             agg_flows = (df.pivot_table(index=["polygon", "technology", "year"],values="Flows (TWh)",aggfunc="sum",observed=False).reindex(full_idx, fill_value=0).reset_index())
             agg_flows["polygon"] = pd.Categorical(agg_flows["polygon"], categories=POLY_ORDER, ordered=True)
-            agg_flows["technology"] = pd.Categorical(agg_flows["technology"], categories=TECH_ORDER, ordered=True)
+            agg_flows["technology"] = pd.Categorical(agg_flows["technology"], categories=TECH_ORDER_NODE, ordered=True)
             agg_flows["year"] = pd.Categorical(agg_flows["year"], categories=YEAR_ORDER, ordered=True)
-            agg_flows["anim_id"] = ( agg_flows["polygon"].astype(str) + " | " + agg_flows["technology"].astype(str))
-            fig_flows = px.bar(agg_flows,x="polygon",y="Flows (TWh)",color="technology",animation_frame="year",animation_group="anim_id",color_discrete_map=color_map,barmode="stack",category_orders={"polygon": POLY_ORDER,"technology": TECH_ORDER,"year": YEAR_ORDER,},title=f"Energy Production by Country ({scenario})")
+            agg_flows["anim_id"] = (agg_flows["polygon"].astype(str) + " | " + agg_flows["technology"].astype(str))
+            fig_flows = px.bar(agg_flows,x="polygon",y="Flows (TWh)",color="technology",animation_frame="year",animation_group="anim_id",color_discrete_map=color_map,barmode="stack",category_orders={"polygon": POLY_ORDER,"technology": TECH_ORDER_NODE,"year": YEAR_ORDER,},title=f"Energy Production by Country ({scenario})")
             fig_flows.update_layout(height=height_value,bargap=0.15,template="plotly_white",legend_title_text="Technology")
             year_totals = agg_flows.pivot_table(index=["year", "polygon"], values="Flows (TWh)", aggfunc="sum", observed=False)
             year_max = year_totals.groupby("year", observed=False).max()
@@ -412,6 +425,12 @@ def main():
         else:
             df = filtered[["polygon", "technology", "year", "Invested", "Decommissioned"]].copy()
             df["year"] = df["year"].astype(int)
+            present_tech = (df.loc[(df["Invested"] > 0.001)|(df["Decommissioned"] > 0.001), "technology"].dropna().unique().tolist())
+            if not present_tech:
+                st.info("No technologies with installed capacity for the selected filters.")
+                st.stop()
+            TECH_ORDER_NODE = [t for t in TECH_ORDER if t in present_tech]
+            df["technology"] = pd.Categorical(df["technology"], categories=TECH_ORDER_NODE, ordered=True)
             POLY_ORDER = sorted(sorted(df["polygon"].dropna().unique()), key=lambda x: (x != "Europe", x))
             full_idx = pd.MultiIndex.from_product([POLY_ORDER, TECH_ORDER, YEAR_ORDER],names=["polygon", "technology", "year"])
             inv = (df.pivot_table(index=["polygon", "technology", "year"],values="Invested",aggfunc="sum",observed=False).reindex(full_idx, fill_value=0).reset_index().rename(columns={"Invested": "Value"}).assign(kind="Invested"))
@@ -419,10 +438,10 @@ def main():
             dec["Value"] = -dec["Value"]
             combined = pd.concat([inv, dec], ignore_index=True)
             combined["polygon"] = pd.Categorical(combined["polygon"], categories=POLY_ORDER, ordered=True)
-            combined["technology"] = pd.Categorical(combined["technology"], categories=TECH_ORDER, ordered=True)
+            combined["technology"] = pd.Categorical(combined["technology"], categories=TECH_ORDER_NODE, ordered=True)
             combined["year"] = pd.Categorical(combined["year"], categories=YEAR_ORDER, ordered=True)
             combined["anim_id"] = combined["polygon"].astype(str) + " | " + combined["technology"].astype(str)
-            fig_change = px.bar(combined,x="polygon",y="Value",color="technology",animation_frame="year",animation_group="anim_id",barmode="relative",pattern_shape="kind",color_discrete_map=color_map,category_orders={"polygon": POLY_ORDER,"technology": TECH_ORDER,"year": YEAR_ORDER,},title=f"Invested (+) vs Decommissioned (–) by Country ({scenario})")
+            fig_change = px.bar(combined,x="polygon",y="Value",color="technology",animation_frame="year",animation_group="anim_id",barmode="relative",pattern_shape="kind",color_discrete_map=color_map,category_orders={"polygon": POLY_ORDER,"technology": TECH_ORDER_NODE,"year": YEAR_ORDER,},title=f"Invested (+) vs Decommissioned (–) by Country ({scenario})")
             fig_change.update_layout(template="plotly_white",height=height_value,bargap=0.20,legend_title_text="Technology",yaxis_title="Capacity (GW)",xaxis_title="Country")
             
             year_ranges = []
@@ -560,6 +579,112 @@ def main():
                             mime="image/png")
         except Exception:
             st.caption("PNG export requires `kaleido`. Install it via `pip install kaleido`.")
+
+    
+    # -------------------------------------------------
+    # Tab 7: Flow Map (Cross-border flows, zoomed + arrows)
+    # -------------------------------------------------
+
+
+    with tab7:
+        st.header("Flow Map (Cross-border)")
+        POLY_COL = "id"
+        geojson_obj, gdf_base = load_geodata("onshore_PECD1.geojson", POLY_COL)
+        if crossborder_flows.empty: st.info("No cross-border flow data loaded."); st.stop()
+
+        # Commodity (node) selection
+        commodities = sorted(crossborder_flows["commodity"].astype(str).dropna().unique())
+        selected_commodity = st.selectbox("Node (commodity)", commodities, index=0)
+
+        # Years (y2030, y2040, ...)
+        year_cols = [c for c in crossborder_flows.columns if isinstance(c, str) and c.startswith("y") and c[1:].isdigit()]
+        years = sorted([int(c[1:]) for c in year_cols])
+        if not years: st.info("No year columns (e.g., y2030, y2040) found in crossborder_flows."); st.stop()
+
+        # Filter by scenario + commodity, keep only countries present in GeoJSON
+        df = crossborder_flows[(crossborder_flows["scenario"] == scenario) & (crossborder_flows["commodity"].astype(str) == selected_commodity)].copy()
+        gdf_ll = gdf_base.to_crs(epsg=4326); rep_pts = gdf_ll.representative_point()
+        centroids = {str(row.id): (pt.x, pt.y) for row, pt in zip(gdf_ll.itertuples(index=False), rep_pts)}
+        df = df[df["source"].astype(str).isin(centroids.keys()) & df["target"].astype(str).isin(centroids.keys())]
+        if df.empty: st.info("Countries in flows not found in provided GeoJSON (id codes must match)."); st.stop()
+
+        # Focus map to represented countries
+        used = sorted(set(df["source"].astype(str)) | set(df["target"].astype(str)))
+        lons = [centroids[c][0] for c in used]; lats = [centroids[c][1] for c in used]
+        lon_min, lon_max, lat_min, lat_max = min(lons), max(lons), min(lats), max(lats)
+        lon_pad, lat_pad = max(1.0, (lon_max - lon_min) * 0.15), max(1.0, (lat_max - lat_min) * 0.15)
+        lon_range, lat_range = [lon_min - lon_pad, lon_max + lon_pad], [lat_min - lat_pad, lat_max + lat_pad]
+
+        # Build flows per unordered pair for all years: flows[(A,B)][y] = (A->B, B->A)
+        flows = {}
+        for row in df.itertuples(index=False):
+            A, B = str(row.source), str(row.target); key = tuple(sorted((A, B)))
+            if key not in flows: flows[key] = {}
+            for y in years:
+                v = float(getattr(row, f"y{y}", 0.0))
+                ab = flows[key].get(y, (0.0, 0.0))
+                flows[key][y] = (ab[0] + v, ab[1]) if row.source == key[0] else (ab[0], ab[1] + v)
+
+        # Absolute colorscale (same for all frames)
+        CS = px.colors.sequential.Viridis
+        abs_max = float(df[year_cols].to_numpy().max()) if len(df) else 0.0
+        if abs_max <= 0: st.info("All flows are zero for this selection."); st.stop()
+        cmin, cmax = 0.0, abs_max
+
+        def color_for(val: float) -> str:
+            t = 0.0 if cmax <= 1e-12 else min(1.0, max(0.0, val / cmax))
+            return sample_colorscale(CS, t)[0]  # hex string
+
+        CONST_WIDTH = 10  # imposed line width (px), not user-controlled
+        LABEL_SIZE = 20  # larger direction labels
+
+        # Helper: add one half-segment (start->end) + large direction label
+        def add_half(traces: list, name_from: str, name_to: str, lon_s: float, lat_s: float, lon_e: float, lat_e: float, value: float):
+            if value <= 1e-12: return
+            color = color_for(value)
+            # half-segment line
+            traces.append(go.Scattergeo(lon=[lon_s, lon_e], lat=[lat_s, lat_e], mode="lines",
+                                        line=dict(color=color, width=CONST_WIDTH), opacity=0.95,
+                                        hoverinfo="text", text=f"{name_from} → {name_to} – {selected_commodity}: {value:.2f}"))
+            # direction label positioned at 60% along the segment
+            lx = lon_s + 0.60 * (lon_e - lon_s); ly = lat_s + 0.60 * (lat_e - lat_s)
+            traces.append(go.Scattergeo(lon=[lx], lat=[ly], mode="text", text=[f"{name_from}→{name_to}"],
+                                        textfont=dict(color="#111827", size=LABEL_SIZE, family="Arial"), hoverinfo="skip", showlegend=False))
+
+        # ---------- Initial frame ----------
+        first_year = years[0]
+        traces_first = []
+        for (A, B), vals in flows.items():
+            lon_A, lat_A = centroids[A]; lon_B, lat_B = centroids[B]
+            lon_M, lat_M = (lon_A + lon_B) / 2.0, (lat_A + lat_B) / 2.0
+            v_AB, v_BA = vals.get(first_year, (0.0, 0.0))
+            # B -> A displayed on A→M
+            add_half(traces_first, B, A, lon_A, lat_A, lon_M, lat_M, v_BA)
+            # A -> B displayed on M→B
+            add_half(traces_first, A, B, lon_M, lat_M, lon_B, lat_B, v_AB)
+        fig = go.Figure(data=traces_first)
+
+        # ---------- Animation frames ----------
+        frames = []
+        for y in years:
+            frame_traces = []
+            for (A, B), vals in flows.items():
+                lon_A, lat_A = centroids[A]; lon_B, lat_B = centroids[B]
+                lon_M, lat_M = (lon_A + lon_B) / 2.0, (lat_A + lat_B) / 2.0
+                v_AB, v_BA = vals.get(y, (0.0, 0.0))
+                add_half(frame_traces, B, A, lon_A, lat_A, lon_M, lat_M, v_BA)
+                add_half(frame_traces, A, B, lon_M, lat_M, lon_B, lat_B, v_AB)
+            frames.append(go.Frame(data=frame_traces, name=str(y)))
+        fig.frames = frames
+
+        # Map & UI (compact one-liners)
+        fig.update_geos(projection_type="natural earth", showcoastlines=True, showcountries=True, showocean=True, oceancolor="#1b2a34", showland=True, landcolor="#243647", lonaxis=dict(range=lon_range), lataxis=dict(range=lat_range))
+        fig.add_trace(go.Scattergeo(lon=[None], lat=[None], mode="markers", marker=dict(size=0.1, color=[0], colorscale=CS, cmin=cmin, cmax=cmax, colorbar=dict(title=f"{selected_commodity} flow", len=0.4)), showlegend=False, hoverinfo="skip"))
+        fig.update_layout(title_text=f"Cross-border Flows – {selected_commodity} – {scenario}", height=700, showlegend=False, template="plotly_white", uirevision="static", updatemenus=[{"type":"buttons","direction":"left","x":0.1,"y":0,"pad":{"r":10,"t":87},"buttons":[{"label":"Play","method":"animate","args":[None,{"frame":{"duration":800,"redraw":True},"fromcurrent":True,"transition":{"duration":300}}]},{"label":"Pause","method":"animate","args":[[None],{"frame":{"duration":0,"redraw":True},"mode":"immediate","transition":{"duration":0}}]}]}], sliders=[{"active":0,"y":0,"x":0.1,"len":0.9,"currentvalue":{"prefix":"Year: ","visible":True},"transition":{"duration":300},"steps":[{"label":str(y),"method":"animate","args":[[str(y)],{"mode":"immediate","frame":{"duration":300,"redraw":True}}]} for y in years]}])
+
+        st.plotly_chart(fig, width="stretch")
+        download_plot(fig, f"flow_map_{selected_commodity}_colormap_abs_labels")
+
 
 if __name__ == "__main__":
     main()
