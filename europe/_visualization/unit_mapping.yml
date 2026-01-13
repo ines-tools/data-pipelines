@@ -1,14 +1,17 @@
+#electricity
 wind-on: Onshore Wind
 wind-off: Offshore Wind
 solar-PV: Solar
-bio-ST: Biomass Steam Turbine
+bioST: Biomass Steam Turbine
 nuclear: Nuclear
 SCPC: Coal PP
 CCGT: Gas Turbine
-waste-ST: Waste Steam Turbine
+wasteST: Waste Steam Turbine
 oil-eng: Diesel Group
 hydro-turbine: Hydro Turbine
 RoR: Run-of-River
+large-battery: Battery Charger
+# heat
 oil-boiler: Diesel Boiler
 bio-boiler: Biomass Boiler
 gas-boiler: Gas Boiler
@@ -17,7 +20,6 @@ air-heatpump: Air HP
 air-heatpump-cool: Cooling Unit
 ground-heatpump: Ground HP
 electric-heating: Electric Heater
-large-battery: Battery Charger
 PEM: Electrolyzer
 SMR: Steam Methane Reforming
 REF-SMR: Refinery

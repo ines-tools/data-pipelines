@@ -121,7 +121,7 @@ def from_DB_to_df(map_years):
                     unit_to_flows[alte_name].loc[unit_to_flows[alte_name].shape[0],:] = [unit_name,node_name.split("_")[0]] + [data[data.index.year==year_i].sum() for year_i in map_years]
 
                     if node_name != "atmosphere":
-                        if not ("+CC" in unit_name and node_name.split("_")[0] == "CO2"):
+                        if not (any(i in unit_name for i in ["+CC","MEA","DEA","-CC"]) and node_name.split("_")[0] == "CO2"):
                             unit_to_node_map[unit_name] = node_name.split("_")[0] 
                         if "wind" in unit_name:
                             energy_map[alte_name].loc[energy_map[alte_name].shape[0],:] = ["wind",unit_name] + [data[data.index.year==year_i].sum() for year_i in map_years]
@@ -315,35 +315,6 @@ def df_to_sankey(energy_df, emission_df, years_map):
             # Layout and export
             fig.update_layout(title_text=f"Sankey Diagram - {scenario} - {year}", font_size=10)
             fig.write_html(f"pictures/sankey_emissions_{scenario}_{year}.html")
-
-def df_to_plots(installed_cap, invested_cap, decommissioned, unit_flows, years_map, plot_by):
-    
-    year_cols = list(years_map.values())
-    for fig_num, df in enumerate([installed_cap,invested_cap,decommissioned]):
-
-        long_df = df.melt(id_vars=["unit_name","node","scenario"],value_vars=year_cols,var_name='year',value_name='capacity_gw')
-        long_df["capacity_gw"] /= 1e3
-        long_df = long_df.rename(columns={"unit_name": "technology"})
-        long_df['polygon'] = long_df["technology"].map(extract_polygon)
-        long_df['technology'] = long_df["technology"].map(apply_unit_name)
-        
-        # Aggregate by polygon + technology
-        grouped = long_df.groupby(["polygon", "technology", "node", "scenario", "year"], as_index=False)["capacity_gw"].sum()
-
-        fig_name = "installed_capacity" if fig_num ==0 else ("invested_capacity" if fig_num==1 else "decommissioned_capacity")
-        
-        # Bars per polygon and scenario
-        for scenario in grouped["scenario"].unique():
-            for item_ in grouped[plot_by].unique():
-                polygon_scenario_bars(grouped, scenario, item_, fig_name, plot_by)
-
-        grouped = long_df.groupby(["technology", "node", "scenario", "year"], as_index=False)["capacity_gw"].sum()
-        grouped["polygon"] = "Europe"
-
-        '''# Bars per polygon and scenario
-        for scenario in grouped["scenario"].unique():
-            for item_ in grouped[plot_by].unique():
-                polygon_scenario_bars(grouped, scenario, item_, fig_name, plot_by)'''
 
 def get_representative_periods():
 
