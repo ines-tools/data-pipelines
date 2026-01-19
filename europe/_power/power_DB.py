@@ -278,6 +278,16 @@ def existing_units(
                         ]
                     )
 
+                inflation = inflationfactor(yearly_inflation,datayear,referenceyear)
+                _, fixed_cost_abs = calculate_investment_and_fixed_costs(
+                    unit,
+                    unit_types,
+                    [datayear],
+                    search_fn=search_data_existing,
+                    invest_modifier=1000.0*inflation,
+                    fixed_modifier=1.0,
+                )
+
                 jaif["parameter_values"].extend(
                     [
                         [
@@ -291,16 +301,7 @@ def existing_units(
                             "technology__to_commodity",
                             [unit["technology"] + "-existing", "elec"],
                             "fixed_cost",
-                            search_data(
-                                unit,
-                                unit_types,
-                                unit["technology"],
-                                [datayear],
-                                "fixed_cost",
-                                modifier=inflationfactor(
-                                    yearly_inflation, datayear, referenceyear
-                                ),
-                            ),
+                            fixed_cost_abs,
                             "Base",
                         ],
                         [
@@ -1207,19 +1208,22 @@ def map_tdr_jaif(line_tdr):
     return line_jaif
 
 
-def calculate_investment_and_fixed_costs(unit, unit_types, years):
+def calculate_investment_and_fixed_costs(unit, unit_types, years, search_fn=None, invest_modifier=1000.0, fixed_modifier=1.0):
     """
     Calculate investment and fixed costs for any unit (PP or storage)
     Returns tuple: (investment_cost, fixed_cost)
     - Investment cost: converted from kWh to MWh
     - Fixed cost: converted from percentage to absolute currency units (EUR/MWh)
     """
-    invest_cost = search_data(
-        unit, unit_types, unit["technology"], years, "investment_cost", modifier=1000.0
-    )  # convert kWh to MWh
-    fixed_cost_pct = search_data(
-        unit, unit_types, unit["technology"], years, "fixed_cost"
-    )
+    if search_fn is None:
+        search_fn = search_data
+
+    invest_cost = search_fn(
+        unit, unit_types, unit["technology"], years, "investment_cost", modifier=invest_modifier
+        )
+    fixed_cost_pct = search_fn(
+        unit, unit_types, unit["technology"], years, "fixed_cost", modifier=fixed_modifier
+        )
 
     # Calculate fixed cost: percentage * investment cost / 100
     if isinstance(invest_cost, dict) and isinstance(fixed_cost_pct, dict):
@@ -1333,6 +1337,47 @@ def search_data(
             "type": "map",
             "data": data,
         }
+    else:
+        parameter_value = data[0][1]
+    return parameter_value
+
+
+def search_data_existing(
+        unit, unit_types, unit_type_key, years, parameter, data=None, modifier=1.0
+):
+    # if parameter in ["fixed_cost"]:
+    #     pprint(f"unit: {unit}, unit_types: {unit_types}, tech: {unit_type_key}, year:{years}, inflation: {modifier}") #debugline
+    if not data:
+        data=[]
+        for year in years:
+            if unit_type_key in unit_types[year]:
+                unit_type=unit_types[year][unit_type_key]
+                print(f"Unit type found for year {year}: {unit_type}") #debugline
+            else:
+                unit_type={}
+            datavalue = None
+            if parameter in unit:
+                if unit[parameter]:
+                    datavalue = unit[parameter]
+            if not datavalue and parameter in unit_type:
+                if unit_type[parameter]:
+                    datavalue = unit_type[parameter]
+            if datavalue:
+                datavalue*=modifier
+            data.append([year,datavalue])
+
+            print(f"Year: {year}, Data Value: {datavalue}, Modifier: {modifier}") #debugline
+    if len(data)==0:
+        parameter_value = None
+        print(f"Cannot find parameter {parameter} for {unit["technology"]}")
+    elif len(data) > 1:
+        parameter_value = {
+        "index_type": "str",
+        "rank": 1,
+        "index_name": "year",
+        "type": "map",
+        "data": data,
+    }
     else:
         parameter_value = data[0][1]
     return parameter_value
