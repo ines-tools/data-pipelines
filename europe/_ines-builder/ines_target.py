@@ -74,7 +74,7 @@ def define_polygons(config : dict, region_data : dict) -> dict:
             off_poly  = region_data[off_level][region_data[off_level].country == country_id].id.tolist()
             polygons["onshore"].update(dict(zip(on_poly,[on_level]*len(on_poly))))
             polygons["offshore"].update({item_p:[off_level,region_data[off_level+"_map"][region_data[off_level+"_map"].source==item_p][on_level].tolist()[0]] for item_p in off_poly})
-        else:
+        elif country_id in config["countries"]:
             on_level  = config["countries"][country_id]["onshore"]
             off_level = config["countries"][country_id]["offshore"]
             on_poly   = region_data[on_level][region_data[on_level].country == country_id].id.tolist()

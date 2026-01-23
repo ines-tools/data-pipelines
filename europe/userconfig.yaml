@@ -53,7 +53,10 @@ global_constraints:
 
 # Define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
-  Europe: 
+  ES: 
+    onshore:  "PECD1"
+    offshore: "OFF2"
+  FR: 
     onshore:  "PECD1"
     offshore: "OFF2"
 
@@ -254,8 +257,8 @@ technology:
     status: True
     investment_method: "not_allowed"
     renewable : True
-  wind-off-existing:
-    rename : "wind-off-existing"
+  wind-off-FB-existing:
+    rename : "wind-off-FB-existing"
     status: True
     investment_method: "not_allowed"
     renewable : True
@@ -280,7 +283,7 @@ technology:
     investment_method: "no_limits"
     renewable : True
   wind-on-SP199-HH100:
-    rename : "wind-on-future"
+    rename : "wind-on-SP199-HH100"
     status: True
     investment_method: "no_limits"
     renewable : True
@@ -295,7 +298,17 @@ technology:
     investment_method: "no_limits"
     renewable : True
   wind-off-FB-SP370-HH155:
-    rename : "wind-off-future"
+    rename : "wind-off-FB-SP370-HH155"
+    status: True
+    investment_method: "no_limits"
+    renewable : True
+  wind-off-FO-SP316-HH155:
+    rename : "wind-off-FO-SP316-HH155"
+    status: False
+    investment_method: "no_limits"
+    renewable : True
+  wind-off-FO-SP370-HH155:
+    rename : "wind-off-FO-SP370-HH155"
     status: True
     investment_method: "no_limits"
     renewable : True
@@ -381,12 +394,9 @@ technology:
     status: True
     investment_method: "not_allowed"
   CH4-import-DZ: 
-    status: False
-    investment_method: "not_allowed"
-  CH4-import-LY: 
     status: True
     investment_method: "not_allowed"
-  CH4-import-DZ: 
+  CH4-import-LY: 
     status: True
     investment_method: "not_allowed"
   CH4-import-MA: 

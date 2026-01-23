@@ -121,7 +121,7 @@ def from_DB_to_df(map_years):
                     unit_to_flows[alte_name].loc[unit_to_flows[alte_name].shape[0],:] = [unit_name,node_name.split("_")[0]] + [data[data.index.year==year_i].sum() for year_i in map_years]
 
                     if node_name != "atmosphere":
-                        if not (any(i in unit_name for i in ["+CC","MEA","DEA","-CC"]) and node_name.split("_")[0] == "CO2"):
+                        if not (any(i in unit_name for i in ["+CC","MEA","DEA","-CC","Oxy","CaL"]) and node_name.split("_")[0] == "CO2"):
                             unit_to_node_map[unit_name] = node_name.split("_")[0] 
                         if "wind" in unit_name:
                             energy_map[alte_name].loc[energy_map[alte_name].shape[0],:] = ["wind",unit_name] + [data[data.index.year==year_i].sum() for year_i in map_years]

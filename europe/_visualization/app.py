@@ -202,7 +202,7 @@ def build_sankey(region, scenario_selected, flow_data, cb_data, title_prefix, an
         df = df.groupby(["source","target"])[year_col].sum().reset_index()
         
         for _, row in df.iterrows():
-            if row[year_col] > 0.001:
+            if row[year_col] > (0.001 if "Emission" not in title_prefix else 1000):
                 s_idx = add_node(row["source"]) if not animate else node_index[row["source"]]
                 t_idx = add_node(row["target"]) if not animate else node_index[row["target"]]
                 links.append({"source": s_idx, "target": t_idx, "value": row[year_col]})
@@ -348,7 +348,7 @@ def main():
             agg_installed["year"] = pd.Categorical(agg_installed["year"], categories=YEAR_ORDER, ordered=True)
             agg_installed["anim_id"] = agg_installed["polygon"].astype(str) + " | " + agg_installed["technology"].astype(str)
             fig_installed = px.bar(agg_installed,x="polygon",y="Capacity (GW)",color="technology",animation_frame="year",animation_group="anim_id", color_discrete_map=color_map,barmode="stack",category_orders={"polygon": POLY_ORDER,"technology": TECH_ORDER_NODE,"year": YEAR_ORDER,},title=f"Installed Capacity by Country ({scenario})")
-            fig_installed.update_layout(height=height_value, bargap=0.15,template="plotly_white",legend_title_text="Technology")
+            fig_installed.update_layout(height=height_value, bargap=0.15,template="plotly_white",legend_title_text="Technology",yaxis_title=("Capacity (GW)" if selected_node not in ["CO2","emission", "cement", "steel","glass","chemicals","ammonia"] else ("CO2 kton/h" if selected_node not in ["cement", "steel","glass","chemicals","ammonia"] else "kton/h")))
             year_totals = agg_installed.pivot_table(index=["year", "polygon"], values="Capacity (GW)", aggfunc="sum", observed=False)
             year_max = year_totals.groupby("year", observed=False).max()
             for frame in fig_installed.frames:
@@ -395,7 +395,7 @@ def main():
             agg_flows["year"] = pd.Categorical(agg_flows["year"], categories=YEAR_ORDER, ordered=True)
             agg_flows["anim_id"] = (agg_flows["polygon"].astype(str) + " | " + agg_flows["technology"].astype(str))
             fig_flows = px.bar(agg_flows,x="polygon",y="Flows (TWh)",color="technology",animation_frame="year",animation_group="anim_id",color_discrete_map=color_map,barmode="stack",category_orders={"polygon": POLY_ORDER,"technology": TECH_ORDER_NODE,"year": YEAR_ORDER,},title=f"Energy Production by Country ({scenario})")
-            fig_flows.update_layout(height=height_value,bargap=0.15,template="plotly_white",legend_title_text="Technology")
+            fig_flows.update_layout(height=height_value,bargap=0.15,template="plotly_white",legend_title_text="Technology",yaxis_title=("Flows (TWh)" if selected_node_f not in ["CO2","emission", "cement", "steel","glass","chemicals","ammonia"] else ("CO2 Mton" if selected_node_f not in ["cement", "steel","glass","chemicals","ammonia"] else "Mton")))
             year_totals = agg_flows.pivot_table(index=["year", "polygon"], values="Flows (TWh)", aggfunc="sum", observed=False)
             year_max = year_totals.groupby("year", observed=False).max()
             for frame in fig_flows.frames:
@@ -442,7 +442,7 @@ def main():
             combined["year"] = pd.Categorical(combined["year"], categories=YEAR_ORDER, ordered=True)
             combined["anim_id"] = combined["polygon"].astype(str) + " | " + combined["technology"].astype(str)
             fig_change = px.bar(combined,x="polygon",y="Value",color="technology",animation_frame="year",animation_group="anim_id",barmode="relative",pattern_shape="kind",color_discrete_map=color_map,category_orders={"polygon": POLY_ORDER,"technology": TECH_ORDER_NODE,"year": YEAR_ORDER,},title=f"Invested (+) vs Decommissioned (–) by Country ({scenario})")
-            fig_change.update_layout(template="plotly_white",height=height_value,bargap=0.20,legend_title_text="Technology",yaxis_title="Capacity (GW)",xaxis_title="Country")
+            fig_change.update_layout(template="plotly_white",height=height_value,bargap=0.20,legend_title_text="Technology",yaxis_title=("Capacity (GW)" if selected_node_id not in ["CO2","emission", "cement", "steel","glass","chemicals","ammonia"] else ("CO2 kton/h" if selected_node_id not in ["cement", "steel","glass","chemicals","ammonia"] else "kton/h")),xaxis_title="Country")
             
             year_ranges = []
             for year_val in YEAR_ORDER:
