@@ -226,7 +226,7 @@ def process_storages(target_db, sheet):
         entity_byname = (sto_name,to_node)
         add_entity(target_db, entity_name, entity_byname)
         
-def process_region_data(target_db,path):
+def process_region_data(target_db,path_cop,path_demand,scenario_df):
 
     years = ["wy1995","wy2008","wy2009"]
     time_list = []
@@ -239,23 +239,22 @@ def process_region_data(target_db,path):
                 "A2WHP-radiators":{"technology":"air-heatpump","commodity":"heat","data":None},
                 "G2WHP-DHW":{"technology":"ground-heatpump","commodity":"heat","data":None},
                 "G2WHP-radiators":{"technology":"ground-heatpump","commodity":"heat","data":None}}
-    scenario_df = pd.read_csv(os.path.join(path,"scenario_total_yearly_demands_GWh.csv"))
 
     for tech in map_tech:
         for cy in years:
             if isinstance(map_tech[tech]["data"],pd.DataFrame):
-                map_tech[tech]["data"] = pd.concat([map_tech[tech]["data"],pd.read_csv(os.path.join(path,f"COP_{tech}_{cy}.csv"),index_col=0).iloc[:8760,:]],axis=0,ignore_index=False)
+                map_tech[tech]["data"] = pd.concat([map_tech[tech]["data"],pd.read_csv(os.path.join(path_cop,f"COP_{tech}_{cy}.csv"),index_col=0).iloc[:8760,:]],axis=0,ignore_index=False)
             else:
-                map_tech[tech]["data"] = pd.read_csv(os.path.join(path,f"COP_{tech}_{cy}.csv"),index_col=0).iloc[:8760,:]
+                map_tech[tech]["data"] = pd.read_csv(os.path.join(path_cop,f"COP_{tech}_{cy}.csv"),index_col=0).iloc[:8760,:]
 
     demand_type = {"cooling_res":"res-cool","cooling_nonres":"nonres-cool","DHW_res":"res-DHW","DHW_nonres":"nonres-DHW","heating_res":"res-space","heating_nonres":"nonres-space"}
     map_demand = {}
     for dem in demand_type:
         for cy in years:
             if dem in map_demand.keys():
-                map_demand[dem] = pd.concat([map_demand[dem],pd.read_csv(os.path.join(path,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0).iloc[:8760,:]],axis=0,ignore_index=False)
+                map_demand[dem] = pd.concat([map_demand[dem],pd.read_csv(os.path.join(path_demand,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0).iloc[:8760,:]],axis=0,ignore_index=False)
             else:
-                map_demand[dem] = pd.read_csv(os.path.join(path,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0).iloc[:8760,:]
+                map_demand[dem] = pd.read_csv(os.path.join(path_demand,f"{dem}_{cy}_normalised_MW_GWh.csv"),index_col=0).iloc[:8760,:]
     
     for country in map_demand[dem].columns:
 
@@ -307,7 +306,9 @@ def main():
     tech_info = pd.read_csv(sys.argv[2],index_col=0)
     stog_info = pd.read_csv(sys.argv[3],index_col=0)
     exis_info = pd.read_csv(sys.argv[4])
-    path_time_series  = os.path.abspath("../../../Buildings/time_series")
+    scenarios = pd.read_csv(sys.argv[5])
+    cop_timeseries  = sys.argv[6]
+    demand_timeseries  = sys.argv[7]
     print("############### Filling the output DB ###############")
     with DatabaseMapping(url_db_out) as target_db:
 
@@ -336,7 +337,7 @@ def main():
         '''process_storages(target_db,stog_info)
         target_db.commit_session("storages added")
         print("storages_added")'''
-        process_region_data(target_db,path_time_series)
+        process_region_data(target_db,cop_timeseries,demand_timeseries,scenarios)
         target_db.commit_session("regions added")
 
 if __name__ == "__main__":

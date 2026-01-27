@@ -219,7 +219,7 @@ def main():
     print("road transport")
     print("-"*20)
     data = {}
-    path = "../../../Transport/road"
+    path = sys.argv[2]
     files = [os.path.join(path,filename) for filename in os.listdir(path) if "profile" in filename or "weekly" in filename]
 
     print("Loading all the CSV files")
@@ -228,7 +228,7 @@ def main():
         data_type = "hourly" if "profile" in elements[3] else "weekly"
         data[(elements[0],elements[1],elements[2],data_type)] = pd.read_csv(file,index_col=0)
 
-    scenario_fleet = pd.read_csv(os.path.join("../../../Transport","fleets_per_scenario.csv"),index_col=[0,1,2,3])
+    scenario_fleet = pd.read_csv(sys.argv[4],index_col=[0,1,2,3])
 
     with DatabaseMapping(url_db_out) as target_db:
 
@@ -268,7 +268,7 @@ def main():
     print("-"*20)
 
     data = {}
-    path = "../../../Transport/non-road"
+    path = sys.argv[3]
     files = [os.path.join(path,filename) for filename in os.listdir(path)]
 
     print("Loading all the CSV files")

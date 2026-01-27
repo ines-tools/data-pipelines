@@ -5,6 +5,7 @@ import pandas as pd
 import sys
 import numpy as np
 import json
+import os 
 
 def add_entity(db_map : DatabaseMapping, class_name : str, entity_byname : str, ent_description = None) -> None:
     _, error = db_map.add_entity_item(entity_byname=entity_byname, entity_class_name=class_name, description = ent_description)
@@ -56,20 +57,20 @@ def path_to_file(file_list,file):
 def main():
 
     url_db_out = sys.argv[1]
-    existing_wind_on = read_excel_data(path_to_file(sys.argv[1:],"capacity_wind-on-existing.xlsx"), "Regional_decomm_2025", 0, [2030,2040,2050])
-    existing_wind_off = read_excel_data(path_to_file(sys.argv[1:],"capacity_wind-off-FB-existing.xlsx"), "Regional_decomm_2025", 0, [2030,2040,2050])
-    existing_solar_PV = read_excel_data(path_to_file(sys.argv[1:],"capacity_solar-PV-existing.xlsx"), "Regional_decomm_2025", 0, [2030,2040,2050])
-    potential_wind_on = read_excel_data(path_to_file(sys.argv[1:],"potential_wind-on.xlsx"), "Data", 0, "Greenfield_potential_GW")
-    potential_wind_off = read_excel_data(path_to_file(sys.argv[1:],"potential_wind-off-FB.xlsx"), "Bottom_fixed_max120kmFromShore", 0, "Greenfield_potential_GW")
-    potential_wind_off_FO = read_excel_data(path_to_file(sys.argv[1:],"potential_wind-off-FO.xlsx"), "Floating", 0, "Greenfield_potential_GW")
-    potential_solar_PV = read_excel_data(path_to_file(sys.argv[1:],"potential_solar-PV.xlsx"), "Data", 0, "Greenfield_potential_GW")
+    existing_wind_on = read_excel_data(os.path.join(sys.argv[4],"capacity_wind-on-existing.xlsx"), "Regional_decomm_2025", 0, [2030,2040,2050])
+    existing_wind_off = read_excel_data(os.path.join(sys.argv[4],"capacity_wind-off-FB-existing.xlsx"), "Regional_decomm_2025", 0, [2030,2040,2050])
+    existing_solar_PV = read_excel_data(os.path.join(sys.argv[4],"capacity_solar-PV-existing.xlsx"), "Regional_decomm_2025", 0, [2030,2040,2050])
+    potential_wind_on = read_excel_data(os.path.join(sys.argv[5],"potential_wind-on.xlsx"), "Data", 0, "Greenfield_potential_GW")
+    potential_wind_off = read_excel_data(os.path.join(sys.argv[5],"potential_wind-off-FB.xlsx"), "Bottom_fixed_max120kmFromShore", 0, "Greenfield_potential_GW")
+    potential_wind_off_FO = read_excel_data(os.path.join(sys.argv[5],"potential_wind-off-FO.xlsx"), "Floating", 0, "Greenfield_potential_GW")
+    potential_solar_PV = read_excel_data(os.path.join(sys.argv[5],"potential_solar-PV.xlsx"), "Data", 0, "Greenfield_potential_GW")
 
     # Read VRE costs
-    vre_cost = pd.read_csv(path_to_file(sys.argv[1:],"VRE_costs.csv"),index_col=0)
+    vre_cost = pd.read_csv(sys.argv[2],index_col=0)
     print(vre_cost.index)
     print("uploading profiles")
     # Read availability data
-    availability = {tech: pd.read_csv(path_to_file(sys.argv[1:],f"{tech}.csv"), index_col=0) for tech in vre_cost.index if tech != "solar-PV-existing" and pd.notna(tech)}
+    availability = {tech: pd.read_csv(os.path.join(sys.argv[3],f"{tech}.csv"), index_col=0) for tech in vre_cost.index if tech != "solar-PV-existing" and pd.notna(tech)}
     print("Data loaded")
 
     # map = {"type":"map","rank":1,"index_type":"str","index_name":index_name,"data":{}}
