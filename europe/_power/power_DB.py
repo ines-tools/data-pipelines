@@ -25,6 +25,8 @@ To Do:
             ○ bioST+CC
             ○ Fuelcell
             ○ Geothermal
+- [X] add assumption parameters from an excel file to account for missing data from tdr/ppm
+- [X] add final validation check to warn if None values are being added to jaif
 - [ ] check whether the script is compatible with the geojson file of the industrial study
 - [ ] reject existing power plants if they are not within areas specified by the geojson file
 
@@ -40,10 +42,12 @@ from pprint import pprint
 from copy import deepcopy
 from math import sqrt
 from pprint import pprint
+import pandas as pd
 import geopandas as gpd
 from shapely.geometry import Point
 from fuzzywuzzy.process import extractOne
 import spinedb_api as api
+import warnings
 
 
 def main(
@@ -53,6 +57,7 @@ def main(
     msy,
     ppm,
     spd,
+    ass,
     geolevel="PECD1",  # "PECD1",# "PECD2",# "NUTS2",# "NUTS3",#
     referenceyear="y2025",
     units_existing=[
@@ -67,7 +72,7 @@ def main(
     ],
     units_new=[
         "bioST",
-        "bioST+CC",
+        # "bioST+CC",
         "CCGT",
         "CCGT+CC",
         "CCGT-H2",
@@ -76,6 +81,7 @@ def main(
         "nuclear-3",
         "OCGT",
         "OCGT+CC",
+        "OCGT-H2",
         "oil-eng",
         "SCPC",
         "SCPC+CC",
@@ -110,6 +116,7 @@ def main(
         inf,
         rfy,
         ppm,
+        ass,
         geomap,
         referenceyear,
         list(msy.keys()),
@@ -117,6 +124,10 @@ def main(
         commodities,
     )
     new_units(jaif, msy, regions, units_new, commodities)
+    apply_assumption_parameters(jaif, ass, regions)
+
+    # validate final parameter values before saving
+    validate_final_parameter_values(jaif)
 
     # save to spine database
     with api.DatabaseMapping(spd) as target_db:
@@ -147,6 +158,7 @@ def existing_units(
     inf,
     rfy,
     ppm,
+    ass,
     geomap,
     referenceyear,
     milestoneyears,
@@ -192,13 +204,13 @@ def existing_units(
                         unit_types[year][line[0]] = {}
                     unit_types[year][line[0]][line[1]] = line[2]
                     # unit_types[year][line[0]][line[1]+'_description']=line[3]+' '+line[4]+' '+line[5]
-    print("Unit Types")
-    pprint(unit_types)  # debugline
+    # print("Unit Types")
+    # pprint(unit_types)  # debugline
 
     with open(ppm, mode="r") as file:
         unit_instances = list(csv.DictReader(file))
     # print(unit_instances)#debugline
-    print("Total units before aggregation:", len(unit_instances))  # debugline
+    # print("Total units before aggregation:", len(unit_instances))  # debugline
 
     # aggregate and clean units
     unit_instances = aggregate_units(
@@ -288,6 +300,17 @@ def existing_units(
                     fixed_modifier=1.0,
                 )
 
+                operational_cost_val = search_data(
+                    unit,
+                    unit_types,
+                    unit["technology"],
+                    [datayear],
+                    "operational_cost",
+                    modifier=inflationfactor(
+                        yearly_inflation, datayear, referenceyear
+                    ),
+                )
+
                 jaif["parameter_values"].extend(
                     [
                         [
@@ -308,16 +331,7 @@ def existing_units(
                             "technology__to_commodity",
                             [unit["technology"] + "-existing", "elec"],
                             "operational_cost",
-                            search_data(
-                                unit,
-                                unit_types,
-                                unit["technology"],
-                                [datayear],
-                                "operational_cost",
-                                modifier=inflationfactor(
-                                    yearly_inflation, datayear, referenceyear
-                                ),
-                            ),
+                            operational_cost_val,
                             "Base",
                         ],
                     ]
@@ -374,23 +388,24 @@ def existing_units(
                 ]
             )
 
+            units_existing_val = search_data(
+                unit,
+                unit_types,
+                unit["technology"],
+                years,
+                "capacity",
+                data=[
+                    [year, unit["capacity"][year]]
+                    for year in milestoneyears
+                ],
+            )
             jaif["parameter_values"].extend(
                 [
                     [
                         "technology__region",
                         [unit["technology"] + "-existing", unit["region"]],
                         "units_existing",
-                        search_data(
-                            unit,
-                            unit_types,
-                            unit["technology"],
-                            years,
-                            "capacity",
-                            data=[
-                                [year, unit["capacity"][year]]
-                                for year in milestoneyears
-                            ],
-                        ),
+                        units_existing_val,
                         "Base",
                     ],
                 ]
@@ -413,34 +428,36 @@ def existing_units(
                         ],
                     ]
                 )
+                efficiency_in_val = search_data(
+                    unit,
+                    unit_types,
+                    unit["technology"],
+                    [datayear],
+                    "efficiency",
+                    modifier=1 / sqrt(2),
+                )
+                efficiency_out_val = search_data(
+                    unit,
+                    unit_types,
+                    unit["technology"],
+                    [datayear],
+                    "efficiency",
+                    modifier=1 / sqrt(2),
+                )
                 jaif["parameter_values"].extend(
                     [
                         [
                             "storage_connection",
                             [unit["technology"] + "-existing", "elec"],
                             "efficiency_in",
-                            search_data(
-                                unit,
-                                unit_types,
-                                unit["technology"],
-                                [datayear],
-                                "efficiency",
-                                modifier=1 / sqrt(2),
-                            ),
+                            efficiency_in_val,
                             "Base",
                         ],
                         [
                             "storage_connection",
                             [unit["technology"] + "-existing", "elec"],
                             "efficiency_out",
-                            search_data(
-                                unit,
-                                unit_types,
-                                unit["technology"],
-                                [datayear],
-                                "efficiency",
-                                modifier=1 / sqrt(2),
-                            ),
+                            efficiency_out_val,
                             "Base",
                         ],
                     ]
@@ -478,20 +495,21 @@ def existing_units(
                     ],
                 ]
             )
+            storages_existing_val = search_data(
+                unit,
+                unit_types,
+                unit["technology"],
+                [referenceyear],
+                "capacity",
+                data=[[k, v] for k, v in unit["capacity"].items()],
+            )
             jaif["parameter_values"].extend(
                 [
                     [
                         "storage__region",
                         [unit["technology"] + "-existing", unit["region"]],
                         "storages_existing",
-                        search_data(
-                            unit,
-                            unit_types,
-                            unit["technology"],
-                            [referenceyear],
-                            "capacity",
-                            data=[[k, v] for k, v in unit["capacity"].items()],
-                        ),
+                        storages_existing_val,
                         "Base",
                     ],
                 ]
@@ -529,8 +547,8 @@ def new_units(jaif, msy, regions, units_new, commodities):
                         unit_types[year][line[0]] = {}
                     unit_types[year][line[0]][line[1]] = line[2]
                     # unit_types[year][line[0]][line[1]+'_description']=line[3]+' '+line[4]+' '+line[5]
-    print("Unit Types")
-    pprint(unit_types)  # debugline
+    # print("Unit Types")
+    # pprint(unit_types)  # debugline
 
     unit_instances = generate_unit_instances(regions, units_new)
 
@@ -595,19 +613,28 @@ def new_units(jaif, msy, regions, units_new, commodities):
                     unit, unit_types, years
                 )
 
+                lifetime_val = search_data(
+                    unit,
+                    unit_types,
+                    unit["technology"],
+                    [years[0]],
+                    "lifetime",
+                )
+                operational_cost_new = search_data(
+                    unit,
+                    unit_types,
+                    unit["technology"],
+                    years,
+                    "operational_cost",
+                )
+
                 jaif["parameter_values"].extend(
                     [
                         [
                             "technology",
                             unit["technology"],
                             "lifetime",
-                            search_data(
-                                unit,
-                                unit_types,
-                                unit["technology"],
-                                [years[0]],
-                                "lifetime",
-                            ),
+                            lifetime_val,
                             "Base",
                         ],
                         [
@@ -635,13 +662,7 @@ def new_units(jaif, msy, regions, units_new, commodities):
                             "technology__to_commodity",
                             [unit["technology"], "elec"],
                             "operational_cost",
-                            search_data(
-                                unit,
-                                unit_types,
-                                unit["technology"],
-                                years,
-                                "operational_cost",
-                            ),
+                            operational_cost_new,
                             "Base",
                         ],
                     ]
@@ -700,34 +721,37 @@ def new_units(jaif, msy, regions, units_new, commodities):
                     ]
                 )
 
+                storage_efficiency_in = search_data(
+                    unit,
+                    unit_types,
+                    unit["technology"],
+                    [years[0]],
+                    "efficiency",
+                    modifier=1 / sqrt(2),
+                )
+                storage_efficiency_out = search_data(
+                    unit,
+                    unit_types,
+                    unit["technology"],
+                    [years[0]],
+                    "efficiency",
+                    modifier=1 / sqrt(2),
+                )
+
                 jaif["parameter_values"].extend(
                     [
                         [
                             "storage_connection",
                             [unit["technology"], "elec"],
                             "efficiency_in",
-                            search_data(
-                                unit,
-                                unit_types,
-                                unit["technology"],
-                                [years[0]],
-                                "efficiency",
-                                modifier=1 / sqrt(2),
-                            ),
+                            storage_efficiency_in,
                             "Base",
                         ],
                         [
                             "storage_connection",
                             [unit["technology"], "elec"],
                             "efficiency_out",
-                            search_data(
-                                unit,
-                                unit_types,
-                                unit["technology"],
-                                [years[0]],
-                                "efficiency",
-                                modifier=1 / sqrt(2),
-                            ),
+                            storage_efficiency_out,
                             "Base",
                         ],
                     ]
@@ -738,15 +762,17 @@ def new_units(jaif, msy, regions, units_new, commodities):
                     calculate_investment_and_fixed_costs(unit, unit_types, years)
                 )
 
+                storage_lifetime = search_data(
+                    unit, unit_types, unit["technology"], years, "lifetime"
+                )
+
                 jaif["parameter_values"].extend(
                     [
                         [
                             "storage",
                             unit["technology"],
                             "lifetime",
-                            search_data(
-                                unit, unit_types, unit["technology"], years, "lifetime"
-                            ),
+                            storage_lifetime,
                             "Base",
                         ],
                         [
@@ -775,6 +801,287 @@ def new_units(jaif, msy, regions, units_new, commodities):
     return jaif
 
 
+def apply_assumption_parameters(jaif, assumptions_path, regions=None):
+    """
+    Load technology parameters from an assumptions Excel file and merge them into jaif.
+
+    Reads from two sheets:
+    - 'Generation': For power plant parameters
+    - 'Storage': For storage parameters
+
+    Expected columns (case-insensitive, spaces/underscores ignored):
+    technology/tech, efficiency_in, efficiency_out, storage_capacity, capacity,
+    operational_cost[_YEAR], investment_cost[_YEAR], fixed_cost[_YEAR], lifetime.
+    Year-suffixed cost columns are combined into jaif maps keyed by year (e.g. y2025).
+    Only non-empty values are applied. Technologies or storages not present in jaif
+    are created if they don't exist (especially useful for new storage types).
+    
+    Args:
+        jaif: The jaif dictionary to update
+        assumptions_path: Path to the Excel assumptions file
+        regions: List of region IDs for creating storage__region entities for new storages
+    """
+
+    if not assumptions_path:
+        print("No assumptions file provided; skipping assumptions merge.")
+        return jaif
+
+    try:
+        xls = pd.ExcelFile(assumptions_path)
+    except FileNotFoundError:
+        print(f"Assumptions file not found: {assumptions_path}")
+        return jaif
+
+    # Helper lookups for existing jaif entities
+    technologies = {entity[1] for entity in jaif["entities"] if entity[0] == "technology"}
+    storages = {entity[1] for entity in jaif["entities"] if entity[0] == "storage"}
+
+    def resolve_entity_name(name, existing_names):
+        if name in existing_names:
+            return name
+        suffix_name = f"{name}-existing"
+        if suffix_name in existing_names:
+            return suffix_name
+        return None
+
+    def find_connection_commodity(entity_type, tech_name):
+        for entity in jaif["entities"]:
+            if entity[0] == entity_type and isinstance(entity[1], list):
+                if entity[1][0] == tech_name:
+                    return entity[1][1]
+        return "elec"
+
+    def find_input_commodity(tech_name):
+        """Find the input commodity for a technology from commodity__to_technology relationship."""
+        for entity in jaif["entities"]:
+            if entity[0] == "commodity__to_technology" and isinstance(entity[1], list):
+                if entity[1][1] == tech_name:  # tech_name is second element
+                    return entity[1][0]  # return commodity (first element)
+        return None  # No input commodity found
+
+    def upsert_parameter(entity_type, entity_name, parameter, value):
+        # Skip empties but allow dict/map values
+        if value is None:
+            return
+        if not isinstance(value, dict) and pd.isna(value):
+            return
+        entry = [entity_type, entity_name, parameter, value, "Base"]
+        for idx, existing in enumerate(jaif["parameter_values"]):
+            if (
+                existing[0] == entity_type
+                and existing[1] == entity_name
+                and existing[2] == parameter
+            ):
+                jaif["parameter_values"][idx] = entry
+                return
+        jaif["parameter_values"].append(entry)
+
+    def build_year_map(row, base_name):
+        """Return map (year->value) if year-suffixed cols exist, else scalar value."""
+        entries = []
+        for col, val in row.items():
+            if not isinstance(col, str):
+                continue
+            if not col.startswith(base_name + "_"):
+                continue
+            suffix = col[len(base_name) + 1 :]
+            if suffix == "":
+                continue
+            if pd.isna(val):
+                continue
+            year_label = str(suffix)
+            if not year_label.startswith("y") and year_label.isdigit():
+                year_label = f"y{year_label}"
+            entries.append([year_label, val])
+
+        if entries:
+            entries.sort(
+                key=lambda pair: (0, int(str(pair[0]).lstrip("y")))
+                if str(pair[0]).lstrip("y").isdigit()
+                else (1, str(pair[0]))
+            )
+            return {
+                "index_type": "str",
+                "rank": 1,
+                "index_name": "year",
+                "type": "map",
+                "data": entries,
+            }
+
+        fallback = row.get(base_name)
+        if pd.isna(fallback):
+            return None
+        return fallback
+
+    # Process Generation sheet for technologies
+    if "Generation" in xls.sheet_names:
+        df_gen = pd.read_excel(assumptions_path, sheet_name="Generation")
+        # Normalise column names
+        df_gen.columns = [str(col).strip().lower().replace(" ", "_") for col in df_gen.columns]
+        if "technology" not in df_gen.columns and "tech" in df_gen.columns:
+            df_gen = df_gen.rename(columns={"tech": "technology"})
+        if "technology" not in df_gen.columns:
+            print("Generation sheet is missing a 'technology' or 'tech' column; skipping.")
+        else:
+            for _, row in df_gen.iterrows():
+                tech_raw = row.get("technology")
+                if pd.isna(tech_raw):
+                    continue
+                tech = str(tech_raw).strip()
+                if not tech:
+                    continue
+
+                tech_name = resolve_entity_name(tech, technologies)
+
+                # Apply to technology-based units (power plants)
+                if tech_name:
+                    commodity = find_connection_commodity("technology__to_commodity", tech_name)
+                    connection = [tech_name, commodity]
+                    
+                    # For commodity__to_technology__to_commodity, need input commodity too
+                    input_commodity = find_input_commodity(tech_name)
+                    if input_commodity:
+                        conversion_connection = [input_commodity, tech_name, commodity]
+                    else:
+                        conversion_connection = None
+                    
+                    invest_val = build_year_map(row, "investment_cost")
+                    op_cost_val = build_year_map(row, "operational_cost")
+                    fixed_cost_val = build_year_map(row, "fixed_cost")
+                    upsert_parameter("technology", tech_name, "lifetime", row.get("lifetime"))
+                    upsert_parameter(
+                        "technology__to_commodity",
+                        connection,
+                        "capacity",
+                        row.get("capacity"),
+                    )
+                    upsert_parameter(
+                        "technology__to_commodity",
+                        connection,
+                        "operational_cost",
+                        op_cost_val,
+                    )
+                    upsert_parameter(
+                        "technology__to_commodity",
+                        connection,
+                        "investment_cost",
+                        invest_val,
+                    )
+                    upsert_parameter(
+                        "technology__to_commodity",
+                        connection,
+                        "fixed_cost",
+                        fixed_cost_val,
+                    )
+                    if conversion_connection:
+                        upsert_parameter(
+                            "commodity__to_technology__to_commodity",
+                            conversion_connection,
+                            "conversion_rate",
+                            row.get("conversion_rate"),
+                        )
+
+                if not tech_name:
+                    print(f"Assumptions tech '{tech}' not found in jaif; skipping.")
+
+    # Process Storage sheet for storage parameters
+    if "Storage" in xls.sheet_names:
+        df_stor = pd.read_excel(assumptions_path, sheet_name="Storage")
+        # Normalise column names
+        df_stor.columns = [str(col).strip().lower().replace(" ", "_") for col in df_stor.columns]
+        if "technology" not in df_stor.columns and "tech" in df_stor.columns:
+            df_stor = df_stor.rename(columns={"tech": "technology"})
+        if "technology" not in df_stor.columns:
+            print("Storage sheet is missing a 'technology' or 'tech' column; skipping.")
+        else:
+            for _, row in df_stor.iterrows():
+                storage_raw = row.get("technology")
+                if pd.isna(storage_raw):
+                    continue
+                storage = str(storage_raw).strip()
+                if not storage:
+                    continue
+
+                storage_name = resolve_entity_name(storage, storages)
+
+                # If storage doesn't exist, create it
+                if not storage_name:
+                    storage_name = storage
+                    commodity = "elec"  # Default commodity for storage
+                    
+                    # Create storage entity
+                    jaif["entities"].extend([
+                        ["storage", storage_name, None],
+                        ["storage_connection", [storage_name, commodity], None],
+                    ])
+                    
+                    # Create storage__region entities for all regions if regions provided
+                    if regions:
+                        for region in regions:
+                            jaif["entities"].append([
+                                "storage__region",
+                                [storage_name, region],
+                                None,
+                            ])
+                    
+                    # Update storages set for future lookups
+                    storages.add(storage_name)
+                    print(f"Created new storage entity '{storage_name}' from assumptions file.")
+
+                # Apply to storage units
+                if storage_name:
+                    invest_val = build_year_map(row, "investment_cost")
+                    op_cost_val = build_year_map(row, "operational_cost")
+                    fixed_cost_val = build_year_map(row, "fixed_cost")
+                    commodity = find_connection_commodity("storage_connection", storage_name)
+                    connection = [storage_name, commodity]
+                    upsert_parameter("storage", storage_name, "lifetime", row.get("lifetime"))
+                    upsert_parameter(
+                        "storage_connection",
+                        connection,
+                        "efficiency_in",
+                        row.get("efficiency_in"),
+                    )
+                    upsert_parameter(
+                        "storage_connection",
+                        connection,
+                        "efficiency_out",
+                        row.get("efficiency_out"),
+                    )
+                    upsert_parameter(
+                        "storage_connection",
+                        connection,
+                        "investment_cost",
+                        invest_val,
+                    )
+                    upsert_parameter(
+                        "storage_connection",
+                        connection,
+                        "operational_cost",
+                        op_cost_val,
+                    )
+                    upsert_parameter(
+                        "storage_connection",
+                        connection,
+                        "fixed_cost",
+                        fixed_cost_val,
+                    )
+                    upsert_parameter(
+                        "storage_connection",
+                        connection,
+                        "capacity",
+                        row.get("capacity"),
+                    )
+                    upsert_parameter(
+                        "storage",
+                        storage_name,
+                        "storage_capacity",
+                        row.get("storage_capacity"),
+                    )
+
+    return jaif
+
+
 def generate_unit_instances(regions, units):
     map_jaif = {
         "bioST": {
@@ -782,11 +1089,11 @@ def generate_unit_instances(regions, units):
             "technology": "bioST",
             "entityclass": "PP",
         },
-        "bioST+CC": {
-            "commodity": "bio",
-            "technology": "bioST+CC",
-            "entityclass": "PP",
-        },
+        # "bioST+CC": {
+        #     "commodity": "bio",
+        #     "technology": "bioST+CC",
+        #     "entityclass": "PP",
+        # },
         "CCGT": {
             "commodity": "CH4",
             "technology": "CCGT",
@@ -825,6 +1132,11 @@ def generate_unit_instances(regions, units):
         "OCGT+CC": {
             "commodity": "CH4",
             "technology": "OCGT+CC",
+            "entityclass": "PP",
+        },
+        "OCGT-H2": {
+            "commodity": "H2",
+            "technology": "OCGT-H2",
             "entityclass": "PP",
         },
         "oil-eng": {
@@ -1150,7 +1462,7 @@ def map_tdr_jaif(line_tdr):
     map_tdr0 = {
         "battery storage": "battery-storage",
         "biogas": "bioST",
-        "biogas CC": "bioST+CC",
+        # "biogas CC": "bioST+CC",
         # "biogas plus hydrogen":"bioST-H2"
         "CCGT": "CCGT",
         # "CCGT+CC",
@@ -1352,7 +1664,7 @@ def search_data_existing(
         for year in years:
             if unit_type_key in unit_types[year]:
                 unit_type=unit_types[year][unit_type_key]
-                print(f"Unit type found for year {year}: {unit_type}") #debugline
+                # print(f"Unit type found for year {year}: {unit_type}") #debugline
             else:
                 unit_type={}
             datavalue = None
@@ -1366,7 +1678,7 @@ def search_data_existing(
                 datavalue*=modifier
             data.append([year,datavalue])
 
-            print(f"Year: {year}, Data Value: {datavalue}, Modifier: {modifier}") #debugline
+            # print(f"Year: {year}, Data Value: {datavalue}, Modifier: {modifier}") #debugline
     if len(data)==0:
         parameter_value = None
         print(f"Cannot find parameter {parameter} for {unit["technology"]}")
@@ -1394,6 +1706,54 @@ def inflationfactor(yearly_inflation, year, referenceyear):
     return inflation
 
 
+def validate_final_parameter_values(jaif):
+    """
+    Validate the final parameter_values list for None values before saving to database.
+    Issues warnings for any None values found.
+    
+    Args:
+        jaif: The jaif dictionary containing parameter_values to validate
+    """
+    warnings_issued = []
+    
+    for param_value in jaif.get("parameter_values", []):
+        if len(param_value) < 4:
+            continue
+            
+        entity_type = param_value[0]
+        entity_name = param_value[1]
+        parameter = param_value[2]
+        value = param_value[3]
+        
+        # Determine unit type from entity_name
+        unit_type = ""
+        if isinstance(entity_name, list) and len(entity_name) > 0:
+            unit_type = str(entity_name[0])
+        else:
+            unit_type = str(entity_name)
+        
+        # Check for None value
+        if value is None:
+            warning_msg = f"Warning: None value for {entity_type} '{entity_name}', parameter '{parameter}' (unit type: {unit_type})"
+            if warning_msg not in warnings_issued:
+                warnings.warn(warning_msg)
+                warnings_issued.append(warning_msg)
+            continue
+        
+        # Check if value is a map/dict with None values in data
+        if isinstance(value, dict) and value.get('type') == 'map' and 'data' in value:
+            none_years = []
+            for year_data in value['data']:
+                if len(year_data) >= 2 and year_data[1] is None:
+                    none_years.append(year_data[0])
+            
+            if none_years:
+                warning_msg = f"Warning: None values in map for {entity_type} '{entity_name}', parameter '{parameter}', years: {', '.join(map(str, none_years))} (unit type: {unit_type})"
+                if warning_msg not in warnings_issued:
+                    warnings.warn(warning_msg)
+                    warnings_issued.append(warning_msg)
+
+
 if __name__ == "__main__":
     # flexibility in input
     # geo = sys.argv[1]
@@ -1416,6 +1776,7 @@ if __name__ == "__main__":
         },
         "ppm": "powerplants",  # "powerplants.csv",
         "spd": "http",  # spine db
+        "ass": "assumptions",  # "assumptions.xlsx",
     }
     for key, value in inputfiles.items():
         if type(value) == dict:
