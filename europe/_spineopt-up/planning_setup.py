@@ -133,24 +133,6 @@ def investment_cost_update():
         except DBAPIError as e:
             print("###################################################################### commit error")  
 
-def update_parameters():
-
-    with DatabaseMapping(url_spineopt) as sopt_db:
-
-        resolution_ = "1h"
-
-        add_or_update_parameter_value(sopt_db, "temporal_block", "resolution", "Base", ("operations_y2030", ),  {"type":"duration","data":resolution_})
-        add_or_update_parameter_value(sopt_db, "temporal_block", "resolution", "Base", ("operations_y2040", ),  {"type":"duration","data":resolution_})
-        add_or_update_parameter_value(sopt_db, "temporal_block", "resolution", "Base", ("operations_y2050", ),  {"type":"duration","data":resolution_})
-        #add_or_update_parameter_value(sopt_db, "node", "initial_storages_invested_available", "Base", ("CO2", ), 0.2*1e6/30)
-        #add_or_update_parameter_value(sopt_db, "node", "fix_storages_invested_available", "Base", ("CO2", ), 0.2*1e6/30)
-        #add_or_update_parameter_value(sopt_db, "node", "node_state_cap", "Base", ("atmosphere", ), 2.2*1e9/30)
-
-        try:
-            sopt_db.commit_session("Update parameters")
-        except DBAPIError as e:
-            print("###################################################################### commit error")  
-
 def air_ground_heatpump():
 
     with DatabaseMapping(url_spineopt) as sopt_db:
@@ -168,17 +150,6 @@ def air_ground_heatpump():
         except DBAPIError as e:
             print("commit error")  
 
-def scenario_development():
-    with DatabaseMapping(url_spineopt) as sopt_db:
-        alt_names = ["wy2009","2030_wy2009","2040_wy2009","2050_wy2009","medium_bio","current","GA","GA_flex0","Base"]
-        # alt_names = ["wy2009","medium_bio","current","GA","GA_flex0","Base"]
-        # alt_names = ["Base"]
-        scenario_name = "__".join(alt_names)
-        add_scenario(sopt_db,scenario_name)
-        for alt_name in alt_names:
-            add_scenario_alternative(sopt_db,scenario_name,alt_name,alt_names.index(alt_name)+1)
-        sopt_db.commit_session("Added scenario")
-
 def manage_output():
     with DatabaseMapping(url_spineopt) as sopt_db:
 
@@ -188,7 +159,11 @@ def manage_output():
         outputs = ["unit_capacity","connection_capacity","node_state_cap","demand",
                    "connections_invested","connections_invested_available","connections_decommissioned","units_invested","units_invested_available","units_mothballed",
                    "storages_invested","storages_invested_available","storages_decommissioned","unit_flow","connection_flow","node_state","node_injection","weight","fractional_demand",
-                   "unit_investment_cost","connection_investment_costs","storage_investment_costs","fixed_om_costs","variable_om_costs","fuel_costs","connection_flow_costs"]
+                   "unit_investment_cost","connection_investment_cost","storage_investment_cost",
+                   "unit_investment_costs","connection_investment_costs","storage_investment_costs","fixed_om_costs","variable_om_costs","fuel_costs","connection_flow_costs","taxes","objective_penalties",
+                   "node_slack_neg","node_slack_pos",
+                   "constraint_nodal_balance","constraint_units_available",
+                   "bound_units_on"]
         
         for output in outputs:
             add_entity(sopt_db,"output",(output,))
@@ -198,11 +173,11 @@ def manage_output():
 def solver_options():
     with DatabaseMapping(url_spineopt) as sopt_db:
         map_options = {"type":"map","index_type":"str","index_name":"x","data":
-                       {"HiGHS.jl" :{"type":"map","index_type":"str","index_name":"x","data":{"presolve":"on","time_limit":3600.01}},
+                       {"HiGHS.jl" :{"type":"map","index_type":"str","index_name":"x","data":{"presolve":"on","time_limit":3600.01,"user_bound_scale":-9}},
                         "Gurobi.jl":{"type":"map","index_type":"str","index_name":"x","data":{"Method":2.0,"NumericFocus":2.0,"Crossover":0.0}}}}
         
         add_parameter_value(sopt_db,"model","db_mip_solver_options","Base",("capacity_planning",),map_options)
-        add_parameter_value(sopt_db,"model","db_mip_solver","Base",("capacity_planning",),"Gurobi.jl")
+        add_parameter_value(sopt_db,"model","db_mip_solver","Base",("capacity_planning",),"HiGHS.jl")
         sopt_db.commit_session("Added solver_options")
 
 def storage_setup():
@@ -300,8 +275,6 @@ def main():
     investment_cost_update()
     print("Heat pump constraints")
     air_ground_heatpump()
-    print("adding scenarios to be analyzed")
-    scenario_development()
     print("managing outputs")
     manage_output()
     print("adding solver options")
@@ -312,8 +285,6 @@ def main():
     # hydro_TB()
     print("industry_temporal_block")
     # industry_TB()
-    print("updating_parameters")
-    # update_parameters()
 
 if __name__ == "__main__":
     main()

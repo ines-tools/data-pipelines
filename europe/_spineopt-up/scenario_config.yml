@@ -1,0 +1,4 @@
+scenarios:
+  baseline_blended_representative_periods: ["Base","wy2009","y2030_wy2009","y2040_wy2009","y2050_wy2009","medium_bio","current","GA","GA_flex0"]
+emission_factor: 0.03333
+resolution: "1h"
