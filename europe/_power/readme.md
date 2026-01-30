@@ -47,3 +47,5 @@ The script makes a distinction between existing units and new units.
 For the existing units, we first load the existing power plants from the power plant matching file and load the (general) technology data associated to the reference year. Mapping functions are used to match the names expected by the power db template example with the names from the technology data catalogue (originally using fuzzy search but eventually hardcoded for more precise data assumptions). The power plants are aggregated and missing data is adjusted with the general data wherever possible. The capacity decays according to the lifetime information of the existing power plant and the provided milestoneyears. If such data is missing, a random milestone year is chosen to decommission the unit.
 
 For the new units, the general technology data is loaded for the milestone years (instead of the reference year).
+
+If there are missing values at the end of the process, these are then replaced by values from the assumptions file.
