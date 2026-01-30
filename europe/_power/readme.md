@@ -14,6 +14,7 @@ It is assumed that you already have Spine Toolbox and ines tools installed.
 
 To add the pipeline, create a folder with the following files:
 + the data sources as explained below,
++ the assumptions file as explained below,
 + the configuration files as explained below,
 + the Power_Sector_template_DB,
 + the power_DB script.
@@ -30,13 +31,16 @@ In Spine Toolbox, create a workflow with:
 
 [ECB inflation data](https://github.com/ines-tools/data-pipelines/blob/main/EU_historical_inflation_ECB.csv) for discounting.
 
+## Assumptions
+There is some missing data in the data from PyPSA. Assumptions are used for that missing data. These assumptions are based on various sources. The assumptions and their sources are collected in a single assumptions file that makes a distinction between conversion technologies and storage. The distinction between existing and new units is only considered in the name with the suffix '-existing'.
+
 ## Configuration files
 The scripts aggregates the positional data to areas specified by a geojson file. Any geolevel within that geojson file can be used, but the geolevel needs to be specified in the main function.
 
-Currently you have to enter the geolevel directy in the script but in the future this is likely to be done through a separate configuration file instead. The same holds for some other parameters like the reference year and the names for the existing/new units.
+Currently you have to enter the geolevel directy in the script but in the future this is likely to be done through a separate configuration file instead. The same holds for some other parameters like the reference year and the names for the existing/new units as well as the template (which currently has to be loaded manually in the output database).
 
 ## Approach
-At the start, the script gathers all input data and uses fuzzy search to determine in what order the input files need to be loaded. This approach is allows for some errors in the filename and some errors in ordering the tool arguments.
+At the start, the script gathers all input data and uses fuzzy search to determine in what order the input files need to be loaded. This approach allows for some errors in the filename and some errors in ordering the tool arguments.
 
 The script makes a distinction between existing units and new units.
 
