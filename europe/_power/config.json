@@ -1,0 +1,32 @@
+{
+    "geolevel": "PECD1",
+    "referenceyear": "y2030",
+    "units_existing":[
+        "bioST",
+        "CCGT",
+        "nuclear-3",
+        "oil-eng",
+        "SCPC",
+        "wasteST",
+        "geothermal",
+        "battery-storage"
+    ],
+    "units_new":[
+        "bioST",
+        "CCGT",
+        "CCGT+CC",
+        "CCGT-H2",
+        "fuelcell",
+        "geothermal",
+        "nuclear-3",
+        "OCGT",
+        "OCGT+CC",
+        "OCGT-H2",
+        "oil-eng",
+        "SCPC",
+        "SCPC+CC",
+        "wasteST",
+        "battery-storage"
+    ],
+    "commodities":[]
+}

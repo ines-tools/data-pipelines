@@ -159,6 +159,13 @@
         ],
         [
             "storage_connection",
+            "energy_power_ratio",
+            null,
+            null,
+            null
+        ],
+        [
+            "storage_connection",
             "fixed_cost",
             null,
             null,
