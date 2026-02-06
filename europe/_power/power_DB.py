@@ -29,12 +29,13 @@ To Do:
 - [X] add final validation check to warn if None values are being added to jaif
 - [ ] check whether the script is compatible with the geojson file of the industrial study
 - [ ] reject existing power plants if they are not within areas specified by the geojson file
-- [ ] remove y2025 from parameter maps
-- [ ] set reference year to y2030
-- [ ] "Don't add "unit" as an item in the parameter map for cost."??
+- [x] remove y2025 from parameter maps
+- [ ] check purging (and that there is no "unit" in the maps)
+- [ ] for the assumptions, have an assumption of the growth/decline over the milestoneyears?
+- [ ] difference between existing tech and new tech
+    - existing tech has all float values (including the costs) and has 2020 costs in 2025 values
+    - new tech has all map values and has 2030, 2040 and 2050 costs in 2025 values
 - [ ] storage
-    - [ ] check difference between storage-existing and new storage
-    - [ ] cost parameters of EXISTING storage need to be a float instead of a map
     - [ ] storage is the energy, storage-connection is power, both need data on
         - [ ] lifetime (currently only storage has one, not the connection, we should set the default the same?)
         - [ ] cost (apparently we only provide costs for the connection, i.e. power, at the moment)
@@ -44,6 +45,8 @@ To Do:
 Optional:
 - [ ] Currently, for some parameters that only require 1 value in jaif, new units use the first milestoneyear for its value  while in some instances it probably should use the average over the years.
 - [ ] aggregate all units by type and use them as another data (arche)type (probably requires moving loading of files from existin/new units to main function)
+- [ ] when loading from the assumptions file, check the milestoneyears (and/or reference year) instead of loading all the years that are in the assumptions columns
+- [ ] When the milestone years are different from the years in the files (whether it is costs.csv or assumptions.xlsx), perform an inflation calculation (similar to reference year but with an assumption on the discount rate)
 """
 
 import sys
