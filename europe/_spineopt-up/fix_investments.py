@@ -221,14 +221,15 @@ def eliminate_investment_temporal_block(model_stage=True):
 
         spineopt_db.commit_session("eliminate_investment_temporal_block")
 
-def update_model():
+def update_model(model_stage):
     with DatabaseMapping(url_spineopt) as spineopt_db:
         for parameter_name in ["model_start","model_end"]:
             for parameter_map in spineopt_db.get_parameter_value_items(parameter_definition_name = parameter_name):
                 item_id = parameter_map["id"]
                 spineopt_db.remove_item("parameter_value",item_id)
         model_name = [entity_i["name"] for entity_i in spineopt_db.get_entity_items(entity_class_name="model")][0]
-        add_parameter_value(spineopt_db,"model","roll_forward","Base",(model_name,),{"type":"duration","data":"24h"})
+        if model_stage:
+            add_parameter_value(spineopt_db,"model","roll_forward","Base",(model_name,),{"type":"duration","data":"24h"})
         
         for entity_map in spineopt_db.get_entity_items(entity_class_name = "model__default_investment_stochastic_structure"):
             item_id = entity_map["id"]
@@ -248,7 +249,7 @@ def scenario_definition(model_stage):
             stage_alternative = "lt_storage_alt"
             add_entity(spineopt_db,"stage", (stage_name,))
             add_alternative(spineopt_db,stage_alternative)
-            add_parameter_value(spineopt_db,"temporal_block","resolution",stage_alternative,("operations",),{"type":"duration","data":"1D"})
+            add_parameter_value(spineopt_db,"temporal_block","resolution",stage_alternative,("operations",),{"type":"duration","data":"8h"})
             model_name = [entity_i["name"] for entity_i in spineopt_db.get_entity_items(entity_class_name="model")][0]
             add_parameter_value(spineopt_db,"model","roll_forward",stage_alternative,(model_name,),None)
             
@@ -315,9 +316,10 @@ def main():
     fix_invested_available(invested_available_items)
     add_slack_var_demand()
     delete_investment_groups()
-    update_model()
+    model_stage = True
+    update_model(model_stage)
     eliminate_investment_temporal_block()
-    scenario_definition(model_stage=True)
+    scenario_definition(model_stage)
     delete_unused_alternatives()
 
 

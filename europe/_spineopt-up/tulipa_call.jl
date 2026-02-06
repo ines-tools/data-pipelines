@@ -4,7 +4,11 @@ using DataFrames
 using DuckDB
 using Distances
 using CSV
-using Debugger
+
+println("WARNING: Check whether there are extreme periods from the loop with the operational assessments")
+
+number_of_representatives = 12
+number_of_timesteps = 24
 
 function get_data(input_folder,year)
   dir = joinpath(input_folder, "profiles")
@@ -21,23 +25,40 @@ for alternative in ["wy2009"]
     println("Importing Data")
     clustering_data = get_data(input_folder,string(alternative))
     println("Splitting Periods")
-    split_into_periods!(clustering_data; period_duration = 24)
+    split_into_periods!(clustering_data; period_duration = number_of_timesteps)
 
-    println("Finding Representative Periods")
-    clustering_result = find_representative_periods(
-        clustering_data,
-        12;
-        drop_incomplete_last_period = false,
-        method = :convex_hull, # k_means, k_medoids, convex_hull, convex_hull_with_null, conical_hull
-        distance = Euclidean(), #Any distance from Distances.jl e.g., SqEuclidean(), or CosineDist()
-        # init = :kmcen,
-    )
+    initial_path = string("results/initial_representative_periods_",alternative,".csv")
+    if isfile(initial_path)
+        initial_df = DataFrame(CSV.File(initial_path))
+        new_number_of_representatives = length(unique(initial_df.period))
+        @info "File Uploaded" initial_path size=size(initial_df)
+        println("Finding Representative Periods with Extremes")
+        clustering_result = find_representative_periods(
+            clustering_data,
+            new_number_of_representatives;
+            initial_representatives = initial_df,
+            drop_incomplete_last_period = false,
+            method = :convex_hull, # k_means, k_medoids, convex_hull, convex_hull_with_null, conical_hull
+            distance = Euclidean(), #Any distance from Distances.jl e.g., SqEuclidean(), or CosineDist()
+            # init = :kmcen,
+        )
+    else
+        @warn "File doest not exist in that directory" initial_path
+        println("Finding Representative Periods with no Extremes")
+        clustering_result = find_representative_periods(
+            clustering_data,
+            number_of_representatives;
+            drop_incomplete_last_period = false,
+            method = :convex_hull, # k_means, k_medoids, convex_hull, convex_hull_with_null, conical_hull
+            distance = Euclidean(), #Any distance from Distances.jl e.g., SqEuclidean(), or CosineDist()
+            # init = :kmcen,
+        )
+        println("Saving Representative Periods ",alternative, clustering_result.auxiliary_data.medoids)
+        #medoids = clustering_result.auxiliary_data.medoids
+        rp_df[!,alternative] = clustering_result.auxiliary_data.medoids
+        CSV.write(string("results/representative_periods.csv"),rp_df);
+    end
 
-    println("Saving Representative Periods ",alternative, clustering_result.auxiliary_data.medoids)
-    #medoids = clustering_result.auxiliary_data.medoids
-    rp_df[!,alternative] = clustering_result.auxiliary_data.medoids
-
-    
     println("Calculating Weights")
     TulipaClustering.fit_rep_period_weights!(
       clustering_result;
@@ -51,4 +72,3 @@ for alternative in ["wy2009"]
     CSV.write(string("results/weights","_",alternative,".csv"),weights)
     
 end
-CSV.write(string("results/representative_periods.csv"),rp_df);

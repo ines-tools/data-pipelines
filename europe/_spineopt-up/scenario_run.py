@@ -68,15 +68,59 @@ def scenario_development(config):
 
     with DatabaseMapping(url_spineopt) as sopt_db:
 
+        scenarios_in_db = [scenario_i["name"] for scenario_i in sopt_db.get_scenario_items()]
         for scenario_name in config["scenarios"]:
-            add_scenario(sopt_db,scenario_name)
-            alt_names = config["scenarios"][scenario_name]
-            for alt_name in alt_names:
-                add_scenario_alternative(sopt_db,scenario_name,alt_name,alt_names.index(alt_name)+1)
+            
+            if scenario_name not in scenarios_in_db:
+                add_scenario(sopt_db,scenario_name)
+                alt_names = config["scenarios"][scenario_name]
+                for alt_name in alt_names:
+                    add_scenario_alternative(sopt_db,scenario_name,alt_name,alt_names.index(alt_name)+1)
         try:
             sopt_db.commit_session("Added scenario")
-        except DBAPIError as e:
+        except:
             print("###################################################################### commit error")  
+
+def storage_setup():
+
+    shortterm_storages = ["large-battery","car-DR","bus-DR","van-DR","truck-DR"]
+    with DatabaseMapping(url_spineopt) as sopt_db:
+        list_rep = [entity_i["name"] for entity_i in sopt_db.get_entity_items(entity_class_name = "temporal_block") if "representative_period" in entity_i["name"]]
+        list_otb = [entity_i["name"] for entity_i in sopt_db.get_entity_items(entity_class_name = "temporal_block") if "operations" in entity_i["name"]]                    
+    
+        for param_map in sopt_db.get_parameter_value_items(entity_class_name = "node", parameter_definition_name = "has_state"):
+            if bool(param_map["parsed_value"]):
+                if all(sto not in param_map["entity_byname"][0] for sto in shortterm_storages):
+                    add_or_update_parameter_value(sopt_db,"node","is_longterm_storage","Base",(param_map["entity_byname"][0],),True)
+                    cylic_contition_status = [entity_i for entity_i in sopt_db.get_parameter_value_items(entity_class_name = "node__temporal_block", alternative_name = "Base", parameter_definition_name = "cyclic_condition") if param_map["entity_byname"][0] == entity_i["entity_byname"][0]]
+                    if cylic_contition_status and sopt_db.get_entity_item(entity_class_name = "temporal_block",name = "all_rps"):
+                        try:
+                            add_entity(sopt_db,"node__temporal_block",(param_map["entity_byname"][0],"all_rps"))
+                        except:
+                            print(f"Entity class node__temporal_block with all_rps already added")
+                            pass
+                else:
+                    if list_rep:
+                        for rep in list_rep:
+                            try:
+                                add_entity(sopt_db,"node__temporal_block",(param_map["entity_byname"][0],rep))
+                            except:
+                                print(f"Entity node__temporal_bloc with {rep}")
+                                pass
+                            add_or_update_parameter_value(sopt_db,"node__temporal_block","cyclic_condition","Base",(param_map["entity_byname"][0],rep),True)
+                    else:
+                        add_or_update_parameter_value(sopt_db,"node","is_longterm_storage","Base",(param_map["entity_byname"][0],),True)
+                        for tb in list_otb:
+                            try:
+                                add_entity(sopt_db,"node__temporal_block",(param_map["entity_byname"][0],tb))
+                            except:
+                                print(f"Entity node__temporal_bloc with {tb}")
+                                pass
+                            add_or_update_parameter_value(sopt_db,"node__temporal_block","cyclic_condition","Base",(param_map["entity_byname"][0],tb),True)
+        try:
+            sopt_db.commit_session("Added storage_setup")
+        except:
+            print("###################################################################### commit error") 
 
 def update_parameters(config):
 
@@ -93,7 +137,7 @@ def update_parameters(config):
 
         try:
             sopt_db.commit_session("Update parameters")
-        except DBAPIError as e:
+        except:
             print("###################################################################### commit error")  
 
 def main():
@@ -103,6 +147,9 @@ def main():
 
     print("adding scenarios to be analyzed")
     scenario_development(config)
+
+    print("storage_setup")
+    storage_setup()
 
     print("updating_parameters")
     update_parameters(config)

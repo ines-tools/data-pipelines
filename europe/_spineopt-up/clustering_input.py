@@ -53,8 +53,5 @@ def input_data():
 
 
 if __name__ == "__main__":
-    if len(os.listdir("profiles")) == 0:
-        input_data()
-    else:
-        print("input data generated")
+    input_data()
 

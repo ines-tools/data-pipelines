@@ -167,7 +167,7 @@ def ch4_production(target_db,sheet):
             add_entity(target_db,"technology__to_commodity__region",(tech,"CH4",country))
             map_cap = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(capacity*1e3/24,1) for year in ["2030"]}}
             add_parameter_value(target_db,"technology__region","units_existing","Base",(tech,country),map_cap)
-            if pd.notna(cost) and cost != 0.0:
+            if pd.notna(cost) and cost != 0.0 and isinstance(cost,float):
                 add_parameter_value(target_db,"technology__to_commodity__region","operational_cost","Base",(tech,"CH4",country),round(cost,2))
     try:
         target_db.commit_session("Added CH4 production")
