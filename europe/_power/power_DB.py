@@ -29,10 +29,21 @@ To Do:
 - [X] add final validation check to warn if None values are being added to jaif
 - [ ] check whether the script is compatible with the geojson file of the industrial study
 - [ ] reject existing power plants if they are not within areas specified by the geojson file
+- [ ] remove y2025 from parameter maps
+- [ ] set reference year to y2030
+- [ ] "Don't add "unit" as an item in the parameter map for cost."??
+- [ ] storage
+    - [ ] check difference between storage-existing and new storage
+    - [ ] cost parameters of EXISTING storage need to be a float instead of a map
+    - [ ] storage is the energy, storage-connection is power, both need data on
+        - [ ] lifetime (currently only storage has one, not the connection, we should set the default the same?)
+        - [ ] cost (apparently we only provide costs for the connection, i.e. power, at the moment)
+    - [ ] if there is no cost data for either energy or power, the energy_power_ratio needs to be specified ("ideally, investment and fixed costs in the storage and storage connection. If no investment costs for the storage connection then energy_power_ratio and operational costs only for the storage-connection")
+    - [ ] "In the DEA catalogue, you can find different cost for energy and power regarding investment cost (both storage and storage-connection). I think fom cost only for energy (storage) and operational cost only for power (storage-connection)." (Alvaro has another example in his mail)
 
 Optional:
 - [ ] Currently, for some parameters that only require 1 value in jaif, new units use the first milestoneyear for its value  while in some instances it probably should use the average over the years.
-- [ ] aggregate all units by type and use them as another data (arche)type (probably requires moving loading of files from existin/new units to main file)
+- [ ] aggregate all units by type and use them as another data (arche)type (probably requires moving loading of files from existin/new units to main function)
 """
 
 import sys
