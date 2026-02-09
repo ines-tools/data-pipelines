@@ -28,10 +28,10 @@ To Do:
 - [X] add assumption parameters from an excel file to account for missing data from tdr/ppm
 - [X] add final validation check to warn if None values are being added to jaif
 - [ ] check whether the script is compatible with the geojson file of the industrial study
-- [ ] reject existing power plants if they are not within areas specified by the geojson file
+- [x] reject existing power plants if they are not within areas specified by the geojson file
 - [ ] remove y2025 from parameter maps (part is assumptions file, part is reference year)
 - [x] check purging (and that there is no "unit" in the maps)
-- [ ] the assumptions have constant values over the years, instead have an assumption of the growth/decline over the milestoneyears?
+- [x] the assumptions have constant values over the years, instead have an assumption of the growth/decline over the milestoneyears? No the data is in 2025 values, the inflation will automatically change the values over the years.
 - [ ] difference between existing tech and new tech
     - existing tech has all float values (including the costs) and has 2020 costs in 2025 values
     - new tech has all map values and has 2030, 2040 and 2050 costs in 2025 values
@@ -1224,7 +1224,10 @@ def aggregate_units(
     aggregated_units = {}
     for unit in unit_instances:
         original_unit = unit.copy()  # Keep original for debugging
+        # print(unit["Country"])  # debugline
         unit = map_ppm_jaif(unit)
+        unit["region"] = get_region(unit, geomap)
+        # print(unit["region"])  # debugline
 
         # Debug: Check if mapping worked for storage - ONLY for 'Other' fuel type
         # if original_unit.get('Set') == 'Store' and original_unit.get('Fueltype') == 'Other':
@@ -1239,9 +1242,7 @@ def aggregate_units(
         # if unit["entityclass"] == "Store":
         #     print(f"STORAGE UNIT FOUND: {unit['commodity']}, {unit['technology']}, {unit['entityclass']}, Region: {unit.get('region', 'NOT_SET')}") #debugline
 
-        if unit["technology"] in units:
-            # clean parameter fields
-            unit["region"] = get_region(unit, geomap)
+        if (unit["technology"] in units) and unit["region"]:
             # tuple for aggregating
             unit_tuple = tuple(
                 [unit[key] for key in ["commodity", "technology", "region"]]
@@ -1320,23 +1321,21 @@ def aggregate_units(
 
 
 def get_region(unit, geomap):
+    """
+    Get region associated to the lat/lon coordinates of the unit.
+    Return None if there is no polygon around a point.
+    """
     lat = float(unit["lat"])
     lon = float(unit["lon"])
     point = Point(lon, lat)
-    # poly_index = geomap.distance(point).sort_values().index[0] # original line, does not work with geographic crs
-    # Convert to projected CRS for accurate distance calculation
-    point_gdf = gpd.GeoDataFrame([1], geometry=[point], crs="EPSG:4326")
-    geomap_projected = geomap.to_crs("EPSG:3857")  # Web Mercator projection
-    point_projected = point_gdf.to_crs("EPSG:3857")
-    poly_index = (
-        geomap_projected.distance(point_projected.geometry.iloc[0])
-        .sort_values()
-        .index[0]
-    )
-    poly = geomap.loc[poly_index]
-    region = poly["id"]
-    # print(unit["region"])#debugline
-    # print(region)#debugline
+    pip = geomap.contains(point)
+    region = None
+    for index, value in enumerate(pip):
+        if value:
+            if region:
+                print("Warning: Overlapping polygons, using region " + region)
+            else:
+                region = geomap.iloc[index]["id"]
     return region
 
 
