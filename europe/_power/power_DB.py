@@ -29,9 +29,9 @@ To Do:
 - [X] add final validation check to warn if None values are being added to jaif
 - [ ] check whether the script is compatible with the geojson file of the industrial study
 - [ ] reject existing power plants if they are not within areas specified by the geojson file
-- [x] remove y2025 from parameter maps
-- [ ] check purging (and that there is no "unit" in the maps)
-- [ ] for the assumptions, have an assumption of the growth/decline over the milestoneyears?
+- [ ] remove y2025 from parameter maps (part is assumptions file, part is reference year)
+- [x] check purging (and that there is no "unit" in the maps)
+- [ ] the assumptions have constant values over the years, instead have an assumption of the growth/decline over the milestoneyears?
 - [ ] difference between existing tech and new tech
     - existing tech has all float values (including the costs) and has 2020 costs in 2025 values
     - new tech has all map values and has 2030, 2040 and 2050 costs in 2025 values
@@ -62,6 +62,7 @@ import geopandas as gpd
 from shapely.geometry import Point
 from fuzzywuzzy.process import extractOne
 import spinedb_api as api
+from spinedb_api import purge
 import warnings
 
 
@@ -132,12 +133,13 @@ def main(
     # save to spine database
     with api.DatabaseMapping(spd) as target_db:
         # empty database
-        target_db.purge_items("entity")
-        target_db.purge_items("parameter_value")
-        target_db.purge_items("alternative")
-        target_db.purge_items("scenario")
+        # target_db.purge_items("entity")
+        # target_db.purge_items("parameter_value")
+        # target_db.purge_items("alternative")
+        # target_db.purge_items("scenario")
         target_db.refresh_session()
-        target_db.commit_session("Purged entities and parameter values")
+        purge.purge(target_db, purge_settings=None)
+        # target_db.commit_session("Purged entities and parameter values")
 
         # load template
         with open(tmp, "r") as f:
@@ -151,7 +153,6 @@ def main(
 
         # load data
         importlog = api.import_data(target_db, **jaif)
-        target_db.refresh_session()
         try:
             target_db.commit_session("Added pypsa data")
         except api.exception.NothingToCommit:
