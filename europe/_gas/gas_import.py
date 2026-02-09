@@ -12,6 +12,7 @@ import json
 url_db_out = sys.argv[1]
 sheets = pd.read_excel(sys.argv[2],sheet_name = None)
 inflation = pd.read_csv(sys.argv[3],index_col=1)
+inflation.index = inflation.index.astype(int)
 
 def add_entity(db_map : DatabaseMapping, class_name : str, element_names : tuple) -> None:
     _, error = db_map.add_entity_item(entity_byname=element_names, entity_class_name=class_name)
@@ -64,7 +65,7 @@ def tech_production(target_db,sheet):
         currency = row.iloc[12]
         add_parameter_value(target_db,"technology__to_commodity","capacity","Base",(tech,to_node),1.0)
         if pd.notna(currency):
-            inflation_factor = math.prod([1+value_*1e-2 for value_ in inflation.loc[currency+1:,"HICP"].tolist()])
+            inflation_factor = math.prod([1+float(value_)*1e-2 for value_ in inflation.loc[int(currency)+1:,"HICP"].tolist()])
             print(tech, currency, inflation_factor)
         if pd.notna(row.iloc[2]):
             map_inv  = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":1e6*inflation_factor*row.iloc[2],"y2040":1e6*inflation_factor*row.iloc[3],"y2050":1e6*inflation_factor*row.iloc[4]}}

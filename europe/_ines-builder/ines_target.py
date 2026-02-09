@@ -256,6 +256,14 @@ def add_nodes(db_map : DatabaseMapping, db_com : DatabaseMapping, config : dict)
         else:
             add_parameter_value(db_map,"node","node_type","Base",(entity_node,),"balance")
 
+    node__to_unit    = [entity_map["entity_byname"][0] for entity_map in db_map.get_entity_items(entity_class_name = "node__to_unit")]
+    unit__to_node    = [entity_map["entity_byname"][1] for entity_map in db_map.get_entity_items(entity_class_name = "unit__to_node")]
+    node__link__node = [node_i for entity_map in db_map.get_entity_items(entity_class_name = "node__link__node") for node_i in [entity_map["entity_byname"][0],entity_map["entity_byname"][2]]]
+    for node in db_map.get_entity_items(entity_class_name = "node"):
+        if node["name"] not in node__to_unit and node["name"] not in unit__to_node and node["name"] not in node__link__node:
+            item_id = node["id"]
+            db_map.remove_item("entity",item_id)
+
 def add_electricity_demand(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
     db_name = "elec_demand"
     start_time = time_lib.time()

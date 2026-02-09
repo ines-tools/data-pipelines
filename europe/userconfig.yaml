@@ -6,20 +6,20 @@ pipelines:
   vre: True
   hydro: True
   biomass: True
-  electricity_transmission: False
+  electricity_transmission: True
   residual_demand: True
   gas: True
-  gas_pipelines: False
+  gas_pipelines: True
   industry: True
   heat: True
   transport: True
-  cargo: False
+  cargo: True
 
 model:
-    type :  brownfield # greenfied
+    type :  brownfield # greenfied not included yet
     operations_resolution : "1h"
     planning_resolution : "365D"
-    planning_years: 
+    planning_years: # options: 2030, 2040 and 2050
       "2030": ["2030-01-01T00:00:00",10.0]
       "2040": ["2041-01-01T00:00:00",10.0]
       "2050": ["2050-01-01T00:00:00",10.0]
@@ -35,33 +35,35 @@ timeline:
     CY_2009 :
       start : "2009-01-01T00:00:00"
       end : "2009-12-31T23:00:00"
-  clustering :
+  clustering : # functionality not included 
     activate : True
     number_clusters : 12
     number_periods : 24
 
 global_constraints:
   co2_annual_budget:
-    "2030": 2200000000
-    "2040": 550000000
+    "2030": 2200000000 # European level
+    "2040": 550000000 # European level
     "2050": 0.0
-  co2_annual_sequestration: 200000000
+  co2_annual_sequestration: 200000000 # European level
   renewable_target:
     "2030": 42.5
     "2040": 42.5
     "2050": 42.5  
 
-# Define Europe as country, then, the remaining countries are modeled following requirements
+# Use country code to model a specific country  and define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
-  ES: 
+  Europe: 
     onshore:  "PECD1"
     offshore: "OFF2"
-
+  #ES:
+    #onshore:  "PECD1"
+    #offshore: "OFF2"
 # Sectors optimized
 commodity: 
   elec: 
-    status: True
-    node_type: balance
+    status: True # True = defined per country, False = global node in the model
+    node_type: balance # Balance = there is balance, commodity = no balance equation, storage = it is a storage node and defined per country
   CH4: 
     status: True
     node_type: balance
@@ -104,7 +106,7 @@ commodity:
 
 transmission: 
   elec: 
-    status: True
+    status: True # True = it is modeled
   CH4: 
     status: True
   H2: 
@@ -114,7 +116,7 @@ transmission:
 
 cargo: 
   MeOH: 
-    status: True
+    status: True  # True = it is modeled
   HC: 
     status: True
   bio: 
@@ -122,8 +124,8 @@ cargo:
 
 storage:
   large-battery :
-    status: True
-    investment_method : "no_limits"
+    status: True # True = it is included in the model
+    investment_method : "no_limits" # not_allowed, no_limits or cumulative_limits
   CH4-geo-formation : 
     status: True 
     investment_method : "not_allowed"
@@ -150,10 +152,10 @@ storage:
 # Technologies definition
 technology:
   oil-eng: 
-    rename : "oil-eng"
-    status: True
-    investment_method: "no_limits"
-    renewable : False
+    rename : "oil-eng" # functionality not included
+    status: True # True = it is included in the model
+    investment_method: "no_limits" # not_allowed, no_limits or cumulative_limits
+    renewable : False # functionality not included
   oil-eng-existing: 
     rename : "oil-eng-existing"
     status: True

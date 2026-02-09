@@ -31,7 +31,7 @@ def main():
 
     url_db_out = sys.argv[1]
     bio_db = pd.read_csv(sys.argv[2]).fillna(0.0)
-
+    bio_costs = {}
     with DatabaseMapping(url_db_out) as db_map:
         
         ## Empty the database
@@ -76,10 +76,10 @@ def main():
                 transport_cost = 7.0 # moving biomass to final destination, average value
                 value_converted = 1.32*np.dot(filter_db["quantity"].values,filter_db["roadsidecost"].values)/filter_db["quantity"].sum()/0.277778 + transport_cost if filter_db["quantity"].sum() > 0 else transport_cost
                 add_parameter_value(db_map,"stock__to_commodity__region","operational_cost",scenario+"_bio",("biomass-stock","bio",region),round(value_converted,1))
-
+                bio_costs[region]=value_converted
         print("Biomass Data Added")
 
         db_map.commit_session("entities added")
-
+    print(f"Average cost of biomass {np.mean(list(bio_costs.values()))}")
 if __name__ == "__main__":
     main()
