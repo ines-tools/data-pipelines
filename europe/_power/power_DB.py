@@ -1,14 +1,18 @@
-# Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the Juha drive Alvaro's Intermediate data Format (jaif) for use in the data pipelines of the energy modelling workbench
-# ppm: Capacity, Efficiency and lifetime (DateOut-DateIn or DateOut-2020)
-# tdr: 2020-2050, investment, FOM, efficiency
-
 """
-To Do:
-- [x] merge files from Alvaro OR replace files of Alvaro with our files
-- [X] see what data there is for CC and H2 in our csv files and add to the code accordingly
-- [X] similar for storage parameters
-- [X] check consistency of datavalues for all data (e.g. kW vs MW)
-- [X] if there is data/technologies missing, put them in a list for Fortum
+# Power DB
+
+Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the Juha driven Alvaro's Intermediate data Format (jaif) for the data pipelines (or component tools), intended to be used by the European and Industrial case study of the mopo project.
+
+## Data
+ppm: Capacity, Efficiency and lifetime (DateOut-DateIn or DateOut-2020)
+tdr: 2020-2050, investment, FOM, efficiency
+
+## To Do:
+- [x] merge files from Alvaro
+- [x] see what data there is for CC and H2 in our csv files and add to the code accordingly
+- [x] similar for storage parameters
+- [x] check consistency of datavalues for all data (e.g. kW vs MW)
+- [x] if there is data/technologies missing, put them in a list for Fortum
     - Missing technologies:
         - OCGT-H2 not listed in tdr
         - H2 not specified as a fuel type in ppm
@@ -25,8 +29,8 @@ To Do:
             ○ bioST+CC
             ○ Fuelcell
             ○ Geothermal
-- [X] add assumption parameters from an excel file to account for missing data from tdr/ppm
-- [X] add final validation check to warn if None values are being added to jaif
+- [x] add assumption parameters from an excel file to account for missing data from tdr/ppm
+- [x] add final validation check to warn if None values are being added to jaif
 - [x] check whether the script is compatible with the geojson file of the industrial study (only need to replace the geojson file and replace PECD1 to IC1 in the configuration file)
 - [x] reject existing power plants if they are not within areas specified by the geojson file
 - [ ] remove y2025 from parameter maps (part is assumptions file, part is reference year)
