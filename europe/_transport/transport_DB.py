@@ -5,6 +5,8 @@ import pandas as pd
 import json
 import os 
 import numpy as np
+import yaml
+
 def add_entity(db_map : DatabaseMapping, class_name : str, element_names : tuple) -> None:
     _, error = db_map.add_entity_item(entity_byname=element_names, entity_class_name=class_name)
     if error is not None:
@@ -59,10 +61,11 @@ def week_to_hourly(commodity,target_db,veh_type,data,key_df,factor,df_index,regi
     
 def profile_historical_wy(array,cyears):
     
-    year_day_index = {"1995":6,"2008":1,"2009":3}
+    year_day_index = {wy:pd.Timestamp(f"{str(wy)}-01-01").weekday() for wy in cyears}
     index_time = []
     value_time = []
     for alternative in cyears:
+        # print(f"Modeling weather year {alternative} with index {year_day_index[alternative]}")
         weeks_52_array = np.concatenate([array[year_day_index[alternative]*24:52*7*24],array[:year_day_index[alternative]*24]])
         value_time += np.concatenate([weeks_52_array,weeks_52_array[-7*24:-6*24]]).tolist()
         index_time += time_index(alternative)
@@ -70,9 +73,8 @@ def profile_historical_wy(array,cyears):
     data = dict(zip(index_time,value_time))
     return data
 
-def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):
+def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range,cyears):
 
-    cyears = ["1995","2008","2009"]
     gasoline_factor = 9.5 # kWh/litre
     diesel_factor = 10.0 # kWh/litre
     h2_factor = 33.3 # kWh/kg
@@ -111,7 +113,7 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):
                         add_parameter_value(target_db,entity_name,"node_type","Base",entity_byname,"balance")
 
                         for alternative_name in ["GA","DE"]:
-                            for flex_scenario in ["0","10","20"]:
+                            for flex_scenario in flex_range:
                                 map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round((1.0-float(flex_scenario)/1e2)*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"Total Fleet"]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"electricity proportion"]/1e3,1) for year in df_index["year"].unique()}}
                                 add_parameter_value(target_db,entity_name,"scale_demand",alternative_name+f"_flex{flex_scenario}",entity_byname,map_profile)    
                         try:
@@ -154,11 +156,9 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range):
                     week_to_hourly("CH4",target_db,vehicle+"-LNG",data,"LNG consumption kg",LNG_factor,df_index,region,vehicle,profile,cyears,scenario_fleet,"LNG proportion")
                     week_to_hourly("HC",target_db,vehicle+"-LPG",data,"LPG consumption litres",LPG_factor,df_index,region,vehicle,profile,cyears,scenario_fleet,"LPG proportion")
 
-def add_nonroad_timeseries(target_db,data):
+def add_nonroad_timeseries(target_db,data,cyears):
 
-    cyears = ["1995","2008","2009"]
     factor = 277777.78
-
     df_index = pd.DataFrame(data.keys(),columns=["region","year"])
     for region in df_index["region"].unique():
         try:
@@ -215,6 +215,10 @@ def main():
 
     # Spine Inputs
     url_db_out = sys.argv[1]
+    userconfig = yaml.safe_load(open(sys.argv[5], "rb"))
+    weather_years = [pd.Timestamp(userconfig["timeline"]["historical_alt"][i]["start"]).year for i in userconfig["timeline"]["historical_alt"]]
+
+
     print(" "*10)
     print("road transport")
     print("-"*20)
@@ -259,7 +263,7 @@ def main():
             for flex_scenario in flex_range:
                 add_alternative(target_db,alternative_name+f"_flex{flex_scenario}")
 
-        add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range)
+        add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range,weather_years)
         print("parameters added for transport")        
         target_db.commit_session("parameters_added")  
     
@@ -278,7 +282,7 @@ def main():
 
     with DatabaseMapping(url_db_out) as target_db:
 
-        add_nonroad_timeseries(target_db,data)
+        add_nonroad_timeseries(target_db,data,weather_years)
         print("parameters added for nonroad transport")        
         target_db.commit_session("parameters_added")
 

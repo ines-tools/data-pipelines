@@ -78,14 +78,14 @@ def process_parameters(target_db, sheet):
         for parameter in ["maximum_discharge"]:
             add_parameter_value(target_db, entity_name, {"maximum_discharge":"capacity"}[parameter], "Base", entity_byname, float(efficiency*sheet.at[country,params[parameter]]))
 
-def ror_parameters(target_db, sheet):
+def ror_parameters(target_db, sheet, wyears):
 
     entity_name = "technology"
     entity_byname = ("RoR",)
     add_entity(target_db, entity_name, entity_byname)
 
-    time_index = [pd.Timestamp(i).tz_convert(None).isoformat() for i in sheet.index if not (pd.Timestamp(i).month == 2 and pd.Timestamp(i).day == 29)]
-    time_pick  = [i for i in sheet.index if not (pd.Timestamp(i).year  == 2008 and pd.Timestamp(i).month == 12 and pd.Timestamp(i).day == 31)]
+    time_index = [pd.Timestamp(i).tz_convert(None).isoformat() for i in sheet.index if not (pd.Timestamp(i).month == 2 and pd.Timestamp(i).day == 29) and pd.Timestamp(i).year in wyears]
+    time_pick  = [i for i in sheet.index if not (pd.Timestamp(i).year%4 == 0 and pd.Timestamp(i).month == 12 and pd.Timestamp(i).day == 31) and pd.Timestamp(i).year in wyears]
     for column in sheet.columns:
 
         country = column[:2]
@@ -102,10 +102,10 @@ def ror_parameters(target_db, sheet):
         add_parameter_value(target_db, entity_name, "capacity", "Base", entity_byname, sheet[column].round(1).max())
 
 
-def inflow_parameters(target_db, sheet):
+def inflow_parameters(target_db, sheet, wyears):
 
-    time_index = [pd.Timestamp(i).tz_convert(None).isoformat() for i in sheet.index if not (pd.Timestamp(i).month == 2 and pd.Timestamp(i).day == 29)]
-    time_pick  = [i for i in sheet.index if not (pd.Timestamp(i).year  == 2008 and pd.Timestamp(i).month == 12 and pd.Timestamp(i).day == 31)]
+    time_index = [pd.Timestamp(i).tz_convert(None).isoformat() for i in sheet.index if not (pd.Timestamp(i).month == 2 and pd.Timestamp(i).day == 29) and pd.Timestamp(i).year in wyears]
+    time_pick  = [i for i in sheet.index if not (pd.Timestamp(i).year%4 == 0 and pd.Timestamp(i).month == 12 and pd.Timestamp(i).day == 31) and pd.Timestamp(i).year in wyears]
     for column in sheet.columns:
 
         country = column[:2]
@@ -123,7 +123,8 @@ def main():
     static_params = pd.read_excel(sys.argv[2],sheet_name="WP2.3 hydro",index_col=0)
     ror_params = pd.read_csv(sys.argv[3],index_col=0,sep=";")
     inflow_params = pd.read_csv(sys.argv[4],index_col=0,sep=";")
-
+    userconfig = yaml.safe_load(open(sys.argv[5], "rb"))
+    weather_years = [pd.Timestamp(userconfig["timeline"]["historical_alt"][i]["start"]).year for i in userconfig["timeline"]["historical_alt"]]
     print("############### Filling the output DB ###############")
     with DatabaseMapping(url_db_out) as target_db:
 
@@ -149,11 +150,11 @@ def main():
         target_db.commit_session("static_params_added")
         print("static_params_added")
         
-        ror_parameters(target_db,ror_params)
+        ror_parameters(target_db,ror_params,weather_years)
         target_db.commit_session("ror_params_added")
         print("ror_params_added")
 
-        inflow_parameters(target_db,inflow_params)
+        inflow_parameters(target_db,inflow_params,weather_years)
         target_db.commit_session("inflow_params_added")
         print("inflow_params_added")
 

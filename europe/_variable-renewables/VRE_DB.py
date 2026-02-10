@@ -6,6 +6,7 @@ import sys
 import numpy as np
 import json
 import os 
+import yaml 
 
 def add_entity(db_map : DatabaseMapping, class_name : str, entity_byname : str, ent_description = None) -> None:
     _, error = db_map.add_entity_item(entity_byname=entity_byname, entity_class_name=class_name, description = ent_description)
@@ -26,7 +27,7 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
 def time_index(year) -> list:
     time_list = {}
     pd_range = pd.date_range(str(int(year))+"-01-01 00:00:00",str(int(year))+"-12-31 23:00:00",freq="h")
-    time_list["standard"] = [i.strftime('%Y-%m-%d %H:%M:%S') for i in pd_range if not (i.year == 2008 and i.month==12 and i.day==31)]
+    time_list["standard"] = [i.strftime('%Y-%m-%d %H:%M:%S') for i in pd_range if not (i.year%4 == 0 and i.month==12 and i.day==31)]
     time_list["iso"]  = [i.isoformat() for i in pd_range if not (i.month==2 and i.day==29)]
     return time_list["standard"], time_list["iso"]
 
@@ -57,6 +58,7 @@ def path_to_file(file_list,file):
 def main():
 
     url_db_out = sys.argv[1]
+    userconfig = yaml.safe_load(open(sys.argv[6], "rb"))
     existing_wind_on = read_excel_data(os.path.join(sys.argv[4],"capacity_wind-on-existing.xlsx"), "Regional_decomm_2025", 0, [2030,2040,2050])
     existing_wind_off = read_excel_data(os.path.join(sys.argv[4],"capacity_wind-off-FB-existing.xlsx"), "Regional_decomm_2025", 0, [2030,2040,2050])
     existing_solar_PV = read_excel_data(os.path.join(sys.argv[4],"capacity_solar-PV-existing.xlsx"), "Regional_decomm_2025", 0, [2030,2040,2050])
@@ -74,7 +76,7 @@ def main():
     print("Data loaded")
 
     # map = {"type":"map","rank":1,"index_type":"str","index_name":index_name,"data":{}}
-    climate_years = [1995,2008,2009]
+    climate_years = [pd.Timestamp(userconfig["timeline"]["historical_alt"][i]["start"]).year for i in userconfig["timeline"]["historical_alt"]]
     with DatabaseMapping(url_db_out) as db_map:
         
         ## Empty the database

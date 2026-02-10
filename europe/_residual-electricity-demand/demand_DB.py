@@ -6,6 +6,7 @@ from openpyxl import load_workbook
 import numpy as np
 import json 
 import datetime
+import yaml
 
 def add_entity(db_map : DatabaseMapping, class_name : str, name : str, ent_description = None) -> None:
     _, error = db_map.add_entity_item(name=name, entity_class_name=class_name,description=ent_description)
@@ -31,10 +32,12 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
 def main():
     url_db_out = sys.argv[1]
     electricity_demand = pd.read_csv(sys.argv[2],index_col=0)
+    userconfig = yaml.safe_load(open(sys.argv[3], "rb"))
+    weather_years = [pd.Timestamp(userconfig["timeline"]["historical_alt"][i]["start"]).year for i in userconfig["timeline"]["historical_alt"]]
 
     # Just for now in order to avoid a heavy DB
-    index_pick = [str(i) for i in pd.date_range("1995-01-01 00:00:00","1995-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2008-01-01 00:00:00","2008-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2009-01-01 00:00:00","2009-12-31 23:00:00",freq="1h").tolist() if not (i.year == 2008 and i.month == 12 and i.day == 31)]
-    index_map  = [i.isoformat() for i in pd.date_range("1995-01-01 00:00:00","1995-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2008-01-01 00:00:00","2008-12-31 23:00:00",freq="1h").tolist() + pd.date_range("2009-01-01 00:00:00","2009-12-31 23:00:00",freq="1h").tolist() if not (i.month == 2 and i.day == 29)]
+    index_pick = [str(i) for wy in weather_years for i in pd.date_range(f"{str(wy)}-01-01 00:00:00",f"{str(wy)}-12-31 23:00:00",freq="1h").tolist() if not (i.year%4 == 0 and i.month == 12 and i.day == 31)]
+    index_map  = [i.isoformat() for wy in weather_years for i in pd.date_range(f"{str(wy)}-01-01 00:00:00",f"{str(wy)}-12-31 23:00:00",freq="1h").tolist() if not (i.month == 2 and i.day == 29)]
     
     with DatabaseMapping(url_db_out) as db_map:
 

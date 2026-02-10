@@ -198,7 +198,6 @@ def process_existing_units(target_db, sheet, existing_df):
                         pass
                     add_parameter_value(target_db,"technology__region","units_existing","Base",(unit_name,region_name),map_param)
 
-
 def process_storages(target_db, sheet):
 
     for sto_name in sheet.index.unique():
@@ -226,9 +225,9 @@ def process_storages(target_db, sheet):
         entity_byname = (sto_name,to_node)
         add_entity(target_db, entity_name, entity_byname)
         
-def process_region_data(target_db,path_cop,path_demand,scenario_df):
+def process_region_data(target_db,path_cop,path_demand,scenario_df,weather_years):
 
-    years = ["wy1995","wy2008","wy2009"]
+    years = [f"wy{str(wy)}" for wy in weather_years]
     time_list = []
     for year in years:
         pd_range = pd.date_range(str(int(year[2:]))+"-01-01 00:00:00",str(int(year[2:]))+"-12-31 23:00:00",freq="h")
@@ -309,6 +308,9 @@ def main():
     scenarios = pd.read_csv(sys.argv[5])
     cop_timeseries  = sys.argv[6]
     demand_timeseries  = sys.argv[7]
+    userconfig = yaml.safe_load(open(sys.argv[8], "rb"))
+    weather_years = [pd.Timestamp(userconfig["timeline"]["historical_alt"][i]["start"]).year for i in userconfig["timeline"]["historical_alt"]]
+
     print("############### Filling the output DB ###############")
     with DatabaseMapping(url_db_out) as target_db:
 
@@ -337,7 +339,7 @@ def main():
         '''process_storages(target_db,stog_info)
         target_db.commit_session("storages added")
         print("storages_added")'''
-        process_region_data(target_db,cop_timeseries,demand_timeseries,scenarios)
+        process_region_data(target_db,cop_timeseries,demand_timeseries,scenarios,weather_years)
         target_db.commit_session("regions added")
 
 if __name__ == "__main__":

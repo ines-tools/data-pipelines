@@ -28,13 +28,10 @@ timeline:
   historical_alt : 
     CY_1995 :
       start : "1995-01-01T00:00:00"
-      end : "1995-12-31T23:00:00"
     CY_2008 :
       start : "2008-01-01T00:00:00"
-      end : "2008-12-31T23:00:00"
     CY_2009 :
       start : "2009-01-01T00:00:00"
-      end : "2009-12-31T23:00:00"
 
 global_constraints:
   co2_annual_budget:
