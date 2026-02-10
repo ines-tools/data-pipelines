@@ -27,7 +27,7 @@ To Do:
             ○ Geothermal
 - [X] add assumption parameters from an excel file to account for missing data from tdr/ppm
 - [X] add final validation check to warn if None values are being added to jaif
-- [ ] check whether the script is compatible with the geojson file of the industrial study
+- [x] check whether the script is compatible with the geojson file of the industrial study (only need to replace the geojson file and replace PECD1 to IC1 in the configuration file)
 - [x] reject existing power plants if they are not within areas specified by the geojson file
 - [ ] remove y2025 from parameter maps (part is assumptions file, part is reference year)
 - [x] check purging (and that there is no "unit" in the maps)
