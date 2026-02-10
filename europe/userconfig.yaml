@@ -20,8 +20,8 @@ model:
     operations_resolution : "1h"
     planning_resolution : "365D"
     planning_years: # options: 2030, 2040 and 2050
-      "2030": ["2030-01-01T00:00:00",10.0]
-      "2040": ["2041-01-01T00:00:00",10.0]
+      "2030": ["2030-01-01T00:00:00",10.0] # start datetime and years represented
+      "2040": ["2041-01-01T00:00:00",10.0] # 2041 no leap year
       "2050": ["2050-01-01T00:00:00",10.0]
 
 timeline:
@@ -35,10 +35,6 @@ timeline:
     CY_2009 :
       start : "2009-01-01T00:00:00"
       end : "2009-12-31T23:00:00"
-  clustering : # functionality not included 
-    activate : True
-    number_clusters : 12
-    number_periods : 24
 
 global_constraints:
   co2_annual_budget:
@@ -46,10 +42,6 @@ global_constraints:
     "2040": 550000000 # European level
     "2050": 0.0
   co2_annual_sequestration: 200000000 # European level
-  renewable_target:
-    "2030": 42.5
-    "2040": 42.5
-    "2050": 42.5  
 
 # Use country code to model a specific country  and define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
@@ -111,8 +103,6 @@ transmission:
     status: True
   H2: 
     status: True
-  CO2: 
-    status: False
 
 cargo: 
   MeOH: 
@@ -129,223 +119,126 @@ storage:
   CH4-geo-formation : 
     status: True 
     investment_method : "not_allowed"
-  H2-tank : 
-    status: False 
-    investment_method : "no_limits"
   salt-cavern :
     status: True 
     investment_method : "cumulative_limits"
-  CO2-geo-formation :
-    status: False 
-    investment_method : "cumulative_limits"
-  liquids-bunker : 
-    status: False 
-    investment_method : "no_limits"
-  LT-hot-water-tank:
-    status: False 
-    investment_method : "no_limits"
-  heat-storage:
-    status: False
-    investment_method : "no_limits"
-
 
 # Technologies definition
 technology:
   oil-eng: 
-    rename : "oil-eng" # functionality not included
     status: True # True = it is included in the model
     investment_method: "no_limits" # not_allowed, no_limits or cumulative_limits
-    renewable : False # functionality not included
   oil-eng-existing: 
-    rename : "oil-eng-existing"
     status: True
     investment_method: "not_allowed"
-    renewable : False
   SCPC:
-    rename : "SCPC"
     status: False
     investment_method: "not_allowed"
-    renewable : False
   SCPC-existing:
-    rename : "SCPC-existing"
     status: True
     investment_method: "not_allowed"
-    renewable : False
   SCPC+CC:
-    rename : "SCPC+CC"
     status: False
     investment_method: "no_limits"
-    renewable : False
   OCGT:
-    rename : "OCGT"
     status: False
     investment_method: "no_limits"
-    renewable : False
   OCGT+CC:
-    rename : "OCGT+CC"
     status: False
     investment_method: "no_limits"
-    renewable : False
   CCGT:
-    rename : "CCGT"
     status: False
     investment_method: "no_limits"
-    renewable : False
   CCGT-existing:
-    rename : "CCGT-existing"
     status: True
     investment_method: "not_allowed"
-    renewable : False
   CCGT+CC:
-    rename : "CCGT+CC"
     status: True
     investment_method: "no_limits"
-    renewable : False
   OCGT-H2:
-    rename : "OCGT-H2"
     status: False
     investment_method: "no_limits"
-    renewable : False
   CCGT-H2:
-    rename : "CCGT-H2"
     status: False
     investment_method: "no_limits"
-    renewable : False
   wasteST:
-    rename : "wasteST"
     status: False
     investment_method: "not_allowed"
-    renewable : False
   wasteST-existing:
-    rename : "wasteST-existing"
     status: True
     investment_method: "not_allowed"
-    renewable : False
   bioST:
-    rename : "bioST"
     status: True
     investment_method: "no_limits"
-    renewable : True
   bioST-existing:
-    rename : "bioST-existing"
     status: True
     investment_method: "not_allowed"
-    renewable : True
   bioST+CC:
-    rename : "bioST+CC"
     status: False
     investment_method: "no_limits"
-    renewable : True
   geothermal:
-    rename : "geothermal"
     status: False
     investment_method: "cumulative_limits"
-    renewable : True
   nuclear-3:
-    rename : "nuclear-3"
     status: True
     investment_method: "no_limits"
-    renewable : False
   nuclear-3-existing:
-    rename : "nuclear-3-existing"
     status: True
     investment_method: "not_allowed"
-    renewable : False
   wind-on-existing:
-    rename : "wind-on-existing"
     status: True
     investment_method: "not_allowed"
-    renewable : True
   wind-off-FB-existing:
-    rename : "wind-off-FB-existing"
     status: True
     investment_method: "not_allowed"
-    renewable : True
   wind-on-SP335-HH100:
-    rename : "wind-on-SP335-HH100"
     status: False
     investment_method: "no_limits"
-    renewable : True
   wind-on-SP335-HH150:
-    rename : "wind-on-SP335-HH150"
     status: False
     investment_method: "no_limits"
-    renewable : True
   wind-on-SP277-HH100:
-    rename : "wind-on-SP277-HH100"
     status: False
     investment_method: "no_limits"
-    renewable : True
   wind-on-SP277-HH150: 
-    rename : "wind-on-SP277-HH150"
     status: False
     investment_method: "no_limits"
-    renewable : True
   wind-on-SP199-HH100:
-    rename : "wind-on-SP199-HH100"
     status: True
     investment_method: "no_limits"
-    renewable : True
   wind-on-SP199-HH150:
-    rename : "wind-on-SP198-HH150"
     status: False
     investment_method: "no_limits"
-    renewable : True
   wind-off-FB-SP316-HH155:
-    rename : "wind-off-FB-SP316-HH155"
     status: False
     investment_method: "no_limits"
-    renewable : True
   wind-off-FB-SP370-HH155:
-    rename : "wind-off-FB-SP370-HH155"
     status: True
     investment_method: "no_limits"
-    renewable : True
   wind-off-FO-SP316-HH155:
-    rename : "wind-off-FO-SP316-HH155"
     status: False
     investment_method: "no_limits"
-    renewable : True
   wind-off-FO-SP370-HH155:
-    rename : "wind-off-FO-SP370-HH155"
     status: True
     investment_method: "no_limits"
-    renewable : True
   solar-PV-existing:
-    rename : "solar-PV"
     status: True
     investment_method: "not_allowed"
-    renewable : True
   solar-PV-no-tracking:
-    rename : "solar-PV"
     status: True
     investment_method: "no_limits"
-    renewable : True
   solar-PV-rooftop:
-    rename : "solar-PV-rooftop"
     status: False
     investment_method: "no_limits"
-    renewable : True
   solar-PV-tracking:
-    rename : "solar-PV-tracking"
     status: False
     investment_method: "no_limits"
-    renewable : True
-  solar-CSP:
-    rename : "solar-CSP"
-    status: False
-    investment_method: "no_limits"
-    renewable : True
   fuelcell:
-    rename : "fuelcell"
     status: False
     investment_method: "no_limits"
-    renewable : False
   hydro-turbine:
-    rename : "hydro-turbine"
     status: True
     investment_method: "not_allowed"
-    renewable : True
   # gas production
   SMR: 
     status: True
@@ -531,7 +424,7 @@ technology:
   waste-CHP-existing:
     status: False
     investment_method: "not_allowed"
-  # industrial routes
+  # industrial routes, default investment method : no_limits
   ((BM)MeOH)O:
     status: true
   ((BM+H2)MeOH)O:
