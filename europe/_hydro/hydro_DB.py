@@ -34,21 +34,26 @@ def process_parameters(target_db, sheet):
     entity_name = "reservoir"
     entity_byname = ("reservoir",)
     add_entity(target_db, entity_name, entity_byname)
+    entity_name = "technology__to_commodity"
+    entity_byname = ("hydro-turbine","elec")
+    add_entity(target_db, entity_name, entity_byname)
+    add_parameter_value(target_db, entity_name, "operational_cost", "Base", entity_byname, 3.03)
+    # add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, 65120.0)
+    entity_name = "reservoir__to_technology"
+    entity_byname = ("reservoir","hydro-turbine")
+    add_entity(target_db, entity_name, entity_byname)
     
     for country in sheet.index:
         param_source = ["initial capacity (MWh)","maximum capacity (MWh)","minimum capacity  (MWh)","maximum discharge  (MWh)","minimum discharge  (MWh)","maximum ramping in 1 hour(MWh)","maximum ramping in 4 hours(MWh)"]
         param_target = ["initial_capacity","capacity","minimum_capacity","maximum_discharge","minimum_discharge","maximum_ramp","maximum_ramp_4"]
         params =dict(zip(param_target,param_source))
         add_entity(target_db, "region", (country,))
-        
+
         entity_name = "technology__to_commodity__region"
         entity_byname = ("hydro-turbine","elec",country)
         add_entity(target_db, entity_name, entity_byname)
         for parameter in ["maximum_ramp","maximum_ramp_4"]:
             add_parameter_value(target_db, entity_name, parameter, "Base", entity_byname, float(sheet.at[country,params[parameter]]))
-        # Hard-coding the variable cost of hydro turbines
-        add_parameter_value(target_db, entity_name, "operational_cost", "Base", entity_byname, 3.03)
-        # add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, 65120.0)
         
         entity_name = "reservoir__region"
         entity_byname = ("reservoir",country)
@@ -82,6 +87,9 @@ def ror_parameters(target_db, sheet, wyears):
 
     entity_name = "technology"
     entity_byname = ("RoR",)
+    add_entity(target_db, entity_name, entity_byname)
+    entity_name = "technology__to_commodity"
+    entity_byname = ("RoR","elec")
     add_entity(target_db, entity_name, entity_byname)
 
     time_index = [pd.Timestamp(i).tz_convert(None).isoformat() for i in sheet.index if not (pd.Timestamp(i).month == 2 and pd.Timestamp(i).day == 29) and pd.Timestamp(i).year in wyears]

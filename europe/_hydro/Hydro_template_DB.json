@@ -39,6 +39,26 @@
             true
         ],
         [
+            "reservoir__to_technology",
+            [
+                "reservoir",
+                "technology"
+            ],
+            null,
+            null,
+            true
+        ],
+        [
+            "technology__to_commodity",
+            [
+                "technology",
+                "commodity"
+            ],
+            null,
+            null,
+            true
+        ],
+        [
             "reservoir__to_technology__region",
             [
                 "reservoir",
@@ -138,6 +158,13 @@
             "pu"
         ],
         [
+            "technology__to_commodity",
+            "operational_cost",
+            null,
+            null,
+            null
+        ],
+        [
             "technology__to_commodity__region",
             "capacity",
             null,
@@ -167,109 +194,10 @@
         ],
         [
             "technology__to_commodity__region",
-            "operational_cost",
-            null,
-            null,
-            null
-        ],
-        [
-            "technology__to_commodity__region",
             "profile_fix",
             null,
             null,
             null
-        ]
-    ],
-    "parameter_types": [
-        [
-            "reservoir__region",
-            "capacity",
-            "float",
-            0
-        ],
-        [
-            "reservoir__region",
-            "inflow",
-            "map",
-            1
-        ],
-        [
-            "reservoir__region",
-            "inflow",
-            "time_series",
-            1
-        ],
-        [
-            "reservoir__region",
-            "initial_capacity",
-            "float",
-            0
-        ],
-        [
-            "reservoir__region",
-            "minimum_capacity",
-            "float",
-            0
-        ],
-        [
-            "reservoir__region",
-            "spillage",
-            "float",
-            0
-        ],
-        [
-            "reservoir__region",
-            "spillage",
-            "map",
-            1
-        ],
-        [
-            "reservoir__region",
-            "spillage",
-            "time_series",
-            1
-        ],
-        [
-            "reservoir__to_technology__region",
-            "maximum_discharge",
-            "float",
-            0
-        ],
-        [
-            "reservoir__to_technology__region",
-            "minimum_discharge",
-            "float",
-            0
-        ],
-        [
-            "reservoir__to_technology__to_commodity__region",
-            "efficiency",
-            "float",
-            0
-        ],
-        [
-            "technology__to_commodity__region",
-            "fixed_cost",
-            "float",
-            0
-        ],
-        [
-            "technology__to_commodity__region",
-            "maximum_ramp",
-            "float",
-            0
-        ],
-        [
-            "technology__to_commodity__region",
-            "maximum_ramp_4",
-            "float",
-            0
-        ],
-        [
-            "technology__to_commodity__region",
-            "operational_cost",
-            "float",
-            0
         ]
     ]
 }

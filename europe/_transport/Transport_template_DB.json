@@ -22,6 +22,16 @@
             true
         ],
         [
+            "commodity__vehicle",
+            [
+                "commodity",
+                "vehicle"
+            ],
+            null,
+            null,
+            true
+        ],
+        [
             "commodity__vehicle__region",
             [
                 "commodity",
@@ -34,6 +44,13 @@
         ]
     ],
     "parameter_definitions": [
+        [
+            "commodity__vehicle",
+            "node_type",
+            null,
+            null,
+            null
+        ],
         [
             "commodity__vehicle__region",
             "connected_vehicles",
@@ -65,13 +82,6 @@
         [
             "commodity__vehicle__region",
             "flow_profile",
-            null,
-            null,
-            null
-        ],
-        [
-            "commodity__vehicle__region",
-            "node_type",
             null,
             null,
             null

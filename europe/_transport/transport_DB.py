@@ -46,14 +46,17 @@ def week_to_hourly(commodity,target_db,veh_type,data,key_df,factor,df_index,regi
             add_entity(target_db,"vehicle",(veh_type,))
         except:
             pass
-
+        try:
+            add_entity(target_db,"commodity__vehicle",(commodity,veh_type))
+            add_parameter_value(target_db,"commodity__vehicle","node_type","Base",(commodity,veh_type),"balance")
+        except:
+            pass
         entity_name   = "commodity__vehicle__region"
         entity_byname = (commodity,veh_type,region)
         add_entity(target_db,entity_name,entity_byname)
 
-        map_fixed_flow_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(output,cyears)}
+        map_fixed_flow_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(-1.0*output,cyears)}
         add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_fixed_flow_profile)
-        add_parameter_value(target_db,entity_name,"node_type","Base",entity_byname,"balance")
 
         for alternative_name in ["GA","DE"]:
             map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(scenario_fleet.at[(region,vehicle,int(year),alternative_name),"Total Fleet"]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),fleet_column]/1e3,1) for year in df_index["year"].unique()}}
@@ -104,13 +107,17 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range,cyears):
                         try:
                             add_entity(target_db,"vehicle",(vehicle,))
                         except:
-                            pass#print("entity created",vehicle)
+                            pass
+                        try:
+                            add_entity(target_db,"commodity__vehicle",("elec",vehicle))
+                            add_parameter_value(target_db,"commodity__vehicle","node_type","Base",("elec",vehicle),"balance")
+                        except:
+                            pass
                         entity_name   = "commodity__vehicle__region"
                         entity_byname = ("elec",vehicle,region)
                         add_entity(target_db,entity_name,entity_byname)
-                        map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(data_fixed_charging,cyears)}
+                        map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(-1.0*data_fixed_charging,cyears)}
                         add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_profile)
-                        add_parameter_value(target_db,entity_name,"node_type","Base",entity_byname,"balance")
 
                         for alternative_name in ["GA","DE"]:
                             for flex_scenario in flex_range:
@@ -119,12 +126,15 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range,cyears):
                         try:
                             add_entity(target_db,"vehicle",(vehicle+"-DR",))
                         except:
-                            pass#print("entity created",vehicle)
-
+                            pass
+                        try:
+                            add_entity(target_db,"commodity__vehicle",("elec",vehicle+"-DR"))
+                            add_parameter_value(target_db,"commodity__vehicle","node_type","Base",("elec",vehicle+"-DR"),"storage")
+                        except:
+                            pass
                         entity_name   = "commodity__vehicle__region"
                         entity_byname = ("elec",vehicle+"-DR",region)
                         add_entity(target_db,entity_name,entity_byname)
-                        add_parameter_value(target_db,entity_name,"node_type","Base",entity_byname,"storage")
 
                         for flex_scenario in ["0","10","20"]:
                             for alternative_name in ["GA","DE"]:
@@ -136,7 +146,7 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range,cyears):
                                 add_parameter_value(target_db,entity_name,"scale_demand",alternative_name+f"_flex{flex_scenario}",entity_byname,map_profile)
                         
                         # historical data
-                        map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(data_flex_demand,cyears)}
+                        map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(-1.0*data_flex_demand,cyears)}
                         add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_profile)
                         map_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(data_connected,cyears)}
                         add_parameter_value(target_db,entity_name,"connected_vehicles","Base",entity_byname,map_profile)
@@ -196,7 +206,11 @@ def add_nonroad_timeseries(target_db,data,cyears):
                     add_entity(target_db,"vehicle",(veh_type,))
                 except:
                     pass
-
+                try:
+                    add_entity(target_db,"commodity__vehicle",(fuel_map[veh_type],veh_type))
+                    add_parameter_value(target_db,"commodity__vehicle","node_type","Base",(fuel_map[veh_type],veh_type),"balance")
+                except:
+                    pass
                 entity_name   = "commodity__vehicle__region"
                 entity_byname = (fuel_map[veh_type],veh_type,region)
                 add_entity(target_db,entity_name,entity_byname)
@@ -204,9 +218,8 @@ def add_nonroad_timeseries(target_db,data,cyears):
                 for year in df_index["year"].unique():
                     if output[year].sum() > 0.0:
                         year_selected = year
-                map_fixed_flow_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(output[year_selected].round(3),cyears)}
+                map_fixed_flow_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(-1.0*output[year_selected].round(3),cyears)}
                 add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_fixed_flow_profile)
-                add_parameter_value(target_db,entity_name,"node_type","Base",entity_byname,"balance")
 
                 map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(annual_scale[year],1) for year in df_index["year"].unique()}}
                 add_parameter_value(target_db,entity_name,"scale_demand","Base",entity_byname,map_profile)
