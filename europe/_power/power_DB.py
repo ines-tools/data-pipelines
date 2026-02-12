@@ -49,8 +49,7 @@ Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the J
 Optional:
 - [ ] Currently, for some parameters that only require 1 value in jaif, new units use the first milestoneyear for its value  while in some instances it probably should use the average over the years.
 - [ ] aggregate all units by type and use them as another data (arche)type (probably requires moving loading of files from existin/new units to main function)
-- [ ] when loading from the assumptions file, check the milestoneyears (and/or reference year) instead of loading all the years that are in the assumptions columns
-- [ ] When the milestone years are different from the years in the files (whether it is costs.csv or assumptions.xlsx), perform an inflation calculation (similar to reference year but with an assumption on the discount rate)
+- [ ] allow for different values for different years in the assumption file.
 """
 
 import sys
