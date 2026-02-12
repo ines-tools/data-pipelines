@@ -37,9 +37,17 @@ In Spine Toolbox, create a workflow with:
 There is some missing data in the data from PyPSA. Assumptions are used for that missing data. These assumptions are based on various sources. The assumptions and their sources are collected in a single assumptions file that makes a distinction between conversion technologies and storage. The distinction between existing and new units is only considered in the name with the suffix '-existing'.
 
 ## Configuration files
-The script operates according to the configuration specified in "config.json". 
+The script operates according to the configuration specified in "config.json".
 
-The script aggregates the positional data to areas specified by the geolevel in the general configuration file. Any geolevel that is present in the provided geojson file is valid.
+The script makes a distinction between 4 types of years for the costs:
+- euroyear: the year in which the data is formatted (it is assumed that all the input data is formatted for this year), e.g. 2020
+- referenceyear: the year in which the data needs to be formatted, e.g. 2025
+- baseyear: the year of the data for existing units, e.g. 2020
+- milestoneyears: the years of the data for the new units, e.g. 2030, 2040 and 2050
+
+The euroyear and the referenceyear are part of the configuration file, but the baseyear and the milestoneyears are currently hardcoded at the start of the script. In a future version of the tool, the baseyear and milestoneyears should be more flexible.
+
+The script aggregates the positional data to areas specified by the geolevel in the general configuration file. Any geolevel that is present in the provided geojson file is valid. For the European case study that implies the levels PECD1, PECD2, NUTS2 and NUTS3. For the Industrial case study that implies the level IC1.
 
 ## Approach
 At the start, the script gathers all input data and uses fuzzy search to determine in what order the input files need to be loaded. This approach allows for some errors in the filename and some errors in ordering the tool arguments.

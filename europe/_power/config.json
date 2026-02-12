@@ -1,6 +1,7 @@
 {
     "geolevel": "PECD1",
-    "referenceyear": "y2025",
+    "euroyear": 2020,
+    "referenceyear": 2025,
     "units_existing":[
         "bioST",
         "CCGT",
