@@ -27,7 +27,8 @@
         "SCPC",
         "SCPC+CC",
         "wasteST",
-        "battery-storage"
+        "battery-storage",
+        "battery-storage-iron-air"
     ],
     "commodities":[]
 }
