@@ -39,12 +39,12 @@ Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the J
         - y2030 - 2030 cost in 2025 EUR
         - y2040 - 2040 cost in 2025 EUR
         - y2050 - 2050 cost in 2025 EUR
-- [ ] storage
-    - [ ] storage is the energy, storage-connection is power, both need data on
-        - [ ] lifetime (currently only storage has one, not the connection, we should set the default the same?)
-        - [ ] cost (apparently we only provide costs for the connection, i.e. power, at the moment)
+- [] storage
+    - [x] storage is the energy, storage-connection is power, both need data on
+        - [x] lifetime (currently only storage has one, not the connection, we should set the default the same?)
+        - [x] cost (apparently we only provide costs for the connection, i.e. power, at the moment)
     - [ ] if there is no cost data for either energy or power, the energy_power_ratio needs to be specified ("ideally, investment and fixed costs in the storage and storage connection. If no investment costs for the storage connection then energy_power_ratio and operational costs only for the storage-connection")
-    - [ ] "In the DEA catalogue, you can find different cost for energy and power regarding investment cost (both storage and storage-connection). I think fom cost only for energy (storage) and operational cost only for power (storage-connection)." (Alvaro has another example in his mail)
+    - [x] "In the DEA catalogue, you can find different cost for energy and power regarding investment cost (both storage and storage-connection). I think fom cost only for energy (storage) and operational cost only for power (storage-connection)." (Alvaro has another example in his mail)
 
 Optional:
 - [ ] Currently, for some parameters that only require 1 value in jaif, new units use the first milestoneyear for its value  while in some instances it probably should use the average over the years.
@@ -508,39 +508,85 @@ def existing_units(
                         ],
                     ]
                 )
-                """
+                
+                # Calculate storage energy and power costs separately for existing units
+                # Energy costs (for storage entity)
+                storage_energy_invest_cost, storage_energy_fixed_cost = (
+                    calculate_investment_and_fixed_costs(
+                        unit,
+                        assumptions,
+                        unit_types,
+                        [baseyear],
+                        invest_modifier=1000.0 * inflation,
+                        fixed_modifier=1.0,
+                        invest_param="investment_cost_energy",
+                        fixed_param="fixed_cost_energy",
+                    )
+                )
+                
+                # Power costs (for storage_connection entity)
+                storage_power_invest_cost, storage_power_fixed_cost = (
+                    calculate_investment_and_fixed_costs(
+                        unit,
+                        assumptions,
+                        unit_types,
+                        [baseyear],
+                        invest_modifier=1000.0 * inflation,
+                        fixed_modifier=1.0,
+                        invest_param="investment_cost_power",
+                        fixed_param="fixed_cost_power",
+                    )
+                )
+                
+                storage_operational_cost_existing = search_data(
+                    unit,
+                    assumptions,
+                    unit_types,
+                    unit["technology"],
+                    [baseyear],
+                    "operational_cost",
+                    modifier=inflation,
+                )
+                
                 jaif["parameter_values"].extend([
                     [
-                        "storage_connection",
-                        [
-                            unit["technology"]+"-existing",
-                            "elec"
-                        ],
+                        "storage",
+                        unit["technology"] + "-existing",
                         "investment_cost",
-                        search_data(unit, assumptions, unit_types, unit["Technolgy"], milestoneyears, "investment_cost"),
+                        storage_energy_invest_cost,
+                        "Base"
+                    ],
+                    [
+                        "storage",
+                        unit["technology"] + "-existing",
+                        "fixed_cost",
+                        storage_energy_fixed_cost,
                         "Base"
                     ],
                     [
                         "storage_connection",
-                        [
-                            unit["technology"]+"-existing",
-                            "elec"
-                        ],
+                        [unit["technology"] + "-existing", "elec"],
+                        "investment_cost",
+                        storage_power_invest_cost,
+                        "Base"
+                    ],
+                    [
+                        "storage_connection",
+                        [unit["technology"] + "-existing", "elec"],
                         "fixed_cost",
-                        search_data(unit, assumptions, unit_types, unit["Technolgy"], milestoneyears, "fixed_cost"),
+                        storage_power_fixed_cost,
+                        "Base"
+                    ],
+                    [
+                        "storage_connection",
+                        [unit["technology"] + "-existing", "elec"],
+                        "operational_cost",
+                        storage_operational_cost_existing,
                         "Base"
                     ],
                 ])
-                """
-            jaif["entities"].extend(
-                [
-                    [
-                        "storage__region",
-                        [unit["technology"] + "-existing", unit["region"]],
-                        None,
-                    ],
-                ]
-            )
+            
+            # Calculate storages_existing value
             storages_existing_val = search_data(
                 unit,
                 assumptions,
@@ -550,17 +596,43 @@ def existing_units(
                 "capacity",
                 data=[[k, v] for k, v in unit["capacity"].items()],
             )
-            jaif["parameter_values"].extend(
-                [
+            
+            # For battery storage, only create storage__region if there are existing storages
+            should_create_storage_region = True
+            if unit["technology"] in ["battery-storage", "battery-storage-iron-air"]:
+                # Check if storages_existing_val has any non-None, non-zero values
+                should_create_storage_region = False
+                if storages_existing_val is not None:
+                    if isinstance(storages_existing_val, dict) and "data" in storages_existing_val:
+                        # Check if any year has a non-zero value
+                        for year_data in storages_existing_val["data"]:
+                            if len(year_data) >= 2 and year_data[1] is not None and year_data[1] != 0:
+                                should_create_storage_region = True
+                                break
+                    elif storages_existing_val != 0:
+                        should_create_storage_region = True
+            
+            if should_create_storage_region:
+                jaif["entities"].extend(
                     [
-                        "storage__region",
-                        [unit["technology"] + "-existing", unit["region"]],
-                        "storages_existing",
-                        storages_existing_val,
-                        "Base",
-                    ],
-                ]
-            )
+                        [
+                            "storage__region",
+                            [unit["technology"] + "-existing", unit["region"]],
+                            None,
+                        ],
+                    ]
+                )
+                jaif["parameter_values"].extend(
+                    [
+                        [
+                            "storage__region",
+                            [unit["technology"] + "-existing", unit["region"]],
+                            "storages_existing",
+                            storages_existing_val,
+                            "Base",
+                        ],
+                    ]
+                )
 
     return jaif
 
@@ -825,8 +897,9 @@ def new_units(jaif, assumptions, msy, inflation, regions, units_new, commodities
                     ]
                 )
 
-                # Calculate storage investment and fixed costs
-                storage_invest_cost, storage_fixed_cost = (
+                # Calculate storage energy and power costs separately
+                # Energy costs (for storage entity)
+                storage_energy_invest_cost, storage_energy_fixed_cost = (
                     calculate_investment_and_fixed_costs(
                         unit,
                         assumptions,
@@ -834,11 +907,37 @@ def new_units(jaif, assumptions, msy, inflation, regions, units_new, commodities
                         years,
                         invest_modifier=1000.0 * inflation,
                         fixed_modifier=1.0,
+                        invest_param="investment_cost_energy",
+                        fixed_param="fixed_cost_energy",
+                    )
+                )
+                
+                # Power costs (for storage_connection entity)
+                storage_power_invest_cost, storage_power_fixed_cost = (
+                    calculate_investment_and_fixed_costs(
+                        unit,
+                        assumptions,
+                        unit_types,
+                        years,
+                        invest_modifier=1000.0 * inflation,
+                        fixed_modifier=1.0,
+                        invest_param="investment_cost_power",
+                        fixed_param="fixed_cost_power",
                     )
                 )
 
                 storage_lifetime = search_data(
                     unit, assumptions, unit_types, unit["technology"], years, "lifetime"
+                )
+                
+                storage_operational_cost = search_data(
+                    unit,
+                    assumptions,
+                    unit_types,
+                    unit["technology"],
+                    years,
+                    "operational_cost",
+                    modifier=inflation,
                 )
 
                 jaif["parameter_values"].extend(
@@ -851,27 +950,57 @@ def new_units(jaif, assumptions, msy, inflation, regions, units_new, commodities
                             "Base",
                         ],
                         [
+                            "storage",
+                            unit["technology"],
+                            "investment_cost",
+                            storage_energy_invest_cost,
+                            "Base",
+                        ],
+                        [
+                            "storage",
+                            unit["technology"],
+                            "fixed_cost",
+                            storage_energy_fixed_cost,
+                            "Base",
+                        ],
+                        [
+                            "storage_connection",
+                            [unit["technology"], "elec"],
+                            "lifetime",
+                            storage_lifetime,
+                            "Base",
+                        ],
+                        [
                             "storage_connection",
                             [unit["technology"], "elec"],
                             "investment_cost",
-                            storage_invest_cost,
+                            storage_power_invest_cost,
                             "Base",
                         ],
                         [
                             "storage_connection",
                             [unit["technology"], "elec"],
                             "fixed_cost",
-                            storage_fixed_cost,
+                            storage_power_fixed_cost,
+                            "Base",
+                        ],
+                        [
+                            "storage_connection",
+                            [unit["technology"], "elec"],
+                            "operational_cost",
+                            storage_operational_cost,
                             "Base",
                         ],
                     ]
                 )
 
-            jaif["entities"].extend(
-                [
-                    ["storage__region", [unit["technology"], unit["region"]], None],
-                ]
-            )
+            # Don't create storage__region entities for battery storage technologies
+            if unit["technology"] not in ["battery-storage", "battery-storage-iron-air"]:
+                jaif["entities"].extend(
+                    [
+                        ["storage__region", [unit["technology"], unit["region"]], None],
+                    ]
+                )
 
     return jaif
 
@@ -1176,17 +1305,18 @@ def decay_capacity(unit, lifetime, milestoneyears):  # baseyear
 
 
 def map_ass_jaif(
-    ass, inflation, costparameters=["investment_cost", "fixed_cost", "operational_cost"]
+    ass, inflation, costparameters=["investment_cost", "fixed_cost", "operational_cost", "investment_cost_energy", "investment_cost_power", "fixed_cost_energy", "fixed_cost_power"]
 ):
     assumptions = {}
     for tech, properties in ass.items():
         assumptions[tech] = {}
         for k, v in properties.items():
-            key = k.split(" ")[0]
+            # Strip newlines and extra whitespace, then get first part before space
+            key = k.replace("\n", " ").replace("\r", " ").strip().split()[0] if k else k
             value = v
             if value and (key in costparameters):
                 value *= inflation
-            assumptions[tech][key] = v
+            assumptions[tech][key] = value
     return assumptions
 
 
@@ -1378,13 +1508,15 @@ def map_tdr_jaif(line_tdr):
 
 
 def calculate_investment_and_fixed_costs(
-    unit, assumptions, unit_types, years, invest_modifier=1000.0, fixed_modifier=1.0
+    unit, assumptions, unit_types, years, invest_modifier=1000.0, fixed_modifier=1.0, invest_param="investment_cost", fixed_param="fixed_cost"
 ):
     """
     Calculate investment and fixed costs for any unit (PP or storage)
     Returns tuple: (investment_cost, fixed_cost)
     - Investment cost: converted from kWh to MWh
     - Fixed cost: converted from percentage to absolute currency units (EUR/MWh)
+    - invest_param: parameter name for investment cost (e.g., 'investment_cost', 'investment_cost_energy', 'investment_cost_power')
+    - fixed_param: parameter name for fixed cost (e.g., 'fixed_cost', 'fixed_cost_energy', 'fixed_cost_power')
     """
     invest_cost = search_data(
         unit,
@@ -1392,7 +1524,7 @@ def calculate_investment_and_fixed_costs(
         unit_types,
         unit["technology"],
         years,
-        "investment_cost",
+        invest_param,
         modifier=invest_modifier,
     )
     fixed_cost_pct = search_data(
@@ -1401,7 +1533,7 @@ def calculate_investment_and_fixed_costs(
         unit_types,
         unit["technology"],
         years,
-        "fixed_cost",
+        fixed_param,
         modifier=fixed_modifier,
     )
 
