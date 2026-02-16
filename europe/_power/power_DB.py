@@ -1674,10 +1674,35 @@ def propose_assumption(unit_type, parameter, proposed_value, assumptions, years)
     Replace proposed value with assumption if possible.
 
     This function assumes that the data for all assumption years are the same. If in the future that format changes, this code need to change as well.
+    
+    For some parameters, the assumption values should always override existing values from jaif.
     """
     # print(unit_type)  # debugline
     # print(parameter)  # debugline
     # print(proposed_value)  # debugline
+    
+    # Parameters that should always use assumption values if available
+    override_parameters = ["CO2_captured", "conversion_rate"]
+    
+    # Check if this parameter should always use assumption value
+    if parameter in override_parameters:
+        if unit_type in assumptions:
+            if parameter in assumptions[unit_type]:
+                if len(years) > 1:
+                    assumed_value = assumptions[unit_type][parameter]
+                    data = [[year, assumed_value] for year in years]
+                    return {
+                        "index_type": "str",
+                        "rank": 1,
+                        "index_name": "year",
+                        "type": "map",
+                        "data": data,
+                    }
+                else:
+                    return assumptions[unit_type][parameter]
+        # If no assumption available, use proposed_value
+        return proposed_value
+    
     returnvalue = None
     if proposed_value is None:
         if unit_type in assumptions:
