@@ -1057,11 +1057,11 @@ def generate_unit_instances(regions, units):
             "technology": "OCGT",
             "entityclass": "PP",
         },
-        "OCGT+CC": {
-            "commodity": "CH4",
-            "technology": "OCGT+CC",
-            "entityclass": "PP",
-        },
+        # "OCGT+CC": {
+        #     "commodity": "CH4",
+        #     "technology": "OCGT+CC",
+        #     "entityclass": "PP",
+        # },
         "OCGT-H2": {
             "commodity": "H2",
             "technology": "OCGT-H2",
@@ -1682,7 +1682,7 @@ def propose_assumption(unit_type, parameter, proposed_value, assumptions, years)
     # print(proposed_value)  # debugline
     
     # Parameters that should always use assumption values if available
-    override_parameters = ["CO2_captured", "conversion_rate"]
+    override_parameters = ["CO2_captured", "conversion_rate", "investment_cost"]
     
     # Check if this parameter should always use assumption value
     if parameter in override_parameters:
