@@ -39,17 +39,17 @@ Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the J
         - y2030 - 2030 cost in 2025 EUR
         - y2040 - 2040 cost in 2025 EUR
         - y2050 - 2050 cost in 2025 EUR
-- [] storage
+- [x] storage
     - [x] storage is the energy, storage-connection is power, both need data on
         - [x] lifetime (currently only storage has one, not the connection, we should set the default the same?)
         - [x] cost (apparently we only provide costs for the connection, i.e. power, at the moment)
-    - [ ] if there is no cost data for either energy or power, the energy_power_ratio needs to be specified ("ideally, investment and fixed costs in the storage and storage connection. If no investment costs for the storage connection then energy_power_ratio and operational costs only for the storage-connection")
     - [x] "In the DEA catalogue, you can find different cost for energy and power regarding investment cost (both storage and storage-connection). I think fom cost only for energy (storage) and operational cost only for power (storage-connection)." (Alvaro has another example in his mail)
 
 Optional:
 - [ ] Currently, for some parameters that only require 1 value in jaif, new units use the first milestoneyear for its value  while in some instances it probably should use the average over the years.
 - [ ] aggregate all units by type and use them as another data (arche)type (probably requires moving loading of files from existin/new units to main function)
 - [ ] allow for different values for different years in the assumption file.
+- [ ] for storage, if there is no cost data for either energy or power, the energy_power_ratio needs to be specified ("ideally, investment and fixed costs in the storage and storage connection. If no investment costs for the storage connection then energy_power_ratio and operational costs only for the storage-connection")
 """
 
 import sys
