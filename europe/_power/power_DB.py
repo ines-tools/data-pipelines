@@ -1740,6 +1740,7 @@ def propose_assumption(
                 replace = True
         if replace:
             proposed_value = None
+    # proposed value should now either be a single None value, a regular single value or a map without None values
 
     returnvalue = proposed_value
     if prioritise_assumption or (returnvalue is None):
