@@ -385,6 +385,7 @@ def existing_units(
                         unit["technology"],
                         [baseyear],
                         "conversion_rate",
+                        prioritise_assumption=True,
                     )
                     if conversion_rate is not None:
                         jaif["parameter_values"].append(
@@ -408,6 +409,7 @@ def existing_units(
                         unit["technology"],
                         [baseyear],
                         "CO2_captured",
+                        prioritise_assumption=True,
                     )
                     if co2_captured is not None:
                         jaif["parameter_values"].append(
@@ -508,7 +510,7 @@ def existing_units(
                         ],
                     ]
                 )
-                
+
                 # Calculate storage energy and power costs separately for existing units
                 # Energy costs (for storage entity)
                 storage_energy_invest_cost, storage_energy_fixed_cost = (
@@ -523,7 +525,7 @@ def existing_units(
                         fixed_param="fixed_cost_energy",
                     )
                 )
-                
+
                 # Power costs (for storage_connection entity)
                 storage_power_invest_cost, storage_power_fixed_cost = (
                     calculate_investment_and_fixed_costs(
@@ -537,7 +539,7 @@ def existing_units(
                         fixed_param="fixed_cost_power",
                     )
                 )
-                
+
                 storage_operational_cost_existing = search_data(
                     unit,
                     assumptions,
@@ -547,45 +549,47 @@ def existing_units(
                     "operational_cost",
                     modifier=inflation,
                 )
-                
-                jaif["parameter_values"].extend([
+
+                jaif["parameter_values"].extend(
                     [
-                        "storage",
-                        unit["technology"] + "-existing",
-                        "investment_cost",
-                        storage_energy_invest_cost,
-                        "Base"
-                    ],
-                    [
-                        "storage",
-                        unit["technology"] + "-existing",
-                        "fixed_cost",
-                        storage_energy_fixed_cost,
-                        "Base"
-                    ],
-                    [
-                        "storage_connection",
-                        [unit["technology"] + "-existing", "elec"],
-                        "investment_cost",
-                        storage_power_invest_cost,
-                        "Base"
-                    ],
-                    [
-                        "storage_connection",
-                        [unit["technology"] + "-existing", "elec"],
-                        "fixed_cost",
-                        storage_power_fixed_cost,
-                        "Base"
-                    ],
-                    [
-                        "storage_connection",
-                        [unit["technology"] + "-existing", "elec"],
-                        "operational_cost",
-                        storage_operational_cost_existing,
-                        "Base"
-                    ],
-                ])
-            
+                        [
+                            "storage",
+                            unit["technology"] + "-existing",
+                            "investment_cost",
+                            storage_energy_invest_cost,
+                            "Base",
+                        ],
+                        [
+                            "storage",
+                            unit["technology"] + "-existing",
+                            "fixed_cost",
+                            storage_energy_fixed_cost,
+                            "Base",
+                        ],
+                        [
+                            "storage_connection",
+                            [unit["technology"] + "-existing", "elec"],
+                            "investment_cost",
+                            storage_power_invest_cost,
+                            "Base",
+                        ],
+                        [
+                            "storage_connection",
+                            [unit["technology"] + "-existing", "elec"],
+                            "fixed_cost",
+                            storage_power_fixed_cost,
+                            "Base",
+                        ],
+                        [
+                            "storage_connection",
+                            [unit["technology"] + "-existing", "elec"],
+                            "operational_cost",
+                            storage_operational_cost_existing,
+                            "Base",
+                        ],
+                    ]
+                )
+
             # Calculate storages_existing value
             storages_existing_val = search_data(
                 unit,
@@ -596,22 +600,29 @@ def existing_units(
                 "capacity",
                 data=[[k, v] for k, v in unit["capacity"].items()],
             )
-            
+
             # For battery storage, only create storage__region if there are existing storages
             should_create_storage_region = True
             if unit["technology"] in ["battery-storage", "battery-storage-iron-air"]:
                 # Check if storages_existing_val has any non-None, non-zero values
                 should_create_storage_region = False
                 if storages_existing_val is not None:
-                    if isinstance(storages_existing_val, dict) and "data" in storages_existing_val:
+                    if (
+                        isinstance(storages_existing_val, dict)
+                        and "data" in storages_existing_val
+                    ):
                         # Check if any year has a non-zero value
                         for year_data in storages_existing_val["data"]:
-                            if len(year_data) >= 2 and year_data[1] is not None and year_data[1] != 0:
+                            if (
+                                len(year_data) >= 2
+                                and year_data[1] is not None
+                                and year_data[1] != 0
+                            ):
                                 should_create_storage_region = True
                                 break
                     elif storages_existing_val != 0:
                         should_create_storage_region = True
-            
+
             if should_create_storage_region:
                 jaif["entities"].extend(
                     [
@@ -808,6 +819,7 @@ def new_units(jaif, assumptions, msy, inflation, regions, units_new, commodities
                         unit["technology"],
                         [years[0]],
                         "conversion_rate",
+                        prioritise_assumption=True,
                     )
                     if conversion_rate is not None:
                         jaif["parameter_values"].append(
@@ -827,6 +839,7 @@ def new_units(jaif, assumptions, msy, inflation, regions, units_new, commodities
                         unit["technology"],
                         [years[0]],
                         "CO2_captured",
+                        prioritise_assumption=True,
                     )
                     if co2_captured is not None:
                         jaif["parameter_values"].append(
@@ -911,7 +924,7 @@ def new_units(jaif, assumptions, msy, inflation, regions, units_new, commodities
                         fixed_param="fixed_cost_energy",
                     )
                 )
-                
+
                 # Power costs (for storage_connection entity)
                 storage_power_invest_cost, storage_power_fixed_cost = (
                     calculate_investment_and_fixed_costs(
@@ -929,7 +942,7 @@ def new_units(jaif, assumptions, msy, inflation, regions, units_new, commodities
                 storage_lifetime = search_data(
                     unit, assumptions, unit_types, unit["technology"], years, "lifetime"
                 )
-                
+
                 storage_operational_cost = search_data(
                     unit,
                     assumptions,
@@ -995,7 +1008,10 @@ def new_units(jaif, assumptions, msy, inflation, regions, units_new, commodities
                 )
 
             # Don't create storage__region entities for battery storage technologies
-            if unit["technology"] not in ["battery-storage", "battery-storage-iron-air"]:
+            if unit["technology"] not in [
+                "battery-storage",
+                "battery-storage-iron-air",
+            ]:
                 jaif["entities"].extend(
                     [
                         ["storage__region", [unit["technology"], unit["region"]], None],
@@ -1305,7 +1321,17 @@ def decay_capacity(unit, lifetime, milestoneyears):  # baseyear
 
 
 def map_ass_jaif(
-    ass, inflation, costparameters=["investment_cost", "fixed_cost", "operational_cost", "investment_cost_energy", "investment_cost_power", "fixed_cost_energy", "fixed_cost_power"]
+    ass,
+    inflation,
+    costparameters=[
+        "investment_cost",
+        "fixed_cost",
+        "operational_cost",
+        "investment_cost_energy",
+        "investment_cost_power",
+        "fixed_cost_energy",
+        "fixed_cost_power",
+    ],
 ):
     assumptions = {}
     for tech, properties in ass.items():
@@ -1508,7 +1534,14 @@ def map_tdr_jaif(line_tdr):
 
 
 def calculate_investment_and_fixed_costs(
-    unit, assumptions, unit_types, years, invest_modifier=1000.0, fixed_modifier=1.0, invest_param="investment_cost", fixed_param="fixed_cost"
+    unit,
+    assumptions,
+    unit_types,
+    years,
+    invest_modifier=1000.0,
+    fixed_modifier=1.0,
+    invest_param="investment_cost",
+    fixed_param="fixed_cost",
 ):
     """
     Calculate investment and fixed costs for any unit (PP or storage)
@@ -1526,6 +1559,7 @@ def calculate_investment_and_fixed_costs(
         years,
         invest_param,
         modifier=invest_modifier,
+        prioritise_assumption=True,
     )
     fixed_cost_pct = search_data(
         unit,
@@ -1627,6 +1661,7 @@ def search_data(
     parameter,
     data=None,
     modifier=1.0,
+    prioritise_assumption=False,
 ):
     # if parameter in ["fixed_cost"]:
     #     pprint(f"unit: {unit}, unit_types: {unit_types}, tech: {unit_type_key}, year:{years}, inflation: {modifier}") #debugline
@@ -1664,73 +1699,55 @@ def search_data(
     else:
         parameter_value = data[0][1]
     parameter_value = propose_assumption(
-        unit["technology"], parameter, parameter_value, assumptions, years
+        unit["technology"],
+        parameter,
+        parameter_value,
+        assumptions,
+        years,
+        prioritise_assumption=prioritise_assumption,
     )
     return parameter_value
 
 
-def propose_assumption(unit_type, parameter, proposed_value, assumptions, years):
+def propose_assumption(
+    unit_type,
+    parameter,
+    proposed_value,
+    assumptions,
+    years,
+    prioritise_assumption=False,
+):
     """
     Replace proposed value with assumption if possible.
 
+    This function assumes that the proposed value is either None or already in the proper format. In other words, this function does not check whether proposed_value and years are compatible. The function does check whether there are None values in the proposed_value and replaces it fully if so.
+
     This function assumes that the data for all assumption years are the same. If in the future that format changes, this code need to change as well.
-    
-    For some parameters, the assumption values should always override existing values from jaif.
+
+    For some parameters, the assumption values should always override existing values from jaif. To that end, use the prioritise assumption toggle.
     """
     # print(unit_type)  # debugline
     # print(parameter)  # debugline
     # print(proposed_value)  # debugline
-    
-    # Parameters that should always use assumption values if available
-    override_parameters = ["CO2_captured", "conversion_rate", "investment_cost"]
-    
-    # Check if this parameter should always use assumption value
-    if parameter in override_parameters:
+
+    # check whether a multi year proposed value has a None value
+    if len(years) > 1:
+        replace = False
+        for v in proposed_value[
+            "data"
+        ]:  # proposed_value["data"] = [['y2030', None], ['y2040', None], ['y2050', None]]
+            if v[1] is None:
+                replace = True
+        if replace:
+            proposed_value = None
+
+    returnvalue = proposed_value
+    if prioritise_assumption or (returnvalue is None):
         if unit_type in assumptions:
             if parameter in assumptions[unit_type]:
-                if len(years) > 1:
-                    assumed_value = assumptions[unit_type][parameter]
-                    data = [[year, assumed_value] for year in years]
-                    return {
-                        "index_type": "str",
-                        "rank": 1,
-                        "index_name": "year",
-                        "type": "map",
-                        "data": data,
-                    }
-                else:
-                    return assumptions[unit_type][parameter]
-        # If no assumption available, use proposed_value
-        return proposed_value
-    
-    returnvalue = None
-    if proposed_value is None:
-        if unit_type in assumptions:
-            if parameter in assumptions[unit_type]:
-                if len(years) > 1:
-                    assumed_value = assumptions[unit_type][parameter]
-                    data = [[year, assumed_value] for year in years]
-                    returnvalue = {
-                        "index_type": "str",
-                        "rank": 1,
-                        "index_name": "year",
-                        "type": "map",
-                        "data": data,
-                    }
-                else:
-                    returnvalue = assumptions[unit_type][parameter]
-    else:
-        if len(years) > 1:
-            replace = False
-            for v in proposed_value[
-                "data"
-            ]:  # proposed_value["data"] = [['y2030', None], ['y2040', None], ['y2050', None]]
-                if v[1] is None:
-                    replace = True
-            if replace:
-                if unit_type in assumptions:
-                    if parameter in assumptions[unit_type]:
-                        assumed_value = assumptions[unit_type][parameter]
+                assumed_value = assumptions[unit_type][parameter]
+                if assumed_value is not None:
+                    if len(years) > 1:
                         data = [[year, assumed_value] for year in years]
                         returnvalue = {
                             "index_type": "str",
@@ -1740,13 +1757,7 @@ def propose_assumption(unit_type, parameter, proposed_value, assumptions, years)
                             "data": data,
                         }
                     else:
-                        returnvalue = None
-                else:
-                    returnvalue = None
-            else:
-                returnvalue = proposed_value
-        else:
-            returnvalue = proposed_value
+                        returnvalue = assumed_value
     # print(returnvalue)  # debugline
     return returnvalue
 
@@ -1779,7 +1790,7 @@ def warn_for_none(jaif):
 
         # Check for None value
         if value is None:
-            warning_msg = f"Warning: None value for {entity_type} '{entity_name}', parameter '{parameter}' (unit type: {unit_type})"
+            warning_msg = f"None value for {entity_type} '{entity_name}', parameter '{parameter}' (unit type: {unit_type})"
             if warning_msg not in warnings_issued:
                 warnings.warn(warning_msg)
                 warnings_issued.append(warning_msg)
