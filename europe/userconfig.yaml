@@ -42,12 +42,12 @@ global_constraints:
 
 # Use country code to model a specific country  and define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
-  Europe: 
+  #Europe: 
+  #  onshore:  "PECD1"
+  #  offshore: "OFF2"
+  DK:
     onshore:  "PECD1"
     offshore: "OFF2"
-  #ES:
-    #onshore:  "PECD1"
-    #offshore: "OFF2"
 # Sectors optimized
 commodity: 
   elec: 

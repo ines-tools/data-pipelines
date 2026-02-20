@@ -7,7 +7,7 @@ using CSV
 
 println("WARNING: Check whether there are extreme periods from the loop with the operational assessments")
 
-number_of_representatives = 6
+number_of_representatives = 4
 number_of_timesteps = 24
 
 function get_data(input_folder,year)

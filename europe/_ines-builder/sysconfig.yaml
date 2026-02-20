@@ -597,13 +597,13 @@ heat_sector:
     dynamic:
       technology__region:
         unit:
-          units_existing: [units_existing,[[1]],[area,{}],null,PECD1]
+          units_existing: [units_existing,[[1]],[population,{}],null,PECD1]
       commodity__to_technology__to_commodity__region:
         unit_flow__unit_flow:
           conversion_rate: [equality_ratio,[[2],[3],[1],[2]],[normalized,{}],null,PECD1]
       storage__region:
         node:
-          storages_existing: [storages_existing,[[1]],[area,{}],null,PECD1]
+          storages_existing: [storages_existing,[[1]],[population,{}],null,PECD1]
       end-use__region:
         node:
           flow_profile: [flow_profile,[[1]],[normalized,{}],null,PECD1]

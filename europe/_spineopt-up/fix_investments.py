@@ -249,7 +249,7 @@ def scenario_definition(model_stage):
             stage_alternative = "lt_storage_alt"
             add_entity(spineopt_db,"stage", (stage_name,))
             add_alternative(spineopt_db,stage_alternative)
-            add_parameter_value(spineopt_db,"temporal_block","resolution",stage_alternative,("operations",),{"type":"duration","data":"8h"})
+            add_parameter_value(spineopt_db,"temporal_block","resolution",stage_alternative,("operations",),{"type":"duration","data":"12h"})
             model_name = [entity_i["name"] for entity_i in spineopt_db.get_entity_items(entity_class_name="model")][0]
             add_parameter_value(spineopt_db,"model","roll_forward",stage_alternative,(model_name,),None)
             
