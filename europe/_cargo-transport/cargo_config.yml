@@ -1,9 +1,0 @@
-MeOH: 
-  maritime: [0.0013,0.0013] # €/(MWh.km) average cost taking into account freight transport and shipping
-  road: [0.035,0.035] # €/(MWh.km) average cost taking into account freight transport and shipping
-bio:
-  maritime: [0.006,0.02] # €/(MWh.km) average cost taking into account freight transport and shipping
-  road: [0.09,0.16] # €/(MWh.km) average cost taking into account freight transport and shipping
-HC:
-  maritime: [0.0013,0.0013] # €/(MWh.km) average cost taking into account freight transport and shipping
-  road: [0.035,0.035] # €/(MWh.km) average cost taking into account freight transport and shipping
