@@ -117,6 +117,8 @@ vre:
       unit:
         - [[1]]
     technology__to_commodity:
+      node:
+        - [[2]]
       unit__to_node: 
         - [[1],[2]]
     technology_type:

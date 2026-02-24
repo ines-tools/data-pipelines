@@ -412,10 +412,19 @@ def add_power_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
                                 for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
                             
-def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict, db_name : str) -> None:
 
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+    
     start_time = time_lib.time()
-    region_params = spatial_transformation(db_source, config, "vre")
+    region_params = spatial_transformation(db_source, config, db_name, polygons)
     print(f"Time Calculating Aggregation: {time_lib.time()-start_time} s")
     print("ADDING VRE ELEMENTS")
     for entity_class in config["sys"]["vre"]["entities"]:
@@ -427,8 +436,8 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
             
             poly_type = "off" if "wind-off" in entity_name else "on"
-            for poly in config[f"{poly_type}shore_polygons"]:
-                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,poly_type)
+            for poly in polygons[f"{poly_type}shore_polygons"]:
+                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,poly_type,polygons)
 
                 # checking hard-coding conditions
                 if "technology" in entity_class_elements and definition_condition == True:
@@ -570,9 +579,17 @@ def add_hydro(db_map : DatabaseMapping, db_source : DatabaseMapping, config : di
                             for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
                                 add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
 
-def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict, db_name : str) -> None:
 
-    db_name = "power_transmission"
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+    
     print(db_name,"WARNING: Source DB must be in the user-defined target resolution")
     print("ADDING POWER TRANSMISSION")
     for entity_class in config["sys"][db_name]["entities"]:
@@ -583,7 +600,7 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if entity_names[0] in config["onshore_polygons"] and entity_names[-1] in config["onshore_polygons"] and config["user"]["transmission"][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["node_type"] == "balance":               
+            if entity_names[0] in polygons["onshore_polygons"] and entity_names[-1] in polygons["onshore_polygons"] and config["user"]["network"][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["node_type"] == "balance":               
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
@@ -616,8 +633,17 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
                         
 def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config :dict, db_name : str) -> None:
 
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+    
     start_time = time_lib.time()
-    region_params = spatial_transformation(db_source, config, db_name)
+    region_params = spatial_transformation(db_source, config, db_name, polygons)
     print(f"Time Calculating Aggregation: {time_lib.time()-start_time} s")
 
     print("ADDING INDUSTRIAL ROUTES")
@@ -630,8 +656,8 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
             entity_target_names   = []
 
-            for poly in config["onshore_polygons"]:
-                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on")
+            for poly in polygons["onshore_polygons"]:
+                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on",polygons)
                 
                 # Condition of demand at technology node
                 if "technology" in entity_class_elements and definition_condition:
@@ -693,7 +719,7 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
                                     if param_source == "demand":
                                         add_parameter_value(db_map,entity_class_target,"flow_scaling_method","Base",entity_target_name,"use_profile_directly")
 
-def add_biomass_production(db_map : DatabaseMapping, db_source : DatabaseMapping, config :dict) -> None:
+def add_biomass_production(db_map : DatabaseMapping, db_source : DatabaseMapping, config :dict, db_name : str) -> None:
 
     for alternative_i in db_source.get_alternative_items():
         try:
@@ -702,9 +728,17 @@ def add_biomass_production(db_map : DatabaseMapping, db_source : DatabaseMapping
             print(f"Repeated Alternative {alternative_i['name']}, then not added")
             pass
 
-    db_name = "biomass_production"
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+    
     start_time = time_lib.time()
-    region_params = spatial_transformation(db_source, config, db_name)
+    region_params = spatial_transformation(db_source, config, db_name, polygons)
     print(f"Time Calculating Aggregation: {time_lib.time()-start_time} s")
 
     print("ADDING BIOMASS INFORMATION")
@@ -718,8 +752,8 @@ def add_biomass_production(db_map : DatabaseMapping, db_source : DatabaseMapping
             entity_target_names   = []
             status = False 
 
-            for poly in config["onshore_polygons"]:
-                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on")
+            for poly in polygons["onshore_polygons"]:
+                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on",polygons)
             
                 if definition_condition == True:
                     for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
@@ -748,11 +782,19 @@ def add_biomass_production(db_map : DatabaseMapping, db_source : DatabaseMapping
                                 for alternative in region_params[entity_class][param_source][entity_name][poly]:
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
 
-def add_gas_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+def add_gas_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict, db_name : str) -> None:
 
-    db_name = "gas_sector"
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+    
     start_time = time_lib.time()
-    region_params = spatial_transformation(db_source, config, db_name)
+    region_params = spatial_transformation(db_source, config, db_name, polygons)
     print(f"Time Calculating Aggregation: {time_lib.time()-start_time} s")
 
     print("ADDING GAS ELEMENTS")
@@ -766,8 +808,8 @@ def add_gas_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
             entity_target_names   = []
             status = False 
 
-            for poly in config["onshore_polygons"]:
-                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on")
+            for poly in polygons["onshore_polygons"]:
+                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on",polygons)
             
                 # checking hard-coding conditions
                 if "technology" in entity_class_elements and definition_condition == True:
@@ -844,9 +886,17 @@ def add_gas_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                                 for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
 
-def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict, db_name : str) -> None:
 
-    db_name = "gas_pipelines"
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+
     print(db_name,"WARNING: Source DB must be in the user-defined target resolution")
     print("ADDING GAS PIPELINES")
     for entity_class in config["sys"][db_name]["entities"]:
@@ -857,7 +907,7 @@ def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, con
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if entity_names[0] in config["onshore_polygons"] and entity_names[-1] in config["onshore_polygons"] and config["user"]["transmission"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance" and config["user"][entity_class_elements[1]][entity_names[1]]["status"]:               
+            if entity_names[0] in polygons["onshore_polygons"] and entity_names[-1] in polygons["onshore_polygons"] and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance" and config["user"][entity_class_elements[1]][entity_names[1]]["status"]:               
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
@@ -891,7 +941,7 @@ def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, con
                                             value_param = value_["parsed_value"]
                                         add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)                       
 
-def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict, db_name : str) -> None:
 
     for alternative_i in db_source.get_alternative_items():
         try:
@@ -900,9 +950,17 @@ def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config 
             print(f"Repeated Alternative {alternative_i['name']}, then not added")
             pass
 
-    db_name = "transport_sector"
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+    
     start_time = time_lib.time()
-    region_params = spatial_transformation(db_source, config, db_name)
+    region_params = spatial_transformation(db_source, config, db_name, polygons)
     print(f"Time Calculating Aggregation: {time_lib.time()-start_time} s")
 
     print("ADDING TRANSPORT")
@@ -916,8 +974,8 @@ def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config 
             entity_target_names   = []
             status = False 
 
-            for poly in config["onshore_polygons"]:
-                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on")
+            for poly in polygons["onshore_polygons"]:
+                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,polygons)
             
                 if config["user"]["vehicle"][entity_names[1]]["status"] == True and config["user"]["commodity"][entity_names[0]]["node_type"] == "balance":             
                     for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
@@ -984,7 +1042,7 @@ def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config 
                                 for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
 
-def add_heat_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+def add_heat_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict, db_name : str) -> None:
 
     for alternative_i in db_source.get_alternative_items():
         try:
@@ -993,9 +1051,17 @@ def add_heat_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, confi
             print(f"Repeated Alternative {alternative_i['name']}, then not added")
             pass
 
-    db_name = "heat_sector"
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+    
     start_time = time_lib.time()
-    region_params = spatial_transformation(db_source, config, db_name)
+    region_params = spatial_transformation(db_source, config, db_name, polygons)
     print(f"Time Calculating Aggregation: {time_lib.time()-start_time} s")
 
     print("ADDING HEAT ELEMENTS")
@@ -1009,8 +1075,8 @@ def add_heat_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, confi
             entity_target_names   = []
             status = False 
 
-            for poly in config["onshore_polygons"]:
-                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on")
+            for poly in polygons["onshore_polygons"]:
+                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on",polygons)
             
                 # checking hard-coding conditions
                 if "technology" in entity_class_elements and definition_condition == True:
@@ -1066,9 +1132,17 @@ def add_heat_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, confi
                                 for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
 
-def add_cargo_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+def add_cargo_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict, db_name : str) -> None:
 
-    db_name = "cargo_transport"
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+    
     print(db_name,"WARNING: Source DB must be in the user-defined target resolution")
     print("ADDING CARGO TRANSPORT")
     for entity_class in config["sys"][db_name]["entities"]:
@@ -1079,7 +1153,7 @@ def add_cargo_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if entity_names[0] in config["onshore_polygons"] and entity_names[-1] in config["onshore_polygons"] and config["user"]["cargo"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance":               
+            if entity_names[0] in polygons["onshore_polygons"] and entity_names[-1] in polygons["onshore_polygons"] and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance":               
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
@@ -1203,62 +1277,68 @@ def main():
         if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_vre) as db_vre:
                 db_vre.fetch_all()
-                add_vre_sector(db_map,db_vre,config)
+                add_vre_sector(db_map,db_vre,config,db_name)
                 print("vre_added")
                 db_map.commit_session("vre_added")
 
+        db_name = "power_transmission"
         # Power Transmission Representation
         if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_tra) as db_tra:
                 db_tra.fetch_all()
-                add_power_transmission(db_map,db_tra,config)
+                add_power_transmission(db_map,db_tra,config,db_name)
                 print("power_transmission_added")
                 try:
                     db_map.commit_session("power_transmission_added")
                 except:
                     print("Error committing the transmission pipeline, likely because you have modeled one country")
         
+        db_name = "residual_demand"
         # Electricity Demand
         if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_dem) as db_dem:
                 db_dem.fetch_all()
-                add_electricity_demand(db_map,db_dem,config)
+                add_electricity_demand(db_map,db_dem,config,db_name)
                 print("electricity_demand_added")
                 db_map.commit_session("electricity_demand_added")
 
         #  Industrial Sector
+        db_name = "industrial_sector"
         if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_ind) as db_ind:
                 db_ind.fetch_all()
-                add_industrial_sector(db_map,db_ind,config,"industrial_sector")
+                add_industrial_sector(db_map,db_ind,config,db_name)
                 print("industrial_sector_added")
                 db_map.commit_session("industrial_sector_added")
+        db_name = "other_industrial_sector"
         if config["user"]["pipelines"][db_name]["status"]:   
             with DatabaseMapping(url_db_ind2) as db_ind:
                 db_ind.fetch_all()
-                add_industrial_sector(db_map,db_ind,config,"other_industrial_sector")
+                add_industrial_sector(db_map,db_ind,config,db_name)
                 print("other_industrial_sector_added")
                 db_map.commit_session("other_industrial_sector_added")
 
-
         #  Biomass Sector
+        db_name = "biomass_production"
         if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_bio) as db_bio:
                 db_bio.fetch_all()
-                add_biomass_production(db_map,db_bio,config)
+                add_biomass_production(db_map,db_bio,config,db_name)
                 print("biomass_sector_added")
                 db_map.commit_session("biomass_sector_added")
 
         # Gas Sector Representation
+        db_name = "gas_sector"
         if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_gas) as db_gas:
                 db_gas.fetch_all()
-                add_gas_sector(db_map,db_gas,config)
+                add_gas_sector(db_map,db_gas,config,db_name)
                 print("gas_sector_added")
                 db_map.commit_session("gas_sector_added")
     
+                db_name = "gas_pipelines"
                 if config["user"]["pipelines"][db_name]["status"]:
-                    add_gas_pipelines(db_map,db_gas,config)
+                    add_gas_pipelines(db_map,db_gas,config,db_name)
                     print("gas_pipelines_added")
                     try:
                         db_map.commit_session("gas_pipelines_added")
@@ -1266,26 +1346,29 @@ def main():
                         print("Error committing the gas pipelines, likely because you have modeled one country")
         
         # Transport Representation
+        db_name = "transport_sector"
         if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_veh) as db_veh:
                 db_veh.fetch_all()
-                add_transport(db_map,db_veh,config)
+                add_transport(db_map,db_veh,config,db_name)
                 print("transport_added")
                 db_map.commit_session("transport_added")
 
         # Heat Sector Representation
+        db_name = "heat_sector"
         if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_hea) as db_hea:
                 db_hea.fetch_all()
-                add_heat_sector(db_map,db_hea,config)
+                add_heat_sector(db_map,db_hea,config,db_name)
                 print("heat_sector_added")
                 db_map.commit_session("heat_sector_added")
 
         # Cargo Sector Representation
+        db_name = "cargo_transport"
         if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_car) as db_car:
                 db_car.fetch_all()
-                add_cargo_sector(db_map,db_car,config)
+                add_cargo_sector(db_map,db_car,config,db_name)
                 print("cargo_sector_added")
                 try:
                     db_map.commit_session("cargo_sector_added")

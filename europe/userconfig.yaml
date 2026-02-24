@@ -7,9 +7,13 @@ pipelines:
     source_resolution: PECD2
     target_resolution: PECD2
   vre:
-    status: False
-    source_resolution: {on: PECD2, off: OFF3}
-    target_resolution: {on: PECD1, off: OFF2}
+    status: True
+    source_resolution:
+      "on": PECD2 
+      "off": OFF3
+    target_resolution:
+      "on": PECD1
+      "off": OFF2
   hydro_systems:
     status: True
     source_resolution: PECD1
@@ -130,7 +134,7 @@ commodity:
     status: False
     node_type: commodity
 
-networks: 
+network: 
   elec: 
     status: True # True = it is modeled
   CH4: 
