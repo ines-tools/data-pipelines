@@ -15,7 +15,7 @@
             true
         ],
         [
-            "reservoir",
+            "storage",
             [],
             null,
             280376907919808,
@@ -29,23 +29,33 @@
             true
         ],
         [
-            "reservoir__region",
+            "commodity__to_technology",
             [
-                "reservoir",
-                "region"
+                "commodity",
+                "technology"
             ],
             null,
             null,
             true
         ],
         [
-            "reservoir__to_technology",
+            "storage__region",
             [
-                "reservoir",
+                "storage",
+                "region"
+            ],
+            null,
+            280375465144754,
+            true
+        ],
+        [
+            "storage__to_technology",
+            [
+                "storage",
                 "technology"
             ],
             null,
-            null,
+            280375465144754,
             true
         ],
         [
@@ -59,14 +69,46 @@
             true
         ],
         [
-            "reservoir__to_technology__region",
+            "technology__to_storage",
             [
-                "reservoir",
+                "technology",
+                "storage"
+            ],
+            null,
+            null,
+            true
+        ],
+        [
+            "commodity__to_technology__to_storage",
+            [
+                "commodity",
+                "technology",
+                "storage"
+            ],
+            null,
+            null,
+            true
+        ],
+        [
+            "storage__to_technology__region",
+            [
+                "storage",
                 "technology",
                 "region"
             ],
             null,
             280375465144754,
+            true
+        ],
+        [
+            "storage__to_technology__to_commodity",
+            [
+                "storage",
+                "technology",
+                "commodity"
+            ],
+            null,
+            null,
             true
         ],
         [
@@ -81,81 +123,71 @@
             true
         ],
         [
-            "reservoir__to_technology__to_commodity__region",
+            "technology__to_storage__region",
             [
-                "reservoir",
                 "technology",
-                "commodity",
+                "storage",
                 "region"
             ],
             null,
-            280375465144754,
+            null,
+            true
+        ],
+        [
+            "commodity__to_technology__to_storage__region",
+            [
+                "commodity",
+                "technology",
+                "storage",
+                "region"
+            ],
+            null,
+            null,
             true
         ]
     ],
     "parameter_definitions": [
         [
-            "reservoir__region",
-            "capacity",
+            "commodity__to_technology__to_storage__region",
+            "efficiency",
             null,
             null,
-            "MWh"
+            null
         ],
         [
-            "reservoir__region",
+            "storage__region",
             "inflow",
             null,
             null,
             "MWh"
         ],
         [
-            "reservoir__region",
+            "storage__region",
             "initial_capacity",
             null,
             null,
             "MWh"
         ],
         [
-            "reservoir__region",
+            "storage__region",
             "minimum_capacity",
             null,
             null,
             "MWh"
         ],
         [
-            "reservoir__region",
-            "spillage",
+            "storage__region",
+            "storage_capacity",
             null,
             null,
             "MWh"
         ],
         [
-            "reservoir__to_technology__region",
-            "maximum_discharge",
-            null,
-            null,
-            "MW"
-        ],
-        [
-            "reservoir__to_technology__region",
-            "minimum_discharge",
-            null,
-            null,
-            "MW"
-        ],
-        [
-            "reservoir__to_technology__to_commodity__region",
+            "storage__to_technology__to_commodity",
             "efficiency",
             null,
             null,
-            "p.u."
-        ],
-        [
-            "reservoir__to_technology__to_commodity__region",
-            "efficiency_curve",
-            null,
-            null,
-            "pu"
+            null
         ],
         [
             "technology__to_commodity",
@@ -187,14 +219,28 @@
         ],
         [
             "technology__to_commodity__region",
-            "maximum_ramp_4",
+            "maximum_ramp_3",
             null,
             null,
-            "in 4 hours (MWh)"
+            "in 3 hours (MWh)"
         ],
         [
             "technology__to_commodity__region",
-            "profile_fix",
+            "min_operating_point",
+            null,
+            null,
+            null
+        ],
+        [
+            "technology__to_commodity__region",
+            "profile",
+            null,
+            null,
+            null
+        ],
+        [
+            "technology__to_storage__region",
+            "capacity",
             null,
             null,
             null

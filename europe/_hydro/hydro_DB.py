@@ -31,7 +31,7 @@ def process_parameters(target_db, sheet):
     entity_name = "technology"
     entity_byname = ("hydro-turbine",)
     add_entity(target_db, entity_name, entity_byname)
-    entity_name = "reservoir"
+    entity_name = "storage"
     entity_byname = ("reservoir",)
     add_entity(target_db, entity_name, entity_byname)
     entity_name = "technology__to_commodity"
@@ -39,51 +39,106 @@ def process_parameters(target_db, sheet):
     add_entity(target_db, entity_name, entity_byname)
     add_parameter_value(target_db, entity_name, "operational_cost", "Base", entity_byname, 3.03)
     # add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, 65120.0)
-    entity_name = "reservoir__to_technology"
+    entity_name = "storage__to_technology"
     entity_byname = ("reservoir","hydro-turbine")
     add_entity(target_db, entity_name, entity_byname)
-    
+    entity_name = "storage__to_technology__to_commodity"
+    entity_byname = ("reservoir","hydro-turbine","elec")
+    add_entity(target_db, entity_name, entity_byname)
+    add_parameter_value(target_db, entity_name, "efficiency", "Base", entity_byname, 1.0)
+
+    param_source = ["initial capacity (MWh)","maximum capacity (MWh)","minimum capacity  (MWh)","maximum discharge  (MWh)","minimum discharge  (MWh)","maximum ramping in 1 hour(MWh)","maximum ramping in 3 hours(MWh)"]
+    param_target = ["initial_capacity","storage_capacity","minimum_capacity","capacity","min_operating_point","maximum_ramp","maximum_ramp_3"]
+    params =dict(zip(param_target,param_source))   
     for country in sheet.index:
-        param_source = ["initial capacity (MWh)","maximum capacity (MWh)","minimum capacity  (MWh)","maximum discharge  (MWh)","minimum discharge  (MWh)","maximum ramping in 1 hour(MWh)","maximum ramping in 4 hours(MWh)"]
-        param_target = ["initial_capacity","capacity","minimum_capacity","maximum_discharge","minimum_discharge","maximum_ramp","maximum_ramp_4"]
-        params =dict(zip(param_target,param_source))
+        
         add_entity(target_db, "region", (country,))
 
         entity_name = "technology__to_commodity__region"
         entity_byname = ("hydro-turbine","elec",country)
         add_entity(target_db, entity_name, entity_byname)
-        for parameter in ["maximum_ramp","maximum_ramp_4"]:
+        for parameter in ["capacity","maximum_ramp","maximum_ramp_3"]:
             add_parameter_value(target_db, entity_name, parameter, "Base", entity_byname, float(sheet.at[country,params[parameter]]))
         
-        entity_name = "reservoir__region"
+        entity_name = "storage__region"
         entity_byname = ("reservoir",country)
         add_entity(target_db, entity_name, entity_byname)
-        for parameter in ["initial_capacity","minimum_capacity","capacity"]:
-            value_param = float(sheet.at[country,params[parameter]]) if parameter == "capacity" else round(float(sheet.at[country,params[parameter]])/float(sheet.at[country,params["capacity"]]),3)
+        for parameter in ["initial_capacity","minimum_capacity","storage_capacity"]:
+            value_param = float(sheet.at[country,params[parameter]]) if parameter == "storage_capacity" else round(float(sheet.at[country,params[parameter]])/float(sheet.at[country,params["storage_capacity"]]),3)
             add_parameter_value(target_db, entity_name, parameter, "Base", entity_byname, value_param)
         
-        entity_name = "reservoir__to_technology__region"
+        entity_name = "storage__to_technology__region"
         entity_byname = ("reservoir","hydro-turbine",country)
         add_entity(target_db, entity_name, entity_byname)
+
+def pump_hydro_storage(target_db, sheet):
+
+    entity_name = "technology"
+    entity_byname = ("PH-discharge",)
+    add_entity(target_db, entity_name, entity_byname)
+    entity_byname = ("PH-charge",)
+    add_entity(target_db, entity_name, entity_byname)
+    entity_name = "storage"
+    entity_byname = ("PH-reservoir",)
+    add_entity(target_db, entity_name, entity_byname)
+    entity_name = "technology__to_commodity"
+    entity_byname = ("PH-discharge","elec")
+    add_entity(target_db, entity_name, entity_byname)
+    entity_name = "storage__to_technology"
+    entity_byname = ("PH-reservoir","PH-discharge")
+    add_entity(target_db, entity_name, entity_byname)
+    entity_name = "technology__to_storage"
+    entity_byname = ("PH-charge","PH-reservoir")
+    add_entity(target_db, entity_name, entity_byname)
+    entity_name = "commodity__to_technology"
+    entity_byname = ("elec","PH-charge")
+    add_entity(target_db, entity_name, entity_byname)
+    entity_name = "commodity__to_technology__to_storage"
+    entity_byname = ("elec","PH-charge","PH-reservoir")
+    add_entity(target_db, entity_name, entity_byname)
+    entity_name = "storage__to_technology__to_commodity"
+    entity_byname = ("PH-reservoir","PH-discharge","elec")
+    add_entity(target_db, entity_name, entity_byname)
+
+    param_source = ["initial capacity (MWh)","maximum capacity (MWh)","maximum discharge  (MWh)","maximal consumption (MWh)","efficiency factor"]
+    param_target = ["initial_capacity","storage_capacity","capacity","capacity","efficiency"]
+    params = dict(zip(param_source,param_target)) 
+    for country in sheet.index:
         
-        entity_name = "reservoir__to_technology__to_commodity__region"
-        entity_byname = ("reservoir","hydro-turbine","elec",country)
+        try:
+            add_entity(target_db, "region", (country,))
+        except:
+            pass
+        
+        # storage params
+        entity_name = "storage__region"
+        entity_byname = ("PH-reservoir",country)
         add_entity(target_db, entity_name, entity_byname)
-        eff1 = float(sheet.at[country,"efficiency 1"])
-        eff2 = float(sheet.at[country,"efficiency 2"])
-        dis1 = float(sheet.at[country,"Discharge segment 1  (MWh)"])
-        dis2 = float(sheet.at[country,"Discharge segment 2  (MWh)"])
-        efficiency = (eff1*dis1+eff2*dis2)/(dis1+dis2)
-        add_parameter_value(target_db, entity_name, "efficiency", "Base", entity_byname, efficiency)
-        efficiency_map = {"type": "map", "index_type": "str", "index_name": "MWh", "data": dict(zip([dis1,dis1+dis2],[eff1,eff2]))}
-        add_parameter_value(target_db, entity_name, "efficiency_curve", "Base", entity_byname, efficiency_map)
+        for parameter in ["initial capacity (MWh)","maximum capacity (MWh)"]:
+            value_param = float(sheet.at[country,parameter]) if parameter == "maximum capacity (MWh)" else round(float(sheet.at[country,parameter])/float(sheet.at[country,"maximum capacity (MWh)"]),3)
+            add_parameter_value(target_db, entity_name, params[parameter], "Base", entity_byname, value_param)
 
+        # discharging params
         entity_name = "technology__to_commodity__region"
-        entity_byname = ("hydro-turbine","elec",country)
-        for parameter in ["maximum_discharge"]:
-            add_parameter_value(target_db, entity_name, {"maximum_discharge":"capacity"}[parameter], "Base", entity_byname, float(efficiency*sheet.at[country,params[parameter]]))
+        entity_byname = ("PH-discharge","elec",country)
+        add_entity(target_db, entity_name, entity_byname)
+        for parameter in ["maximum discharge  (MWh)"]:
+            add_parameter_value(target_db, entity_name, params[parameter], "Base", entity_byname, float(sheet.at[country,parameter]))
 
-def ror_parameters(target_db, sheet, wyears):
+        # charging params
+        entity_name = "technology__to_storage__region"
+        entity_byname = ("PH-charge","PH-reservoir",country)
+        add_entity(target_db, entity_name, entity_byname)
+        for parameter in ["maximal consumption (MWh)"]:
+            add_parameter_value(target_db, entity_name, params[parameter], "Base", entity_byname, float(sheet.at[country,parameter]))
+
+        entity_name = "commodity__to_technology__to_storage__region"
+        entity_byname = ("elec","PH-charge","PH-reservoir",country)
+        add_entity(target_db, entity_name, entity_byname)
+        for parameter in ["efficiency factor"]:
+            add_parameter_value(target_db, entity_name, params[parameter], "Base", entity_byname,float(sheet.at[country,parameter]))
+
+def ror_parameters(target_db, path, wyears):
 
     entity_name = "technology"
     entity_byname = ("RoR",)
@@ -92,11 +147,14 @@ def ror_parameters(target_db, sheet, wyears):
     entity_byname = ("RoR","elec")
     add_entity(target_db, entity_name, entity_byname)
 
-    time_index = [pd.Timestamp(i).tz_convert(None).isoformat() for i in sheet.index if not (pd.Timestamp(i).month == 2 and pd.Timestamp(i).day == 29) and pd.Timestamp(i).year in wyears]
-    time_pick  = [i for i in sheet.index if not (pd.Timestamp(i).year%4 == 0 and pd.Timestamp(i).month == 12 and pd.Timestamp(i).day == 31) and pd.Timestamp(i).year in wyears]
-    for column in sheet.columns:
+    for file in os.listdir(path):
+        sheet = pd.read_csv(os.path.join(path,file),index_col=0).iloc[:,0]
 
-        country = column[:2]
+        time_index = [pd.Timestamp(i).tz_convert(None).isoformat() for i in sheet.index if not (pd.Timestamp(i).month == 2 and pd.Timestamp(i).day == 29) and pd.Timestamp(i).year in wyears]
+        time_pick  = [i for i in sheet.index if not (pd.Timestamp(i).year%4 == 0 and pd.Timestamp(i).month == 12 and pd.Timestamp(i).day == 31) and pd.Timestamp(i).year in wyears]
+
+        country = file.split("_")[0]
+        print(f"run-of-river country {country}")
         try:
             add_entity(target_db, "region", (country,))
         except:
@@ -105,32 +163,36 @@ def ror_parameters(target_db, sheet, wyears):
         entity_byname = ("RoR","elec",country)
         add_entity(target_db, entity_name, entity_byname)
 
-        param_map = {"type":"map","index_type":"date_time","index_name":"t","data":dict(zip(time_index,(sheet[column].loc[time_pick].values/sheet[column].max()).round(3)))}
-        add_parameter_value(target_db, entity_name, "profile_fix", "Base", entity_byname, param_map)
-        add_parameter_value(target_db, entity_name, "capacity", "Base", entity_byname, sheet[column].round(1).max())
+        param_map = {"type":"map","index_type":"date_time","index_name":"t","data":dict(zip(time_index,(sheet.loc[time_pick].values/sheet.max()).round(3)))}
+        add_parameter_value(target_db, entity_name, "profile", "Base", entity_byname, param_map)
+        add_parameter_value(target_db, entity_name, "capacity", "Base", entity_byname, sheet.round(1).max())
 
 
-def inflow_parameters(target_db, sheet, wyears):
+def inflow_parameters(target_db, path, inflow_factor, wyears):
 
-    time_index = [pd.Timestamp(i).tz_convert(None).isoformat() for i in sheet.index if not (pd.Timestamp(i).month == 2 and pd.Timestamp(i).day == 29) and pd.Timestamp(i).year in wyears]
-    time_pick  = [i for i in sheet.index if not (pd.Timestamp(i).year%4 == 0 and pd.Timestamp(i).month == 12 and pd.Timestamp(i).day == 31) and pd.Timestamp(i).year in wyears]
-    for column in sheet.columns:
+    for file in os.listdir(path):
+        sheet = pd.read_csv(os.path.join(path,file),index_col=0).iloc[:,0]
 
-        country = column[:2]
-        entity_name = "reservoir__region"
-        entity_byname = ("reservoir",country)
+        time_index = [pd.Timestamp(i).tz_convert(None).isoformat() for i in sheet.index if not (pd.Timestamp(i).month == 2 and pd.Timestamp(i).day == 29) and pd.Timestamp(i).year in wyears]
+        time_pick  = [i for i in sheet.index if not (pd.Timestamp(i).year%4 == 0 and pd.Timestamp(i).month == 12 and pd.Timestamp(i).day == 31) and pd.Timestamp(i).year in wyears]
+    
+        country = file.split("_")[0]
+        if country in inflow_factor.index:
+            print(f"inflows country {country}")
+            entity_name = "storage__region"
+            entity_byname = ("reservoir",country)
 
-        param_map = {"type":"map","index_type":"date_time","index_name":"t","data":dict(zip(time_index,sheet[column].loc[time_pick].values.round(1)))}
-        add_parameter_value(target_db, entity_name, "inflow", "Base", entity_byname, param_map)
+            param_map = {"type":"map","index_type":"date_time","index_name":"t","data":dict(zip(time_index,(inflow_factor.at[country]*sheet.loc[time_pick].values).round(1)))}
+            add_parameter_value(target_db, entity_name, "inflow", "Base", entity_byname, param_map)
 
 
 def main():
 
     # Spine Inputs
     url_db_out = sys.argv[1]
-    static_params = pd.read_excel(sys.argv[2],sheet_name="WP2.3 hydro",index_col=0)
-    ror_params = pd.read_csv(sys.argv[3],index_col=0,sep=";")
-    inflow_params = pd.read_csv(sys.argv[4],index_col=0,sep=";")
+    static_params = pd.read_excel(sys.argv[2],sheet_name=None,index_col=0)
+    inflow_params = sys.argv[3]
+    ror_params = sys.argv[4]
     userconfig = yaml.safe_load(open(sys.argv[5], "rb"))
     weather_years = [pd.Timestamp(userconfig["timeline"]["historical_alt"][i]["start"]).year for i in userconfig["timeline"]["historical_alt"]]
     print("############### Filling the output DB ###############")
@@ -154,17 +216,23 @@ def main():
         for alternative_name in ["Base"]:
             add_alternative(target_db,alternative_name)
 
-        process_parameters(target_db,static_params)
+        process_parameters(target_db,static_params["WP2.3 hydro Reservoir"])
         target_db.commit_session("static_params_added")
         print("static_params_added")
-        
+
+        pump_hydro_storage(target_db,static_params["Pump"])
+        target_db.commit_session("pump_static_params_added")
+        print("pump_static_params_added")
+
+        inflow_parameters(target_db,inflow_params,static_params["WP2.3 hydro Reservoir"]["Inflow adjustment factor"],weather_years)
+        target_db.commit_session("inflow_params_added")
+        print("inflow_params_added")
+
         ror_parameters(target_db,ror_params,weather_years)
         target_db.commit_session("ror_params_added")
         print("ror_params_added")
 
-        inflow_parameters(target_db,inflow_params,weather_years)
-        target_db.commit_session("inflow_params_added")
-        print("inflow_params_added")
+        
 
 
 if __name__ == "__main__":

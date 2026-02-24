@@ -1,5 +1,6 @@
 import spinedb_api as api
 from spinedb_api import DatabaseMapping
+from spinedb_api.parameter_value import convert_map_to_table, IndexedValue
 from sqlalchemy.exc import DBAPIError
 import datetime
 import pandas as pd
@@ -9,6 +10,18 @@ import numpy as np
 import json
 import yaml 
 import time as time_lib
+
+def nested_index_names(value, names = None, depth = 0):
+    if names is None:
+        names = []
+    if depth == len(names):
+        names.append(value.index_name)
+    elif value.index_name != names[-1]:
+        raise RuntimeError(f"Index names at depth {depth} do no match: {value.index_name} vs. {names[-1]}")
+    for y in value.values:
+        if isinstance(y, IndexedValue):
+            nested_index_names(y, names, depth + 1)
+    return names
 
 def add_superclass_subclass(db_map : DatabaseMapping, superclass_name : str, subclass_name : str) -> None:
     _, error = db_map.add_superclass_subclass_item(superclass_name=superclass_name, subclass_name=subclass_name)
@@ -31,7 +44,7 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
     if error is not None:
         raise RuntimeError(error)
 
-def define_polygons(config : dict, region_data : dict) -> dict:
+def define_polygons(config : dict, region_data : dict, on_level : str, off_level : str) -> dict:
     
     countries = [
         "AT",  # Austria
@@ -65,30 +78,28 @@ def define_polygons(config : dict, region_data : dict) -> dict:
         "UK",  # United Kingdom
         "NO"   # Norway
     ]
-    polygons={"onshore":{},"offshore":{}}
+    polygons={"onshore_polygons":{},"offshore_polygons":{}}
     for country_id in countries:
         if country_id not in config["countries"] and "Europe" in config["countries"]:
-            on_level  = config["countries"]["Europe"]["onshore"]
-            off_level = config["countries"]["Europe"]["offshore"]
             on_poly   = region_data[on_level][region_data[on_level].country == country_id].id.tolist()
-            off_poly  = region_data[off_level][region_data[off_level].country == country_id].id.tolist()
-            polygons["onshore"].update(dict(zip(on_poly,[on_level]*len(on_poly))))
-            polygons["offshore"].update({item_p:[off_level,region_data[off_level+"_map"][region_data[off_level+"_map"].source==item_p][on_level].tolist()[0]] for item_p in off_poly})
+            polygons["onshore_polygons"].update(dict(zip(on_poly,[on_level]*len(on_poly))))
+            if off_level:
+                off_poly  = region_data[off_level][region_data[off_level].country == country_id].id.tolist()
+                polygons["offshore_polygons"].update({item_p:[off_level,region_data[off_level+"_map"][region_data[off_level+"_map"].source==item_p][on_level].tolist()[0]] for item_p in off_poly})
         elif country_id in config["countries"]:
-            on_level  = config["countries"][country_id]["onshore"]
-            off_level = config["countries"][country_id]["offshore"]
             on_poly   = region_data[on_level][region_data[on_level].country == country_id].id.tolist()
-            off_poly  = region_data[off_level][region_data[off_level].country == country_id].id.tolist()
-            polygons["onshore"].update(dict(zip(on_poly,[on_level]*len(on_poly))))
-            polygons["offshore"].update({item_p:[off_level,region_data[off_level+"_map"][region_data[off_level+"_map"].source==item_p][on_level].tolist()[0]] for item_p in off_poly})
+            polygons["onshore_polygons"].update(dict(zip(on_poly,[on_level]*len(on_poly))))
+            if off_level:
+                off_poly  = region_data[off_level][region_data[off_level].country == country_id].id.tolist()
+                polygons["offshore_polygons"].update({item_p:[off_level,region_data[off_level+"_map"][region_data[off_level+"_map"].source==item_p][on_level].tolist()[0]] for item_p in off_poly})
     return polygons
 
-def user_entity_condition(config,entity_class_elements,entity_names,poly,poly_type):
+def user_entity_condition(config,entity_class_elements,entity_names,poly,poly_type,polygons):
 
     if poly_type == "off":
-        poly_level,poly_connection = config[f"{poly_type}shore_polygons"][poly]
+        poly_level,poly_connection = polygons[f"{poly_type}shore_polygons"][poly]
     else:
-        poly_level = config[f"{poly_type}shore_polygons"][poly]
+        poly_level = polygons[f"{poly_type}shore_polygons"][poly]
 
     entity_target_names = []
     definition_condition = True
@@ -138,9 +149,11 @@ def ines_aggregrate(db_source : DatabaseMapping,transformer_df : pd.DataFrame,ta
                 elif parameter_value["type"] == "map":
                     param_dict = json.loads(parameter_value["value"].decode("utf-8"))
                     if "type" not in param_dict["data"]:
-                        param_value = param_dict["data"]
-                        keys = list(param_value.keys())
-                        vals = multiplier*np.fromiter(param_value.values(), dtype=float)
+                        map_table = convert_map_to_table(parameter_value["parsed_value"])
+                        index_names = nested_index_names(parameter_value["parsed_value"])
+                        data = pd.DataFrame(map_table, columns=index_names + ["value"]).set_index(index_names[0])["value"]
+                        keys = [pd.Timestamp(i.value).isoformat() if api.to_database(i)[1] == "date_time" else i for i in data.index.tolist()]
+                        vals = multiplier*np.fromiter(data.tolist(), dtype=float)
                         if not values_.get(parameter_value["alternative_name"],{}):
                             values_[parameter_value["alternative_name"]] = {"type":"map","index_type":param_dict["index_type"],"index_name":param_dict["index_name"],"data":dict(zip(keys,vals))}
                         else:
@@ -151,7 +164,7 @@ def ines_aggregrate(db_source : DatabaseMapping,transformer_df : pd.DataFrame,ta
                 # ADD MORE Parameter Types HERE            
     return values_
         
-def spatial_transformation(db_source, config, sector):
+def spatial_transformation(db_source, config, sector, polygons):
     
     spatial_data = {}
     for entity_class in config["sys"][sector]["entities"]:
@@ -174,7 +187,6 @@ def spatial_transformation(db_source, config, sector):
 
                         param_list_target = dynamic_params[entity_class_target][source_parameter]  
                         defaults = param_list_target[3]
-                        source_level = param_list_target[4][poly_type] if isinstance(param_list_target[4],dict) else param_list_target[4]     
                         multipliers = param_list_target[2]
                         if not multipliers[1]:
                             weight = multipliers[0] 
@@ -183,8 +195,10 @@ def spatial_transformation(db_source, config, sector):
                                 weight = multipliers[1][particular_case] if any(particular_case in entity_item for entity_item in entity_names) else multipliers[0]
                                 break
 
-                        for target_poly in config[f"{poly_type}shore_polygons"]:
-                            _,definition_condition,target_level = user_entity_condition(config,entity_class_elements,entity_names,target_poly,poly_type)
+                        source_level = config["user"]["pipelines"][sector]["source_resolution"][poly_type] if isinstance(config["user"]["pipelines"][sector]["source_resolution"],dict) else config["user"]["pipelines"][sector]["source_resolution"]
+
+                        for target_poly in polygons[f"{poly_type}shore_polygons"]:
+                            _,definition_condition,target_level = user_entity_condition(config,entity_class_elements,entity_names,target_poly,poly_type,polygons)
 
                             if definition_condition == True:
                                 
@@ -209,9 +223,11 @@ def spatial_transformation(db_source, config, sector):
                                             elif parameter_value["type"] == "map":
                                                 param_dict = json.loads(parameter_value["value"].decode("utf-8"))
                                                 if "type" not in param_dict["data"]:
-                                                    param_value = param_dict["data"]
-                                                    keys = list(param_value.keys())
-                                                    vals = np.fromiter(param_value.values(), dtype=float)
+                                                    map_table = convert_map_to_table(parameter_value["parsed_value"])
+                                                    index_names = nested_index_names(parameter_value["parsed_value"])
+                                                    data = pd.DataFrame(map_table, columns=index_names + ["value"]).set_index(index_names[0])["value"]
+                                                    keys = [pd.Timestamp(i.value).isoformat() if api.to_database(i)[1]=="date_time" else i for i in data.index.tolist()]
+                                                    vals = np.fromiter(data.tolist(), dtype=float)
                                                     value_ = {"type":"map","index_type":param_dict["index_type"],"index_name":param_dict["index_name"],"data":dict(zip(keys,vals))}     
                                             elif parameter_value["type"] == "float":
                                                 value_ = parameter_value["parsed_value"]
@@ -309,11 +325,19 @@ def add_electricity_demand(db_map : DatabaseMapping, db_source : DatabaseMapping
                                 for alternative in region_params[entity_class][param_source][entity_name][poly]:
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
                                             
-def add_power_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+def add_power_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict, db_name : str) -> None:
 
-    db_name = "power_sector"
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+    
     start_time = time_lib.time()
-    region_params = spatial_transformation(db_source, config, db_name)
+    region_params = spatial_transformation(db_source, config, db_name, polygons)
     print(f"Time Calculating Aggregation: {time_lib.time()-start_time} s")
 
     print("ADDING POWER ELEMENTS")
@@ -327,8 +351,8 @@ def add_power_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
             entity_target_names   = []
             status = False 
 
-            for poly in config["onshore_polygons"]:
-                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on")
+            for poly in polygons["onshore_polygons"]:
+                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on",polygons)
             
                 # checking hard-coding conditions
                 if "technology" in entity_class_elements and definition_condition == True:
@@ -472,11 +496,18 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                                 for alternative in region_params[entity_class][param_source][entity_name].get(poly,{}):
                                     add_parameter_value(db_map,entity_class_target,param_values[0],alternative,entity_target_name,region_params[entity_class][param_source][entity_name][poly][alternative])
 
-def add_hydro(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
+def add_hydro(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict, db_name : str) -> None:
     
-    db_name = "hydro_systems"
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+    
     start_time = time_lib.time()
-    region_params = spatial_transformation(db_source, config, db_name)
+    region_params = spatial_transformation(db_source, config, db_name, polygons)
     print(f"Time Calculating Aggregation: {time_lib.time()-start_time} s")
 
     print("ADDING HYDRO_SYSTEMS")
@@ -489,8 +520,8 @@ def add_hydro(db_map : DatabaseMapping, db_source : DatabaseMapping, config : di
             entity_target_names   = []
             status = False 
 
-            for poly in config["onshore_polygons"]:
-                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on")
+            for poly in polygons["onshore_polygons"]:
+                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on",polygons)
 
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
@@ -583,9 +614,8 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
                                         value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
                                         add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)
                         
-def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config :dict) -> None:
+def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config :dict, db_name : str) -> None:
 
-    db_name = "industrial_sector"
     start_time = time_lib.time()
     region_params = spatial_transformation(db_source, config, db_name)
     print(f"Time Calculating Aggregation: {time_lib.time()-start_time} s")
@@ -1115,20 +1145,18 @@ def main():
     url_db_hyd = sys.argv[6]
     url_db_dem = sys.argv[7]
     url_db_ind = sys.argv[8]
-    url_db_bio = sys.argv[9]
-    url_db_gas = sys.argv[10]
-    url_db_veh = sys.argv[11]
-    url_db_hea = sys.argv[12]
-    url_db_car = sys.argv[13]
+    url_db_ind2= sys.argv[9]
+    url_db_bio = sys.argv[10]
+    url_db_gas = sys.argv[11]
+    url_db_veh = sys.argv[12]
+    url_db_hea = sys.argv[13]
+    url_db_car = sys.argv[14]
 
     with open("ines_structure.json", 'r') as f:
         ines_spec = json.load(f)
 
-    config = {"sys":yaml.safe_load(open("sysconfig.yaml", "rb")),"user":yaml.safe_load(open(sys.argv[14], "rb"))}
+    config = {"sys":yaml.safe_load(open("sysconfig.yaml", "rb")),"user":yaml.safe_load(open(sys.argv[15], "rb"))}
     config["transformer"] = pd.read_excel("region_transformation.xlsx",sheet_name=None)
-    polygons = define_polygons(config["user"],config["transformer"])
-    config["onshore_polygons"]  = polygons["onshore"]
-    config["offshore_polygons"] = polygons["offshore"]   
 
     with DatabaseMapping(url_db_out) as db_map:
 
@@ -1153,23 +1181,26 @@ def main():
         db_map.commit_session("timeline_added")
 
         # Power Sector Representation
-        if config["user"]["pipelines"]["power"]:
+        db_name = "power_sector"
+        if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_pow) as db_pow:
                 db_pow.fetch_all()
-                add_power_sector(db_map,db_pow,config)
+                add_power_sector(db_map,db_pow,config,db_name)
                 print("power_sector_added")
                 db_map.commit_session("power_sector_added")
 
         # Hydro Systems
-        if config["user"]["pipelines"]["hydro"]:
+        db_name = "hydro_systems"
+        if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_hyd) as db_hyd:
                 db_hyd.fetch_all()
-                add_hydro(db_map,db_hyd,config)
+                add_hydro(db_map,db_hyd,config,db_name)
                 print("hydro_systems_added")
                 db_map.commit_session("hydro_systems_added")
         
         # Power VRE Representation
-        if config["user"]["pipelines"]["vre"]:
+        db_name = "vre"
+        if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_vre) as db_vre:
                 db_vre.fetch_all()
                 add_vre_sector(db_map,db_vre,config)
@@ -1177,7 +1208,7 @@ def main():
                 db_map.commit_session("vre_added")
 
         # Power Transmission Representation
-        if config["user"]["pipelines"]["electricity_transmission"]:
+        if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_tra) as db_tra:
                 db_tra.fetch_all()
                 add_power_transmission(db_map,db_tra,config)
@@ -1188,7 +1219,7 @@ def main():
                     print("Error committing the transmission pipeline, likely because you have modeled one country")
         
         # Electricity Demand
-        if config["user"]["pipelines"]["residual_demand"]:
+        if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_dem) as db_dem:
                 db_dem.fetch_all()
                 add_electricity_demand(db_map,db_dem,config)
@@ -1196,16 +1227,22 @@ def main():
                 db_map.commit_session("electricity_demand_added")
 
         #  Industrial Sector
-        if config["user"]["pipelines"]["industry"]:
+        if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_ind) as db_ind:
                 db_ind.fetch_all()
-                add_industrial_sector(db_map,db_ind,config)
+                add_industrial_sector(db_map,db_ind,config,"industrial_sector")
                 print("industrial_sector_added")
                 db_map.commit_session("industrial_sector_added")
+        if config["user"]["pipelines"][db_name]["status"]:   
+            with DatabaseMapping(url_db_ind2) as db_ind:
+                db_ind.fetch_all()
+                add_industrial_sector(db_map,db_ind,config,"other_industrial_sector")
+                print("other_industrial_sector_added")
+                db_map.commit_session("other_industrial_sector_added")
 
 
         #  Biomass Sector
-        if config["user"]["pipelines"]["biomass"]:
+        if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_bio) as db_bio:
                 db_bio.fetch_all()
                 add_biomass_production(db_map,db_bio,config)
@@ -1213,14 +1250,14 @@ def main():
                 db_map.commit_session("biomass_sector_added")
 
         # Gas Sector Representation
-        if config["user"]["pipelines"]["gas"]:
+        if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_gas) as db_gas:
                 db_gas.fetch_all()
                 add_gas_sector(db_map,db_gas,config)
                 print("gas_sector_added")
                 db_map.commit_session("gas_sector_added")
     
-                if config["user"]["pipelines"]["gas_pipelines"]:
+                if config["user"]["pipelines"][db_name]["status"]:
                     add_gas_pipelines(db_map,db_gas,config)
                     print("gas_pipelines_added")
                     try:
@@ -1229,7 +1266,7 @@ def main():
                         print("Error committing the gas pipelines, likely because you have modeled one country")
         
         # Transport Representation
-        if config["user"]["pipelines"]["transport"]:
+        if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_veh) as db_veh:
                 db_veh.fetch_all()
                 add_transport(db_map,db_veh,config)
@@ -1237,7 +1274,7 @@ def main():
                 db_map.commit_session("transport_added")
 
         # Heat Sector Representation
-        if config["user"]["pipelines"]["heat"]:
+        if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_hea) as db_hea:
                 db_hea.fetch_all()
                 add_heat_sector(db_map,db_hea,config)
@@ -1245,7 +1282,7 @@ def main():
                 db_map.commit_session("heat_sector_added")
 
         # Cargo Sector Representation
-        if config["user"]["pipelines"]["cargo"]:
+        if config["user"]["pipelines"][db_name]["status"]:
             with DatabaseMapping(url_db_car) as db_car:
                 db_car.fetch_all()
                 add_cargo_sector(db_map,db_car,config)

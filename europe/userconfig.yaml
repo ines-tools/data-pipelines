@@ -2,18 +2,58 @@
 # countries : ["AL","DE","HU","MK","SE","AT","DK","IE","MT","SI","BA","EE","IT","NL","SK","BE","ES","LT","NO","TR","BG","FI","LU","PL","UA","CH","FR","LV","PT","UK","CY","GR","MD","RO","XK","CZ","HR","ME","RS"]
 
 pipelines:
-  power: True
-  vre: True
-  hydro: True
-  biomass: True
-  electricity_transmission: True
-  residual_demand: True
-  gas: True
-  gas_pipelines: True
-  industry: True
-  heat: True
-  transport: True
-  cargo: True
+  power_sector: 
+    status: True
+    source_resolution: PECD2
+    target_resolution: PECD2
+  vre:
+    status: False
+    source_resolution: {on: PECD2, off: OFF3}
+    target_resolution: {on: PECD1, off: OFF2}
+  hydro_systems:
+    status: True
+    source_resolution: PECD1
+    target_resolution: PECD1
+  biomass_production:
+    status: False
+    source_resolution: PECD1
+    target_resolution: PECD1
+  power_transmission:
+    status: False
+    source_resolution: PECD1
+    target_resolution: PECD1
+  residual_demand:
+    status: False
+    source_resolution: PECD1
+    target_resolution: PECD1
+  gas_sector:
+    status: False
+    source_resolution: PECD1
+    target_resolution: PECD1
+  gas_pipelines: 
+    status: False
+    source_resolution: PECD1
+    target_resolution: PECD1
+  industrial_sector:
+    status: False
+    source_resolution: PECD1
+    target_resolution: PECD1
+  other_industrial_sector:
+    status: False
+    source_resolution: PECD1
+    target_resolution: PECD1
+  heat_sector:
+    status: False
+    source_resolution: PECD1
+    target_resolution: PECD1
+  transport_sector:
+    status: False
+    source_resolution: PECD1
+    target_resolution: PECD1
+  cargo_transport:
+    status: False
+    source_resolution: PECD1
+    target_resolution: PECD1
 
 model:
     type :  brownfield # greenfied not included yet
@@ -38,16 +78,13 @@ global_constraints:
     "2030": 2200000000 # European level
     "2040": 550000000 # European level
     "2050": 0.0
-  co2_annual_sequestration: 200000000 # European level
+  co2_annual_sequestration: 200000000 # system level
 
 # Use country code to model a specific country  and define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
-  #Europe: 
-  #  onshore:  "PECD1"
-  #  offshore: "OFF2"
-  DK:
-    onshore:  "PECD1"
-    offshore: "OFF2"
+  #- Europe
+  - ES
+
 # Sectors optimized
 commodity: 
   elec: 
@@ -93,26 +130,27 @@ commodity:
     status: False
     node_type: commodity
 
-transmission: 
+networks: 
   elec: 
     status: True # True = it is modeled
   CH4: 
     status: True
   H2: 
     status: True
-
-cargo: 
   MeOH: 
-    status: True  # True = it is modeled
+    status: True 
   HC: 
     status: True
   bio: 
     status: True
 
 storage:
-  large-battery :
+  battery-storage:
     status: True # True = it is included in the model
     investment_method : "no_limits" # not_allowed, no_limits or cumulative_limits
+  battery-storage-iron-air:
+    status: True 
+    investment_method : "no_limits"
   CH4-geo-formation : 
     status: True 
     investment_method : "not_allowed"
@@ -176,6 +214,9 @@ technology:
   geothermal:
     status: False
     investment_method: "cumulative_limits"
+  geothermal-existing:
+    status: False
+    investment_method: "cumulative_limits"
   nuclear-3:
     status: True
     investment_method: "no_limits"
@@ -234,6 +275,12 @@ technology:
     status: False
     investment_method: "no_limits"
   hydro-turbine:
+    status: True
+    investment_method: "not_allowed"
+  PH-charge:
+    status: True
+    investment_method: "not_allowed"
+  PH-discharge:
     status: True
     investment_method: "not_allowed"
   # gas production
