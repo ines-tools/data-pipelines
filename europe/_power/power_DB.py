@@ -102,6 +102,7 @@ def main(
         units_existing = config["units_existing"]
         units_new = config["units_new"]
         commodities = config["commodities"]
+        fossil_commodities = config["fossil_commodities"]
 
     # load geo data
     geomap = gpd.read_file(geo)
@@ -151,6 +152,7 @@ def main(
         geomap,
         units_existing,
         commodities,
+        fossil_commodities,
     )
     new_units(
         jaif,
@@ -160,6 +162,7 @@ def main(
         regions,
         units_new,
         commodities,
+        fossil_commodities,
     )
 
     # warn for none values before saving
@@ -214,6 +217,7 @@ def existing_units(
     geomap,
     units_existing,
     commodities,
+    fossil_commodities,
 ):
     """
     Adds existing units to jaif
@@ -300,6 +304,14 @@ def existing_units(
                         ],
                     ]
                 )
+                if unit["commodity"] in fossil_commodities:
+                    jaif["entities"].append(
+                        [
+                            "technology__to_commodity",
+                            [unit["technology"] + "-existing", "CO2"],
+                            None,
+                        ]
+                    )
                 # map technology to commodity
                 if unit["commodity"]:
                     jaif["entities"].extend(
@@ -653,7 +665,16 @@ def existing_units(
 ##########
 
 
-def new_units(jaif, assumptions, msy, inflation, regions, units_new, commodities):
+def new_units(
+    jaif,
+    assumptions,
+    msy,
+    inflation,
+    regions,
+    units_new,
+    commodities,
+    fossil_commodities,
+):
     """
     Adds new units to jaif
 
@@ -721,6 +742,14 @@ def new_units(jaif, assumptions, msy, inflation, regions, units_new, commodities
                         ],
                     ]
                 )
+                if unit["commodity"] in fossil_commodities:
+                    jaif["entities"].append(
+                        [
+                            "technology__to_commodity",
+                            [unit["technology"], "CO2"],
+                            None,
+                        ]
+                    )
 
                 if unit["commodity"]:
                     jaif["entities"].extend(
