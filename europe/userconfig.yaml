@@ -5,7 +5,7 @@ pipelines:
   power_sector: 
     status: True
     source_resolution: PECD2
-    target_resolution: PECD2
+    target_resolution: PECD1
   vre:
     status: False
     source_resolution:
@@ -19,7 +19,7 @@ pipelines:
     source_resolution: PECD1
     target_resolution: PECD1
   biomass_production:
-    status: False
+    status: True
     source_resolution: PECD1
     target_resolution: PECD1
   power_transmission:
@@ -27,35 +27,35 @@ pipelines:
     source_resolution: PECD1
     target_resolution: PECD1
   residual_demand:
-    status: False
+    status: True
     source_resolution: PECD1
     target_resolution: PECD1
   gas_sector:
-    status: False
+    status: True
     source_resolution: PECD1
     target_resolution: PECD1
   gas_pipelines: 
-    status: False
+    status: True
     source_resolution: PECD1
     target_resolution: PECD1
   industrial_sector:
-    status: False
+    status: True
     source_resolution: PECD1
     target_resolution: PECD1
   other_industrial_sector:
-    status: False
+    status: True
     source_resolution: PECD1
     target_resolution: PECD1
   heat_sector:
-    status: False
+    status: True
     source_resolution: PECD1
     target_resolution: PECD1
   transport_sector:
-    status: False
+    status: True
     source_resolution: PECD1
     target_resolution: PECD1
   cargo_transport:
-    status: False
+    status: True
     source_resolution: PECD1
     target_resolution: PECD1
 
@@ -609,7 +609,67 @@ technology:
     status: true
   WPI-BOF-MEA:
     status: true
-
+  alumina-production-alternative:
+    status: False
+  alumina-production-reference:
+    status: False
+  aluminium-primary-production-alternative:
+    status: False
+  aluminium-primary-production-reference:
+    status: False
+  aluminium-secondary-production-alternative:
+    status: False
+  aluminium-secondary-production-reference:
+    status: False
+  food-beverages-tobacco-production-alternative:
+    status: False
+  food-beverages-tobacco-production-reference:
+    status: False
+  leather-and-textile-production-alternative:
+    status: False
+  leather-and-textile-production-reference:
+    status: False
+  machinery-equipment-production-alternative:
+    status: False
+  machinery-equipment-production-reference:
+    status: False
+  other-non-ferrous-metals-production-alternative:
+    status: False
+  other-non-ferrous-metals-production-reference:
+    status: False
+  paper-production-alternative:
+    status: False
+  paper-production-reference:
+    status: False
+  pharmaceuticals-production-alternative:
+    status: False
+  pharmaceuticals-production-reference:
+    status: False
+  printing-and-media-production-alternative:
+    status: False
+  printing-and-media-production-reference:
+    status: False
+  pulp-production-alternative:
+    status: False
+  pulp-production-reference:
+    status: False
+  steel-electric-arc-finishing-alternative:
+    status: False
+  steel-electric-arc-finishing-reference:
+    status: False
+  steel-electric-arc-rolling-alternative:
+    status: False
+  steel-electric-arc-rolling-reference:
+    status: False
+  transport-equipment-production-alternative:
+    status: False
+  transport-equipment-production-reference:
+    status: False
+  wood-and-wood-products_production-alternative:
+    status: False
+  wood-and-wood-products_production-reference:
+    status: False
+    
 end-use:
   nonres-cool:
     status: True

@@ -6,7 +6,7 @@ commodities:
         commodity_price: [commodity_price,1.0]
 
 # Electricity Demand
-elec_demand:
+residual_demand:
   entities:
     commodity:
       node: null

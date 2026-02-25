@@ -482,7 +482,11 @@ def add_vre_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config
                         # Entity Definitions
                         for entity_target_building in config["sys"]["vre"]["entities"][entity_class][entity_class_target]:
                             entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in entity_target_building])
-                            add_entity(db_map,entity_class_target,entity_target_name)
+                            try:
+                                add_entity(db_map,entity_class_target,entity_target_name)
+                            except RuntimeError:
+                                print(f"Repeated Entity {entity_class} {entity_name}, then not added")
+                                pass
                         
                         # User Parameters
                         if entity_class in config["sys"]["vre"]["parameters"]["user"]:
@@ -940,7 +944,7 @@ def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, con
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if entity_names[0] in polygons["onshore_polygons"] and entity_names[-1] in polygons["onshore_polygons"] and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance" and config["user"][entity_class_elements[1]][entity_names[1]]["status"]:               
+            if (entity_names[0] in polygons["onshore_polygons"] or entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance" and config["user"][entity_class_elements[1]][entity_names[1]]["status"]:               
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
@@ -1027,7 +1031,7 @@ def add_transport(db_map : DatabaseMapping, db_source : DatabaseMapping, config 
             status = False 
 
             for poly in polygons["onshore_polygons"]:
-                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,polygons)
+                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on",polygons)
             
                 if config["user"]["vehicle"][entity_names[1]]["status"] == True and config["user"]["commodity"][entity_names[0]]["node_type"] == "balance":             
                     for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
@@ -1205,7 +1209,7 @@ def add_cargo_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if entity_names[0] in polygons["onshore_polygons"] and entity_names[-1] in polygons["onshore_polygons"] and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance":               
+            if (entity_names[0] in polygons["onshore_polygons"] or entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance":               
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
@@ -1493,7 +1497,6 @@ def main():
 
         # Coupling sector with different resolution
         coupling_spatial_resolutions(db_map, config)
-
         # Policy Constraints
         add_policy_constraints(db_map,config)
         print("policy_constraints")

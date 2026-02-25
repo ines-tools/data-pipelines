@@ -169,19 +169,25 @@ def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
     if error is not None:
         raise RuntimeError(error)
     
+def remove_items(db_map : DatabaseMapping):
+    for entity_name in ["steam","heat"]:
+        for entity_map in db_map.get_entity_items(entity_class_name="commodity",name=entity_name):
+            item_id = entity_map["id"]
+            db_map.remove_item("entity",item_id)
+
 def main():
 
     # Spine Inputs
     dbs_dict = {
         "part1" : [sys.argv[1],"nuts0",
-                   ["cement","chemical-chlorine","chemicals-olefins","chemicals-PE","chemicals-PEA",
+                   ["cement","chemical-chlorine","chemical-olefins","chemical-PE","chemical-PEA",
                     "fertiliser-ammonia-NH3","glass-container","glass-fibre","glass-float",
-                    "HC","steel-primary","steel-secondary"]],
+                    "HC","steel-primary","steel-secondary","MeOH"]],
         "part2" : [sys.argv[2],"nuts0",
-                   ["alumina","aluminium-primary","aluminium-secondary",
+                   ["alumina","aluminium-primary","aluminium-secondary","integrated-stealworks-steel"
                     "other-industrial-sectors","ceramics-and-other-non-metalic-minerals"
                     "other-chemicals","pharmaceuticals","food-beverages-tobacco",
-                    "machinery-equipment","other-non-ferrous-metals","paper",
+                    "machinery-equipment","other-non-ferrous-metals","paper","electric-arc-steel",
                     "printing-and-media","pulp","leather-and-textile",
                     "transport-equipment","wood-and-wood-products"]],
         }
@@ -225,6 +231,8 @@ def main():
             demand_sectors(target_db,ind_df[f"ind_production_30_50_{resolution}"],nodes)
             target_db.commit_session("demand added")
             print("demand added")
+            remove_items(target_db)
+            target_db.commit_session("removal")
         
 if __name__ == "__main__":
     main()
