@@ -297,7 +297,12 @@ def process_region_data(target_db,path_cop,path_demand,scenario_df,weather_years
                 value_cop = map_tech[tech]["data"][country].values if tech == "A2AHP-cooling" else map_tech[tech]["data"][country].values*ratio_space + map_tech[tech[:6]+"DHW"]["data"][country].values*ratio_DHW
                 map_param = {"type": "map", "index_type": "str", "index_name": "t", "data":dict(zip(time_list,value_cop.round(4)))}
                 add_parameter_value(target_db, entity_name, "conversion_rate", "Base", entity_byname, map_param)
-        
+
+def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
+    _, error = db_map.add_scenario_item(name=name_scenario)
+    if error is not None:
+        raise RuntimeError(error)
+          
 def main():
 
     # Spine Inputs
@@ -320,6 +325,9 @@ def main():
         target_db.purge_items('alternative')
         target_db.purge_items('scenario')
         target_db.refresh_session()
+
+        versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
+        add_scenario(target_db,f"v_{versionconfig["buildings"]["version"]}")
 
         with open("heat_template_DB.json", 'r') as f:
             db_template = json.load(f)

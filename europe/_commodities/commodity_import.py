@@ -6,6 +6,7 @@ from openpyxl import load_workbook
 import numpy as np
 import json 
 import math
+import yaml
 
 def add_entity(db_map : DatabaseMapping, class_name : str, name : tuple, ent_description = None) -> None:
     _, error = db_map.add_entity_item(entity_byname=name, entity_class_name=class_name, description = ent_description)
@@ -27,6 +28,11 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
     _, error = db_map.add_alternative_item(name=name_alternative)
     if error is not None:
         raise RuntimeError(error)
+
+def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
+    _, error = db_map.add_scenario_item(name=name_scenario)
+    if error is not None:
+        raise RuntimeError(error)
     
 def main():
 
@@ -43,6 +49,9 @@ def main():
         db_map.purge_items('alternative')
         db_map.purge_items('scenario')
         db_map.refresh_session()
+
+        versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
+        add_scenario(db_map,f"v_{versionconfig["commodities"]["version"]}")
 
         with open("commodities_template_DB.json", 'r') as f:
             db_template = json.load(f)

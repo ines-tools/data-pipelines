@@ -7,7 +7,7 @@ pipelines:
     source_resolution: PECD2
     target_resolution: PECD2
   vre:
-    status: True
+    status: False
     source_resolution:
       "on": PECD2 
       "off": OFF3
@@ -23,7 +23,7 @@ pipelines:
     source_resolution: PECD1
     target_resolution: PECD1
   power_transmission:
-    status: False
+    status: True
     source_resolution: PECD1
     target_resolution: PECD1
   residual_demand:

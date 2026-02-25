@@ -18,7 +18,7 @@ elec_demand:
     dynamic:
       commodity__region:
         node:
-          flow_profile: [flow_profile,[[1]],[population,{}],null,PECD1]
+          flow_profile: [flow_profile,[[1]],[population,{}],null]
 
 # Power Sector DB including Transmission in Target Resolution
 power_sector:
@@ -108,7 +108,7 @@ power_sector:
     dynamic:
       technology__region:
         unit:
-          units_existing: [units_existing,[[1]],[area,{}],null,PECD1]
+          units_existing: [units_existing,[[1]],[area,{}],null]
 
 # Variable Renewable Energy
 vre:
@@ -148,13 +148,13 @@ vre:
     dynamic:
       technology__region:
         unit:
-          units_existing: [units_existing,[[1]],[area,{}],null,{"on": PECD2, "off": OFF3}]
+          units_existing: [units_existing,[[1]],[area,{}],null]
       technology__to_commodity__region:
         unit__to_node:
-          profile_limit_upper: [profile_limit_upper,[[1],[2]],[potential,{existing: capacity}],null,{"on": PECD2, "off": OFF3}]
+          profile_limit_upper: [profile_limit_upper,[[1],[2]],[potential,{existing: capacity}],null]
       technology_type__region:
         set:
-          potential: [max_cumulative,[[1]],[area,{}],null,{"on": PECD2, "off": OFF3}]
+          potential: [max_cumulative,[[1]],[area,{}],null]
 
 # Hydro systems
 hydro_systems:
@@ -221,26 +221,29 @@ hydro_systems:
     dynamic:
       storage__region:
         node:
-          inflow: [flow_profile,[[1]],[area,{}],null,PECD1]
-          storage_capacity: [storages_existing,[[1]],[area,{}],null,PECD1]
-          initial_capacity: [storage_state_fix,[[1]],[normalized,{}],null,PECD1]
-          minimum_capacity: [storage_state_lower_limit,[[1]],[normalized,{}],null,PECD1]
+          inflow: [flow_profile,[[1]],[area,{}],null]
+          storage_capacity: [storages_existing,[[1]],[area,{}],null]
+          initial_capacity: [storage_state_fix,[[1]],[normalized,{}],null]
+          minimum_capacity: [storage_state_lower_limit,[[1]],[normalized,{}],null]
       technology__to_storage__region:
         unit:
-          capacity: [units_existing,[[1]],[area,{}],null,PECD1]
+          capacity: [units_existing,[[1]],[area,{}],null]
       technology__to_commodity__region:
         unit__to_node:
-          profile: [profile_limit_upper,[[1],[2]],[normalized,{}],null,PECD1]
+          profile: [profile_limit_upper,[[1],[2]],[normalized,{}],null]
         unit:
-          capacity: [units_existing,[[1]],[area,{}],null,PECD1]
+          capacity: [units_existing,[[1]],[area,{}],null]
       commodity__to_technology__to_storage__region:
         unit_flow__unit_flow:
-          efficiency: [equality_ratio,[[2],[3],[1],[2]],[normalized,{}],null,PECD1]
+          efficiency: [equality_ratio,[[2],[3],[1],[2]],[normalized,{}],null]
 
 # power transmission map
 power_transmission:
   entities:
     region__transmission__commodity__region:
+      node:
+        - [[3,1]]
+        - [[3,4]]
       link:
         - [[1,3,4]]
       node__link__node:
@@ -307,10 +310,10 @@ industrial_sector:
     dynamic:
       technology__region:
         unit:
-          units_existing: [units_existing,[[1]],[area,{}],null,PECD1]
+          units_existing: [units_existing,[[1]],[area,{}],null]
       commodity__region:
         node:
-          demand: [flow_profile,[[1]],[population,{}],null,PECD1]
+          demand: [flow_profile,[[1]],[population,{}],null]
 
 # Other Industrial sector map
 other_industrial_sector:
@@ -357,10 +360,10 @@ other_industrial_sector:
     dynamic:
       technology__region:
         unit:
-          units_existing: [units_existing,[[1]],[area,{}],null,PECD1]
+          units_existing: [units_existing,[[1]],[area,{}],null]
       commodity__region:
         node:
-          demand: [flow_profile,[[1]],[population,{}],null,PECD1]
+          demand: [flow_profile,[[1]],[population,{}],null]
 
 # Biomass Production
 biomass_production:
@@ -390,9 +393,9 @@ biomass_production:
     dynamic:
       stock__to_commodity__region:
         node__link__node:
-          operational_cost: [operational_cost,[[1],[1,2],[2]],[average,{}],null,PECD1]
+          operational_cost: [operational_cost,[[1],[1,2],[2]],[average,{}],null,]
         node:
-          annual_production: [storage_capacity,[[1]],[area,{}],null,PECD1]
+          annual_production: [storage_capacity,[[1]],[area,{}],null]
 
 # gas sector modelling
 gas_sector:
@@ -480,32 +483,35 @@ gas_sector:
     dynamic:
       technology__region:
         unit:
-          units_existing: [units_existing,[[1]],[area,{}],null,PECD1]
+          units_existing: [units_existing,[[1]],[area,{}],null]
       technology__to_commodity__region:
         unit__to_node:
-          operational_cost: [other_operational_cost,[[1],[2]],[average,{}],null,PECD1]
-          capacity: [capacity,[[1],[2]],[area,{}],null,PECD1]
+          operational_cost: [other_operational_cost,[[1],[2]],[average,{}],null]
+          capacity: [capacity,[[1],[2]],[area,{}],null]
       storage__region:
         node:
-          capacity: [storage_capacity,[[1]],[area,{}],null,PECD1]
-          storages_existing: [storages_existing,[[1]],[area,{}],null,PECD1]
-          potentials: [storages_max_cumulative,[[1]],[area,{}],null,PECD1]
+          capacity: [storage_capacity,[[1]],[area,{}],null]
+          storages_existing: [storages_existing,[[1]],[area,{}],null]
+          potentials: [storages_max_cumulative,[[1]],[area,{}],null]
       storage_connection__region:
         link:
-          links_existing_in: [links_existing,[[2,1]],[area,{}],null,PECD1]
-          links_existing_out: [links_existing,[[1,2]],[area,{}],null,PECD1]
-          potentials_in: [links_max_cumulative,[[2,1]],[area,{}],null,PECD1]
-          potentials_out: [links_max_cumulative,[[1,2]],[area,{}],null,PECD1]
+          links_existing_in: [links_existing,[[2,1]],[area,{}],null]
+          links_existing_out: [links_existing,[[1,2]],[area,{}],null]
+          potentials_in: [links_max_cumulative,[[2,1]],[area,{}],null]
+          potentials_out: [links_max_cumulative,[[1,2]],[area,{}],null]
         node__link__node:
-          capacity_in: [capacity,[[2],[2,1],[1]],[area,{}],null,PECD1]
-          capacity_out: [capacity,[[1],[1,2],[2]],[area,{}],null,PECD1]
-          operational_cost_in: [operational_cost,[[2],[2,1],[1]],[average,{}],null,PECD1]
-          operational_cost_out: [operational_cost,[[1],[1,2],[2]],[average,{}],null,PECD1]
+          capacity_in: [capacity,[[2],[2,1],[1]],[area,{}],null,]
+          capacity_out: [capacity,[[1],[1,2],[2]],[area,{}],null]
+          operational_cost_in: [operational_cost,[[2],[2,1],[1]],[average,{}],null]
+          operational_cost_out: [operational_cost,[[1],[1,2],[2]],[average,{}],null]
 
 # gas pipelines integration
 gas_pipelines:
   entities:
     pipeline:
+      node:
+        - [[2,1]]
+        - [[2,3]]
       link:
         - [[1,2,3]]
       node__link__node:
@@ -574,16 +580,16 @@ transport_sector:
     dynamic:
       commodity__vehicle__region:
         node:
-          connected_vehicles: [storage_state_upper_limit,[[2]],[normalized,{}],null,PECD1]
-          energy_max: [storages_fix_cumulative,[[2]],[population,{}],null,PECD1]
-          flow_profile: [flow_profile,[[2]],[normalized,{}],null,PECD1]
-          scale_demand: [flow_annual,[[2]],[population,{}],null,PECD1]
+          connected_vehicles: [storage_state_upper_limit,[[2]],[normalized,{}],null]
+          energy_max: [storages_fix_cumulative,[[2]],[population,{}],null]
+          flow_profile: [flow_profile,[[2]],[normalized,{}],null]
+          scale_demand: [flow_annual,[[2]],[population,{}],null]
         unit:
-          power_available: [availability,[[1,2]],[normalized,{}],null,PECD1]
-          power_capacity: [units_fix_cumulative,[[1,2]],[population,{}],null,PECD1]
+          power_available: [availability,[[1,2]],[normalized,{}],null]
+          power_capacity: [units_fix_cumulative,[[1,2]],[population,{}],null]
         unit_flow__unit_flow:
-          efficiency_in: [equality_ratio,[[1,2],[2],[1],[1,2]],[normalized,{}],null,PECD1]
-          efficiency_out: [equality_ratio,[[1,2],[1],[2],[1,2]],[normalized,{}],null,PECD1]
+          efficiency_in: [equality_ratio,[[1,2],[2],[1],[1,2]],[normalized,{}],null]
+          efficiency_out: [equality_ratio,[[1,2],[1],[2],[1,2]],[normalized,{}],null]
 
 # Heat Sector Integration
 heat_sector:
@@ -671,22 +677,25 @@ heat_sector:
     dynamic:
       technology__region:
         unit:
-          units_existing: [units_existing,[[1]],[population,{}],null,PECD1]
+          units_existing: [units_existing,[[1]],[population,{}],null]
       commodity__to_technology__to_commodity__region:
         unit_flow__unit_flow:
-          conversion_rate: [equality_ratio,[[2],[3],[1],[2]],[normalized,{}],null,PECD1]
+          conversion_rate: [equality_ratio,[[2],[3],[1],[2]],[normalized,{}],null]
       storage__region:
         node:
-          storages_existing: [storages_existing,[[1]],[population,{}],null,PECD1]
+          storages_existing: [storages_existing,[[1]],[population,{}],null]
       end-use__region:
         node:
-          flow_profile: [flow_profile,[[1]],[normalized,{}],null,PECD1]
-          annual_scale: [flow_annual,[[1]],[population,{}],null,PECD1]
+          flow_profile: [flow_profile,[[1]],[normalized,{}],null]
+          annual_scale: [flow_annual,[[1]],[population,{}],null]
 
 # cargo transport map
 cargo_transport:
   entities:
     region__commodity__region:
+      node:
+        - [[2,1]]
+        - [[2,3]]
       link:
         - [[1,2,3]]
       node__link__node:

@@ -29,6 +29,11 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
     if error is not None:
         raise RuntimeError(error)
 
+def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
+    _, error = db_map.add_scenario_item(name=name_scenario)
+    if error is not None:
+        raise RuntimeError(error)
+    
 def main():
     url_db_out = sys.argv[1]
     electricity_demand = pd.read_csv(sys.argv[2],index_col=0)
@@ -47,6 +52,9 @@ def main():
         db_map.purge_items('alternative')
         db_map.purge_items('scenario')
         db_map.refresh_session()
+
+        versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
+        add_scenario(db_map,f"v_{versionconfig["residual_demand"]["version"]}")
 
         with open("rdemand_template_DB.json", 'r') as f:
             db_template = json.load(f)

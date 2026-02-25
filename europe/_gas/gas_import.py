@@ -392,6 +392,11 @@ def h2_network(target_db,sheet):
     except DBAPIError as e:
         print("commit H2 network error")
 
+def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
+    _, error = db_map.add_scenario_item(name=name_scenario)
+    if error is not None:
+        raise RuntimeError(error)
+    
 def main():
 
     print("############### Filling the output DB ###############")
@@ -403,6 +408,9 @@ def main():
         target_db.purge_items('alternative')
         target_db.purge_items('scenario')
         target_db.refresh_session()
+
+        versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
+        add_scenario(target_db,f"v_{versionconfig["gas"]["version"]}")
 
         with open("gas_template_DB.json", 'r') as f:
             db_template = json.load(f)

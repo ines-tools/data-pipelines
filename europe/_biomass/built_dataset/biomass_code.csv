@@ -1,0 +1,55 @@
+﻿type_id;cat_id;subcat_id;categorie;subcategorie;type_name;short_name;cat_aggreg
+1111;11;111;Production from forests;Stemwood from final fellings & thinnings;Stemwood from final fellings originating from nonconifer trees;Final fellings from nonconifer trees;forest
+1112;11;111;Production from forests;Stemwood from final fellings & thinnings;Stemwood from final fellings originating from conifer trees;Final fellings from conifer trees;forest
+1113;11;111;Production from forests;Stemwood from final fellings & thinnings;Stemwood from thinnings originating from nonconifer trees;Thinnings from nonconifer trees;forest
+1114;11;111;Production from forests;Stemwood from final fellings & thinnings;Stemwood from thinnings originating from conifer trees;Thinnings from conifer trees;forest
+1115;11;111;Production from forests;Stemwood from final fellings & thinnings;Stemwood from final fellings and thinnings broadleaf & coniferous trees;Stemwood from broadleaf & coniferous trees;forest
+1121;11;112;Production from forests;Stem and crown biomass from early thinnings;Stem and crown biomass from early thinnings originating from broadleaf trees;Early thinnings from nonconifer trees;forest
+1122;11;112;Production from forests;Stem and crown biomass from early thinnings;Stem and crown biomass from early thinnings originating from conifer trees;Early thinnings from conifer trees;forest
+1211;12;121;Primary residues from forests;Logging residues from final fellings & thinnings;Logging residues from final fellings originating from nonconifer trees;Logging residues from final fellings from nonconifer trees;forest
+1212;12;121;Primary residues from forests;Logging residues from final fellings & thinnings;Logging residues from final fellings originating from conifer trees;Logging residues from final fellings from conifer trees;forest
+1213;12;121;Primary residues from forests;Logging residues from final fellings & thinnings;Logging residues from thinnings from nonconifer trees;Logging residues from thinnings from nonconifer trees;forest
+1214;12;121;Primary residues from forests;Logging residues from final fellings & thinnings;Logging residues from thinnings from conifer trees;Logging residues from thinnings from conifer trees;forest
+1221;12;122;Primary residues from forests;Stumps from final fellings & and thinnings;Stumps from final fellings originating from nonconifer trees;Stumps from final fellings from nonconifer trees;forest
+1222;12;122;Primary residues from forests;Stumps from final fellings & and thinnings;Stumps from final fellings originating from conifer trees;Stumps from final fellings from conifer trees;forest
+2112;21;211;Primary production of lignocellulosic biomass crops;Energy grasses, annual & perennial crops;Miscanthus (Perennial grass);Miscanthus;agriculture
+2113;21;211;Primary production of lignocellulosic biomass crops;Energy grasses, annual & perennial crops;Switchgrass (Perennial grass);Switchgrass;agriculture
+2114;21;211;Primary production of lignocellulosic biomass crops;Energy grasses, annual & perennial crops;Giant reed (Perennial grass);Giant reed;agriculture
+2115;21;211;Primary production of lignocellulosic biomass crops;Energy grasses, annual & perennial crops;Cardoon (Perennial crop);Cardoon;agriculture
+2116;21;211;Primary production of lignocellulosic biomass crops;Energy grasses, annual & perennial crops;Reed Canary Grass (Perennial grass);Reed Canary Grass;agriculture
+2121;21;212;Primary production of lignocellulosic biomass crops;Short rotation coppice;SRC Willow;SRC Willow;agriculture
+2122;21;212;Primary production of lignocellulosic biomass crops;Short rotation coppice;SRC Poplar;SRC Poplar;agriculture
+2123;21;212;Primary production of lignocellulosic biomass crops;Short rotation coppice;Other SRC;Other SRC;agriculture
+2211;22;221;Agricultural residues;Straw/stubbles;Rice straw;Rice straw;agriculture
+2212;22;221;Agricultural residues;Straw/stubbles;Cereals straw;Cereals straw;agriculture
+2213;22;221;Agricultural residues;Straw/stubbles;Oil seed rape straw;Oil seed rape straw;agriculture
+2214;22;221;Agricultural residues;Straw/stubbles;Maize stover;Maize stover;agriculture
+2215;22;221;Agricultural residues;Straw/stubbles;Sugarbeet leaves;Sugarbeet leaves;agriculture
+2216;22;221;Agricultural residues;Straw/stubbles;Sunflower straw;Sunflower straw;agriculture
+2221;22;222;Agricultural residues;Woody prunning & orchards residues;Residues from vineyards;Residues from vineyards;agriculture
+2222;22;222;Agricultural residues;Woody prunning & orchards residues;Residues from fruit tree plantations (apples, pears and soft fruit);Residues from fruit tree plantations;agriculture
+2223;22;222;Agricultural residues;Woody prunning & orchards residues;Residues from olives tree plantations;Residues from olives tree plantations;agriculture
+2224;22;222;Agricultural residues;Woody prunning & orchards residues;Residues from citrus tree plantations;Residues from citrus tree plantations;agriculture
+2225;22;222;Agricultural residues;Woody prunning & orchards residues;Residues from nuts plantation;Residues from nuts plantation;agriculture
+2311;23;231;Grassland;Grassland;Unused grassland cuttings (abandoned grassland, managed grasslands not used for feed)  ;Unused grassland cuttings;agriculture
+3121;3;312;Other land use;Biomass from road side verges;Grassy biomass from road side verges;Road side verges (grassy);agriculture
+4111;41;411;Secondary residues from wood industries;Saw mill residues;Sawdust from sawmills from conifers;Sawdust (conifers);forest
+4112;41;411;Secondary residues from wood industries;Saw mill residues;Sawdust from sawmills from nonconifers;Sawdust (nonconifers);forest
+4113;41;411;Secondary residues from wood industries;Saw mill residues;Sawmill residues: excluding sawdust, conifers;Other residues (conifers);forest
+4114;41;411;Secondary residues from wood industries;Saw mill residues;Sawmill residues: excluding sawdust, nonconifers;Other residues (nonconifers);forest
+4121;41;412;Secondary residues from wood industries;Other wood processing industry residues;Residues industries producing semi finished wood based panels ;Residues from industries producing semi finished wood based panels;forest
+4122;41;412;Secondary residues from wood industries;Other wood processing industry residues;Residues from further woodprocessing;Residues from further woodprocessing;forest
+4131;41;413;Secondary residues from wood industries;Secondary residues from pulp and paper industry;Bark residues from pulp and paper industry;Bark;forest
+4132;41;413;Secondary residues from wood industries;Secondary residues from pulp and paper industry;Black liquor;Black liquor;forest
+4211;42;421;Secondary residues of industry utilising agricultural products;By-products and residues from food and fruit processing industry;Olive-stones;Olive-stones;agriculture
+4212;42;421;Secondary residues of industry utilising agricultural products;By-products and residues from food and fruit processing industry;Other by-;Other by-;agriculture
+4213;42;421;Secondary residues of industry utilising agricultural products;By-products and residues from food and fruit processing industry;Rice husk;Rice husk;agriculture
+4214;42;421;Secondary residues of industry utilising agricultural products;By-products and residues from food and fruit processing industry;Pressed grapes dregs;Pressed grapes dregs;agriculture
+4215;42;421;Secondary residues of industry utilising agricultural products;By-products and residues from food and fruit processing industry;Cereal bran;Cereal bran;agriculture
+5111;51;511;Municipal waste;Biodegradable municipal waste;Biowaste as part of integrally collected municipal waste: Biodegradable waste of not separately collected municipal  waste (excluding textile and paper);Biowaste unseparately collected;organic waste
+5112;51;511;Municipal waste;Biodegradable municipal waste;Separately collected biowaste: Biodegradable waste of separately collected municipal waste (excluding textile and paper);Biowaste separately collected;organic waste
+5211;52;521;Waste from wood ;Post consumer wood;Hazardous post consumer wood;Hazardous post consumer wood;forest
+5212;52;521;Waste from wood ;Post consumer wood;Non hazardous post consumer wood;Non hazardous post consumer wood;forest
+6111;61;611;Non-woody biomass; Animal-based fuels; Manure; Manure liquid;agriculture
+6112;61;611;Non-woody biomass; Animal-based fuels; Manure; Manure solid;agriculture
+6113;61;611;Non-woody biomass; Other biomass fuels; Biosludge; Biosludge;agriculture

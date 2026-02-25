@@ -48,6 +48,11 @@ def add_network(target_db, network,cost):
             sea_condition = "road" if row.iloc[3] else "maritime"
             add_parameter_value(target_db,entity_class,"operational_cost","Base",entity_byname,round(np.mean(cost[commodity][sea_condition])*row.iloc[2],1))
 
+def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
+    _, error = db_map.add_scenario_item(name=name_scenario)
+    if error is not None:
+        raise RuntimeError(error)
+    
 def main():
 
     # Spine Inputs
@@ -64,6 +69,9 @@ def main():
         target_db.purge_items('alternative')
         target_db.purge_items('scenario')
         target_db.refresh_session()
+
+        versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
+        add_scenario(target_db,f"v_{versionconfig["cargo"]["version"]}")
 
         with open("cargo_template_DB.json", 'r') as f:
             db_template = json.load(f)

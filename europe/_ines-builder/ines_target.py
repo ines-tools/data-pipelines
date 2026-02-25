@@ -11,6 +11,8 @@ import json
 import yaml 
 import time as time_lib
 
+network_nodes = {}
+
 def nested_index_names(value, names = None, depth = 0):
     if names is None:
         names = []
@@ -265,19 +267,22 @@ def add_nodes(db_map : DatabaseMapping, db_com : DatabaseMapping, config : dict)
         list_names = entity_node.split("_")
         if list_names[0] in config["user"]["commodity"]:
             add_parameter_value(db_map,"node","node_type","Base",(entity_node,),config["user"]["commodity"][list_names[0]]["node_type"])
-            if config["user"]["commodity"][list_names[0]]["node_type"] == "commodity":
-                param_list = config["sys"]["commodities"]["commodity"][entity_class]
-                for param_source in param_list:
-                    param_target = param_list[param_source][0]
-                    multiplier = param_list[param_source][1]
-                    values_ = db_com.get_parameter_value_items(entity_class_name="commodity",entity_byname=(list_names[0],),parameter_definition_name=param_source)
-                    if values_:
-                        for value_ in values_:
-                            value_param = multiplier*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:multiplier*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
-                            add_parameter_value(db_map,entity_class,param_target,value_["alternative_name"],(entity_node,),value_param)
         else:
             add_parameter_value(db_map,"node","node_type","Base",(entity_node,),"balance")
 
+    for parameter_map in db_map.get_parameter_value_items(entity_class_name="node",parameter_definition_name="node_type",alternative_name="Base"):
+        if parameter_map["parsed_value"] == "commodity":
+            param_list = config["sys"]["commodities"]["commodity"][parameter_map["entity_class_name"]]
+            commodity_name = parameter_map["entity_byname"][0].split("_")[0]
+            for param_source in param_list:
+                param_target = param_list[param_source][0]
+                multiplier = param_list[param_source][1]
+                values_ = db_com.get_parameter_value_items(entity_class_name="commodity",entity_byname=(commodity_name,),parameter_definition_name=param_source)
+                if values_:
+                    for value_ in values_:
+                        value_param = multiplier*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:multiplier*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                        add_parameter_value(db_map,entity_class,param_target,value_["alternative_name"],parameter_map["entity_byname"],value_param)
+                
     node__to_unit    = [entity_map["entity_byname"][0] for entity_map in db_map.get_entity_items(entity_class_name = "node__to_unit")]
     unit__to_node    = [entity_map["entity_byname"][1] for entity_map in db_map.get_entity_items(entity_class_name = "unit__to_node")]
     node__link__node = [node_i for entity_map in db_map.get_entity_items(entity_class_name = "node__link__node") for node_i in [entity_map["entity_byname"][0],entity_map["entity_byname"][2]]]
@@ -286,10 +291,19 @@ def add_nodes(db_map : DatabaseMapping, db_com : DatabaseMapping, config : dict)
             item_id = node["id"]
             db_map.remove_item("entity",item_id)
 
-def add_electricity_demand(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict) -> None:
-    db_name = "elec_demand"
+def add_electricity_demand(db_map : DatabaseMapping, db_source : DatabaseMapping, config : dict, db_name : str) -> None:
+    
+    if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["on"]
+        off_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]["off"]
+    else:
+        on_target_resolution = config["user"]["pipelines"][db_name]["target_resolution"]
+        off_target_resolution = None
+    
+    polygons = define_polygons(config["user"],config["transformer"],on_target_resolution,off_target_resolution)
+    
     start_time = time_lib.time()
-    region_params = spatial_transformation(db_source, config, db_name)
+    region_params = spatial_transformation(db_source, config, db_name, polygons)
     print(f"Time Calculating Aggregation: {time_lib.time()-start_time} s")
 
     print("ADDING ELEC DEMAND TIME SERIES")
@@ -303,8 +317,8 @@ def add_electricity_demand(db_map : DatabaseMapping, db_source : DatabaseMapping
             entity_target_names   = []
             status = False 
 
-            for poly in config["onshore_polygons"]:
-                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on")
+            for poly in polygons["onshore_polygons"]:
+                entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on",polygons)
 
                 if definition_condition == True:
                     for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
@@ -592,6 +606,7 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
     
     print(db_name,"WARNING: Source DB must be in the user-defined target resolution")
     print("ADDING POWER TRANSMISSION")
+
     for entity_class in config["sys"][db_name]["entities"]:
         entities = db_source.get_entity_items(entity_class_name = entity_class)
         
@@ -600,12 +615,30 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if entity_names[0] in polygons["onshore_polygons"] and entity_names[-1] in polygons["onshore_polygons"] and config["user"]["network"][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["node_type"] == "balance":               
+            if (entity_names[0] in polygons["onshore_polygons"] or entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["node_type"] == "balance":               
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
                             entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in entity_target_building])
-                            add_entity(db_map,entity_class_target,entity_target_name)
+                            try:
+                                if entity_class_target == "node":
+                                    if entity_names[entity_target_building[0][1]-1] in polygons["onshore_polygons"]:
+                                        commodity_name = entity_names[entity_target_building[0][0]-1]
+                                        if commodity_name not in network_nodes:
+                                            network_nodes[commodity_name] = {}
+                                        country_name = entity_names[entity_target_building[0][1]-1][:2]
+                                        region_name = entity_names[entity_target_building[0][1]-1]
+                                        if country_name not in network_nodes[commodity_name]:
+                                            network_nodes[commodity_name][country_name] = []
+                                        if region_name not in network_nodes[commodity_name][country_name]:
+                                            network_nodes[commodity_name][country_name].append(region_name)
+                                add_entity(db_map,entity_class_target,entity_target_name)
+                                if entity_class_target == "node":
+                                    if entity_names[entity_target_building[0][1]-1] not in polygons["onshore_polygons"]:
+                                        add_parameter_value(db_map,"node","node_type","Base",entity_target_name,"commodity")
+                            except:
+                                print(f"Repeated Entity {entity_class} {entity_name}, then not added")
+                                pass
 
                     # Default Parameters
                     if entity_class in config["sys"][db_name]["parameters"]["default"]:
@@ -630,7 +663,7 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
                                     for value_ in values_:
                                         value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
                                         add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)
-                        
+
 def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, config :dict, db_name : str) -> None:
 
     if isinstance(config["user"]["pipelines"][db_name]["target_resolution"],dict):
@@ -912,7 +945,26 @@ def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, con
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
                             entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in entity_target_building])
-                            add_entity(db_map,entity_class_target,entity_target_name)
+                            try:
+                                if entity_class_target == "node":
+                                    if entity_names[entity_target_building[0][1]-1] in polygons["onshore_polygons"]:
+                                        commodity_name = entity_names[entity_target_building[0][0]-1]
+                                        if commodity_name not in network_nodes:
+                                            network_nodes[commodity_name] = {}
+                                        country_name = entity_names[entity_target_building[0][1]-1][:2]
+                                        region_name = entity_names[entity_target_building[0][1]-1]
+                                        if country_name not in network_nodes[commodity_name]:
+                                            network_nodes[commodity_name][country_name] = []
+                                        if region_name not in network_nodes[commodity_name][country_name]:
+                                            network_nodes[commodity_name][country_name].append(region_name)
+                                add_entity(db_map,entity_class_target,entity_target_name)
+                                if entity_class_target == "node":
+                                    if entity_names[entity_target_building[0][1]-1] not in polygons["onshore_polygons"]:
+                                        add_parameter_value(db_map,"node","node_type","Base",entity_target_name,"commodity")
+                            except:
+                                print(f"Repeated Entity {entity_class} {entity_name}, then not added")
+                                pass
+
 
                     # Default Parameters
                     if entity_class in config["sys"][db_name]["parameters"]["default"]:
@@ -1158,7 +1210,26 @@ def add_cargo_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
                             entity_target_name = tuple(["_".join([entity_names[i-1] for i in k]) for k in entity_target_building])
-                            add_entity(db_map,entity_class_target,entity_target_name)
+                            try:
+                                if entity_class_target == "node":
+                                    if entity_names[entity_target_building[0][1]-1] in polygons["onshore_polygons"]:
+                                        commodity_name = entity_names[entity_target_building[0][0]-1]
+                                        if commodity_name not in network_nodes:
+                                            network_nodes[commodity_name] = {}
+                                        country_name = entity_names[entity_target_building[0][1]-1][:2]
+                                        region_name = entity_names[entity_target_building[0][1]-1]
+                                        if country_name not in network_nodes[commodity_name]:
+                                            network_nodes[commodity_name][country_name] = []
+                                        if region_name not in network_nodes[commodity_name][country_name]:
+                                            network_nodes[commodity_name][country_name].append(region_name)
+                                add_entity(db_map,entity_class_target,entity_target_name)
+                                if entity_class_target == "node":
+                                    if entity_names[entity_target_building[0][1]-1] not in polygons["onshore_polygons"]:
+                                        add_parameter_value(db_map,"node","node_type","Base",entity_target_name,"commodity")
+                            except:
+                                print(f"Repeated Entity {entity_class} {entity_name}, then not added")
+                                pass
+
 
                     # Default Parameters
                     if entity_class in config["sys"][db_name]["parameters"]["default"]:
@@ -1181,7 +1252,45 @@ def add_cargo_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
                                     for value_ in values_:
                                         value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
                                         add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)
-          
+
+def coupling_spatial_resolutions(db_map : DatabaseMapping, config : dict):
+
+    mopo_resolutions = ["PECD1","PECD2","NUTS2","NUTS3"]
+    commodity_pipeline = {"elec":"power_transmission","CH4":"gas_pipelines","H2":"gas_pipelines","bio":"cargo_transport","HC":"cargo_transport","MeOH":"cargo_transport"}
+    for commodity in config["user"]["network"]:
+        if config["user"]["commodity"][commodity]["status"]:
+            commodity_resolution = config["user"]["pipelines"][commodity_pipeline[commodity]]["target_resolution"]
+            if commodity not in network_nodes:
+                network_nodes[commodity] = {}
+            for node_name in [i["entity_byname"][0] for i in db_map.get_parameter_value_items(entity_class_name = "node", alternative_name="Base", parameter_definition_name = "node_type") if i["parsed_value"] == "balance" and commodity in i["entity_byname"][0]]:
+                polygon_name = node_name.split("_")[1]
+                country_code = node_name.split("_")[1][:2]
+                if country_code in network_nodes[commodity]:
+                    target_polygons = network_nodes[commodity][country_code]
+                    target_resolution = commodity_resolution
+                else:
+                    target_polygons = [country_code]
+                    target_resolution = "PECD1"
+                    try:
+                        add_entity(db_map,"node",(f"{commodity}_{country_code}",))
+                    except:
+                        pass
+                for target_polygon in target_polygons:
+                    if target_polygon != polygon_name:
+                        for resolution in [i for i in mopo_resolutions if i != target_resolution]:
+                            df_region = config["transformer"][f"{resolution}_{target_resolution}"]
+                            check_connection = df_region[(df_region["source"]==polygon_name)&(df_region["target"]==target_polygon)].index.tolist()
+                            if check_connection:
+                                link_name = f"{polygon_name}_{commodity}_{target_polygon}"
+                                node_name_1 = f"{commodity}_{polygon_name}"
+                                node_name_2 = f"{commodity}_{target_polygon}"
+                                add_entity(db_map,"link",(link_name,))
+                                add_entity(db_map,"node__link__node",(node_name_1,link_name,node_name_2))
+                                add_entity(db_map,"node__link__node",(node_name_2,link_name,node_name_1))
+                                add_parameter_value(db_map,"node__link__node","efficiency","Base",(node_name_1,link_name,node_name_2),1.0)
+                                add_parameter_value(db_map,"node__link__node","efficiency","Base",(node_name_2,link_name,node_name_1),1.0)
+                                break
+
 def add_policy_constraints(db_map : DatabaseMapping, config : dict):
 
     co2_values = [config["user"]["global_constraints"]["co2_annual_budget"][year] for year in config["user"]["global_constraints"]["co2_annual_budget"]]
@@ -1292,7 +1401,7 @@ def main():
                     db_map.commit_session("power_transmission_added")
                 except:
                     print("Error committing the transmission pipeline, likely because you have modeled one country")
-        
+
         db_name = "residual_demand"
         # Electricity Demand
         if config["user"]["pipelines"][db_name]["status"]:
@@ -1381,6 +1490,9 @@ def main():
             add_nodes(db_map,db_com,config)
             print("nodes_added")
             db_map.commit_session("nodes_added")
+
+        # Coupling sector with different resolution
+        coupling_spatial_resolutions(db_map, config)
 
         # Policy Constraints
         add_policy_constraints(db_map,config)

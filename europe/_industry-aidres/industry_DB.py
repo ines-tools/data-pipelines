@@ -4,6 +4,7 @@ import sys
 import pandas as pd
 import numpy as np
 import json
+import yaml
 
 def add_entity(db_map : DatabaseMapping, class_name : str, element_names : tuple) -> None:
     _, error = db_map.add_entity_item(entity_byname=element_names, entity_class_name=class_name)
@@ -163,6 +164,11 @@ def demand_sectors(target_db,sheet,nodes):
                 if sheet.at[i,"to_node"] != "HC":
                     add_parameter_value(target_db, entity_name, "demand", "Base", entity_byname, -1*multiplier*float(sheet.at[i,"2030"])) # same demand for every year
 
+def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
+    _, error = db_map.add_scenario_item(name=name_scenario)
+    if error is not None:
+        raise RuntimeError(error)
+    
 def main():
 
     # Spine Inputs
@@ -194,6 +200,9 @@ def main():
             target_db.purge_items('alternative')
             target_db.purge_items('scenario')
             target_db.refresh_session()
+
+            versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
+            add_scenario(target_db,f"v_{versionconfig["industry"]["version"]}")
 
             with open("industry_template_DB.json", 'r') as f:
                 db_template = json.load(f)

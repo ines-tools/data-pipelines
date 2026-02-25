@@ -23,7 +23,11 @@ def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
     _, error = db_map.add_alternative_item(name=name_alternative)
     if error is not None:
         raise RuntimeError(error)
-    
+
+def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
+    _, error = db_map.add_scenario_item(name=name_scenario)
+    if error is not None:
+        raise RuntimeError(error)
 
 def process_parameters(target_db, sheet):
 
@@ -205,6 +209,9 @@ def main():
         target_db.purge_items('scenario')
         target_db.refresh_session()
 
+        versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
+        add_scenario(target_db,f"v_{versionconfig["hydro"]["version"]}")
+
         with open("hydro_template_DB.json", 'r') as f:
             db_template = json.load(f)
         # Importing Map
@@ -231,9 +238,6 @@ def main():
         ror_parameters(target_db,ror_params,weather_years)
         target_db.commit_session("ror_params_added")
         print("ror_params_added")
-
-        
-
 
 if __name__ == "__main__":
     main()

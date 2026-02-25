@@ -1,0 +1,46 @@
+enspreso_code;enspreso_name;MOPO_db_cat_id
+MINBIOAGRW1;cherries;2222
+MINBIOAGRW1;maizestraw;2214
+MINBIOAGRW1;Olive pits;4211
+MINBIOAGRW1;olives;2223
+MINBIOAGRW1;cerealstraw;2212
+MINBIOAGRW1;grass for biogas;22
+MINBIOAGRW1;maize for biogas;22
+MINBIOAGRW1;osr;22
+MINBIOAGRW1;vineyards;2221
+MINBIOAGRW1;ricestraw;2211
+MINBIOAGRW1;sugarbeettops;2215
+MINBIOAGRW1;apples;2222
+MINBIOAGRW1;citrus;2224
+MINBIOAGRW1;-;22
+MINBIOCRP11;'Bioethanol_durum_wheat;21
+MINBIOCRP11;Bioethanol_maize;21
+MINBIOCRP11;Bioethanol_softwheat;21
+MINBIOCRP11;'Bioethanol_barley;21
+MINBIOCRP11;Bioethanol_rey;21
+MINBIOCRP11;Bioethanol_other_cereals;21
+MINBIOCRP11;Bioethanol_oats;21
+MINBIOCRP21;Bioethanol_sugarbeet;21
+MINBIOCRP31;Miscanthus;2112
+MINBIOCRP31;Switchgrass;2113
+MINBIOCRP31;RCG;2116
+MINBIOCRP41;Willow;2121
+MINBIOCRP41a;Poplar;2122
+MINBIOFRSR1;C&P_Res;12
+MINBIOFRSR1;Fuelwood Res;12
+MINBIOFRSR1a;landscapecare;3
+MINBIOFRSR1a;-;3
+MINBIOGAS1;manure_liq;6111
+MINBIOGAS1;manure_sol;6112
+MINBIOGAS1;-;611
+MINBIOLIQ1;Biodiesel_soya;21
+MINBIOLIQ1;Biodiesel_sunflower_seed;2216
+MINBIOMUN1;Municipal waste;51
+MINBIORPS1;Biodiesel_rape_seed;2213
+MINBIOSLU1;sludge;6113
+MINBIOWOO;FuelwoodRW;111
+MINBIOWOOa;C&P_RW;111
+MINBIOWOOW1;othersecresid;4113
+MINBIOWOOW1a;sawdust;4111
+MINBIOWOOW1;-;4114
+MINBIOWOOW1a;-;4112

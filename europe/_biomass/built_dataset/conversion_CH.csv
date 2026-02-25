@@ -1,0 +1,11 @@
+categorie;type_id;roadside_costs;enspreso_code;enspreso_name
+Green Waste;5111;4.41304347826086;MINBIOFRSR1a;landscapecare
+Org.  part of household garbage;5112;-1.217391304347828;;
+Sewage Sludge;6112;23.51086956521739;MINBIOSLU1;sludge
+Animal Manure;6111;1.4456521739130395;MINBIOGAS1;manure_liq
+Agricultural crop by-products;2212;6.923913043478258;MINBIOAGRW1;cerealstraw
+Commercial and industrial org. waste ;5111;5.70652173913043;MINBIOFRSR1a;landscapecare
+Forest wood;1111;5.70652173913043;MINBIOWOO;FuelwoodRW
+Wood from landscape maintenance;2221;7.076086956521738;MINBIOFRSR1a;landscapecare
+Wood residues;4114;1.673913043478258;MINBIOWOOW1;othersecresid
+Waste wood;5212;28.83695652173913;MINBIOWOOW1;othersecresid

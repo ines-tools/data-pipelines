@@ -224,6 +224,11 @@ def add_nonroad_timeseries(target_db,data,cyears):
                 map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(annual_scale[year],1) for year in df_index["year"].unique()}}
                 add_parameter_value(target_db,entity_name,"scale_demand","Base",entity_byname,map_profile)
 
+def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
+    _, error = db_map.add_scenario_item(name=name_scenario)
+    if error is not None:
+        raise RuntimeError(error)
+    
 def main():
 
     # Spine Inputs
@@ -255,6 +260,9 @@ def main():
         target_db.purge_items('alternative')
         target_db.purge_items('scenario')
         target_db.refresh_session()
+
+        versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
+        add_scenario(target_db,f"v_{versionconfig["transport"]["version"]}")
 
         with open("transport_template_DB.json", 'r') as f:
             db_template = json.load(f)

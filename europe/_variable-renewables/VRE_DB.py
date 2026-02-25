@@ -55,6 +55,11 @@ def add_technology_relationship(db_map, tech_type, tech, poly, potential, availa
 def path_to_file(file_list,file):
     return [element for element in file_list if file in element][0]
 
+def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
+    _, error = db_map.add_scenario_item(name=name_scenario)
+    if error is not None:
+        raise RuntimeError(error)
+    
 def main():
 
     url_db_out = sys.argv[1]
@@ -85,6 +90,9 @@ def main():
         db_map.purge_items('alternative')
         db_map.purge_items('scenario')
         db_map.refresh_session()
+
+        versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
+        add_scenario(db_map,f"v_{versionconfig["vre"]["version"]}")
 
         with open("VRE_template_DB.json", 'r') as f:
             db_template = json.load(f)
