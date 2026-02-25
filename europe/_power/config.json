@@ -30,12 +30,5 @@
         "battery-storage",
         "battery-storage-iron-air"
     ],
-    "commodities":[],
-    "fossil_commodities":[
-        "bio",
-        "CH4",
-        "coal",
-        "HC",
-        "waste"
-    ]
+    "commodities":[]
 }

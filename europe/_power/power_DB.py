@@ -102,7 +102,6 @@ def main(
         units_existing = config["units_existing"]
         units_new = config["units_new"]
         commodities = config["commodities"]
-        fossil_commodities = config["fossil_commodities"]
 
     # load geo data
     geomap = gpd.read_file(geo)
@@ -152,7 +151,6 @@ def main(
         geomap,
         units_existing,
         commodities,
-        fossil_commodities,
     )
     new_units(
         jaif,
@@ -162,7 +160,6 @@ def main(
         regions,
         units_new,
         commodities,
-        fossil_commodities,
     )
 
     # warn for none values before saving
@@ -217,7 +214,6 @@ def existing_units(
     geomap,
     units_existing,
     commodities,
-    fossil_commodities,
 ):
     """
     Adds existing units to jaif
@@ -294,6 +290,7 @@ def existing_units(
         if unit["entityclass"] == "PP":
             if unit["technology"] not in technologylist:
                 technologylist.append(unit["technology"])
+                has_carbon_capture = "+CC" in unit["technology"]
                 jaif["entities"].extend(
                     [
                         ["technology", unit["technology"] + "-existing", None],
@@ -304,7 +301,7 @@ def existing_units(
                         ],
                     ]
                 )
-                if unit["commodity"] in fossil_commodities:
+                if has_carbon_capture:
                     jaif["entities"].append(
                         [
                             "technology__to_commodity",
@@ -330,6 +327,10 @@ def existing_units(
                                 ],
                                 None,
                             ],
+                        ]
+                    )
+                    if has_carbon_capture:
+                        jaif["entities"].append(
                             [
                                 "commodity__to_technology__to_commodity",
                                 [
@@ -338,9 +339,8 @@ def existing_units(
                                     "CO2",
                                 ],
                                 None,
-                            ],
-                        ]
-                    )
+                            ]
+                        )
 
                 _, fixed_cost_abs = calculate_investment_and_fixed_costs(
                     unit,
@@ -423,7 +423,7 @@ def existing_units(
                         "CO2_captured",
                         prioritise_assumption=True,
                     )
-                    if co2_captured is not None:
+                    if has_carbon_capture and co2_captured is not None:
                         jaif["parameter_values"].append(
                             [
                                 "commodity__to_technology__to_commodity",
@@ -673,7 +673,6 @@ def new_units(
     regions,
     units_new,
     commodities,
-    fossil_commodities,
 ):
     """
     Adds new units to jaif
@@ -731,6 +730,7 @@ def new_units(
         if unit["entityclass"] == "PP":
             if unit["technology"] not in technologylist:
                 technologylist.append(unit["technology"])
+                has_carbon_capture = "+CC" in unit["technology"]
 
                 jaif["entities"].extend(
                     [
@@ -742,7 +742,7 @@ def new_units(
                         ],
                     ]
                 )
-                if unit["commodity"] in fossil_commodities:
+                if has_carbon_capture:
                     jaif["entities"].append(
                         [
                             "technology__to_commodity",
@@ -764,13 +764,16 @@ def new_units(
                                 [unit["commodity"], unit["technology"], "elec"],
                                 None,
                             ],
+                        ]
+                    )
+                    if has_carbon_capture:
+                        jaif["entities"].append(
                             [
                                 "commodity__to_technology__to_commodity",
                                 [unit["commodity"], unit["technology"], "CO2"],
                                 None,
-                            ],
-                        ]
-                    )
+                            ]
+                        )
 
                 # Calculate investment and fixed costs
                 invest_cost, fixed_cost = calculate_investment_and_fixed_costs(
@@ -870,7 +873,7 @@ def new_units(
                         "CO2_captured",
                         prioritise_assumption=True,
                     )
-                    if co2_captured is not None:
+                    if has_carbon_capture and co2_captured is not None:
                         jaif["parameter_values"].append(
                             [
                                 "commodity__to_technology__to_commodity",
