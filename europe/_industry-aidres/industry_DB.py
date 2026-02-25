@@ -179,7 +179,7 @@ def main():
 
     # Spine Inputs
     dbs_dict = {
-        "part1" : [sys.argv[1],"nuts0",
+        "part1" : [sys.argv[1],"nuts3",
                    ["cement","chemical-chlorine","chemical-olefins","chemical-PE","chemical-PEA",
                     "fertiliser-ammonia-NH3","glass-container","glass-fibre","glass-float",
                     "HC","steel-primary","steel-secondary","MeOH"]],

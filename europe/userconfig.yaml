@@ -4,7 +4,7 @@
 pipelines:
   power_sector: 
     status: True
-    source_resolution: PECD2
+    source_resolution: NUTS3
     target_resolution: PECD1
   vre:
     status: False
@@ -40,7 +40,7 @@ pipelines:
     target_resolution: PECD1
   industrial_sector:
     status: True
-    source_resolution: PECD1
+    source_resolution: NUTS3
     target_resolution: PECD1
   other_industrial_sector:
     status: True
@@ -669,7 +669,7 @@ technology:
     status: False
   wood-and-wood-products_production-reference:
     status: False
-    
+
 end-use:
   nonres-cool:
     status: True
