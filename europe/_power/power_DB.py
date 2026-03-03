@@ -1173,6 +1173,19 @@ def aggregate_units(
         # original_unit = unit.copy()  # debugline
         # print(unit["Country"])  # debugline
         unit = map_ppm_jaif(unit)
+        if "capacity" in unit:
+            lifetime = search_data(
+                unit,
+                assumptions,
+                unit_types,
+                unit["technology"],
+                [baseyear],
+                "lifetime",
+            )
+            unit["capacity"] = decay_capacity(unit, lifetime, milestoneyears)
+            if sum(unit["capacity"].values()) <= 0.0:
+                # ignore the existing unit if it is not present in the milestone years
+                continue
         unit["region"] = get_region(unit, geomap)
         # print(unit["region"])  # debugline
 
@@ -1228,18 +1241,6 @@ def aggregate_units(
                     else:
                         aggregated_unit[parameter] = None
                 for parameter in cumulative_parameters:
-                    if parameter == "capacity":
-                        lifetime = search_data(
-                            unit,
-                            assumptions,
-                            unit_types,
-                            unit["technology"],
-                            [baseyear],
-                            "lifetime",
-                        )
-                        unit["capacity"] = decay_capacity(
-                            unit, lifetime, milestoneyears
-                        )
                     if unit[parameter]:
                         aggregated_unit[parameter] = deepcopy(unit[parameter])
                     else:
@@ -1278,19 +1279,6 @@ def aggregate_units(
                     elif unit[parameter]:
                         aggregated_unit[parameter] = float(unit[parameter])
                 for parameter in cumulative_parameters:
-                    if parameter == "capacity":
-                        lifetime = search_data(
-                            unit,
-                            assumptions,
-                            unit_types,
-                            unit["technology"],
-                            [baseyear],
-                            "lifetime",
-                        )
-                        unit["capacity"] = decay_capacity(
-                            unit, lifetime, milestoneyears
-                        )
-                    # else assume data is already in correct format
                     if aggregated_unit[parameter] and unit[parameter]:
                         for year in aggregated_unit[parameter].keys():
                             aggregated_unit[parameter][year] += unit[parameter][year]
