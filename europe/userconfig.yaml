@@ -3,11 +3,11 @@
 
 pipelines:
   power_sector: 
-    status: True
-    source_resolution: NUTS3
-    target_resolution: PECD1
+    status: True             # include pipeline or not
+    source_resolution: PECD1 # Do not touch unless you rerun the corresponding pipeline producing data in that resolution
+    target_resolution: PECD1 # Using the weighting factors from the documentation (configurable in sysconfig.yaml file)
   vre:
-    status: False
+    status: True
     source_resolution:
       "on": PECD2 
       "off": OFF3
@@ -40,7 +40,7 @@ pipelines:
     target_resolution: PECD1
   industrial_sector:
     status: True
-    source_resolution: NUTS3
+    source_resolution: PECD1
     target_resolution: PECD1
   other_industrial_sector:
     status: True
@@ -62,8 +62,8 @@ pipelines:
 model:
     type :  brownfield # greenfied not included yet
     operations_resolution : "1h"
-    planning_resolution : "365D"
-    planning_years: # options: 2030, 2040 and 2050
+    planning_resolution : "365D" # it builds this optimization window for each planning year
+    planning_years: # options: 2030, 2040 and 2050 (parameters limitation)
       "2030": ["2030-01-01T00:00:00",10.0] # start datetime and years represented
       "2040": ["2041-01-01T00:00:00",10.0] # 2041 no leap year
       "2050": ["2050-01-01T00:00:00",10.0]
@@ -71,7 +71,7 @@ model:
 timeline:
   historical_alt : 
     CY_1995 :
-      start : "1995-01-01T00:00:00"
+      start : "1995-01-01T00:00:00" # it will include this year in the data pipeline, INES will import the historical record from the pipeline without checking this parameter 
     CY_2008 :
       start : "2008-01-01T00:00:00"
     CY_2009 :
@@ -79,8 +79,8 @@ timeline:
 
 global_constraints:
   co2_annual_budget:
-    "2030": 2200000000 # European level
-    "2040": 550000000 # European level
+    "2030": 2200000000 # European level, if running a country-level model, then adjust this factor
+    "2040": 550000000  # European level
     "2050": 0.0
   co2_annual_sequestration: 200000000 # system level
 
@@ -92,7 +92,7 @@ countries :
 # Sectors optimized
 commodity: 
   elec: 
-    status: True # True = defined per country, False = global node in the model
+    status: True       # True = defined per country, False = global node in the model
     node_type: balance # Balance = there is balance, commodity = no balance equation, storage = it is a storage node and defined per country
   CH4: 
     status: True
@@ -136,21 +136,21 @@ commodity:
 
 network: 
   elec: 
-    status: True # True = it is modeled
+    status: False # True = it is modeled
   CH4: 
-    status: True
+    status: False
   H2: 
-    status: True
+    status: False
   MeOH: 
-    status: True 
+    status: False
   HC: 
-    status: True
+    status: False
   bio: 
-    status: True
+    status: False
 
 storage:
   battery-storage:
-    status: True # True = it is included in the model
+    status: True                    # True = it is included in the model
     investment_method : "no_limits" # not_allowed, no_limits or cumulative_limits
   battery-storage-iron-air:
     status: True 
@@ -165,7 +165,7 @@ storage:
 # Technologies definition
 technology:
   oil-eng: 
-    status: True # True = it is included in the model
+    status: True                   # True = it is included in the model
     investment_method: "no_limits" # not_allowed, no_limits or cumulative_limits
   oil-eng-existing: 
     status: True
@@ -610,65 +610,65 @@ technology:
   WPI-BOF-MEA:
     status: true
   alumina-production-alternative:
-    status: False
+    status: True
   alumina-production-reference:
-    status: False
+    status: True
   aluminium-primary-production-alternative:
-    status: False
+    status: True
   aluminium-primary-production-reference:
-    status: False
+    status: True
   aluminium-secondary-production-alternative:
-    status: False
+    status: True
   aluminium-secondary-production-reference:
-    status: False
+    status: True
   food-beverages-tobacco-production-alternative:
-    status: False
+    status: True
   food-beverages-tobacco-production-reference:
-    status: False
+    status: True
   leather-and-textile-production-alternative:
-    status: False
+    status: True
   leather-and-textile-production-reference:
-    status: False
+    status: True
   machinery-equipment-production-alternative:
-    status: False
+    status: True
   machinery-equipment-production-reference:
-    status: False
+    status: True
   other-non-ferrous-metals-production-alternative:
-    status: False
+    status: True
   other-non-ferrous-metals-production-reference:
-    status: False
+    status: True
   paper-production-alternative:
-    status: False
+    status: True
   paper-production-reference:
-    status: False
+    status: True
   pharmaceuticals-production-alternative:
-    status: False
+    status: True
   pharmaceuticals-production-reference:
-    status: False
+    status: True
   printing-and-media-production-alternative:
-    status: False
+    status: True
   printing-and-media-production-reference:
-    status: False
+    status: True
   pulp-production-alternative:
-    status: False
+    status: True
   pulp-production-reference:
-    status: False
+    status: True
   steel-electric-arc-finishing-alternative:
-    status: False
+    status: True
   steel-electric-arc-finishing-reference:
-    status: False
+    status: True
   steel-electric-arc-rolling-alternative:
-    status: False
+    status: True
   steel-electric-arc-rolling-reference:
-    status: False
+    status: True
   transport-equipment-production-alternative:
-    status: False
+    status: True
   transport-equipment-production-reference:
-    status: False
+    status: True
   wood-and-wood-products_production-alternative:
-    status: False
+    status: True
   wood-and-wood-products_production-reference:
-    status: False
+    status: True
 
 end-use:
   nonres-cool:
@@ -684,9 +684,9 @@ end-use:
   res-DHW:
     status: True
   DH-space:
-    status: False
+    status: False # not included this demand in the data pipeline
   DH-DHW:
-    status: False
+    status: False # not included this demand in the data pipeline
     
 vehicle:
   car:

@@ -36,45 +36,48 @@ def add_tech_parameters(target_db,industry,node,sheets):
     entity_name = "technology__to_commodity"
     entity_byname = (industry,node)
     df = sheets["ind_process_routes_capex"]
-    array_p = (df[(df.Industry==industry)][planning_years].values.flatten().round(2)*8760.0).tolist()
-    print(array_p)
-    param_type = "map" if not all(array_p[0] == i for i in array_p) else "float"
-    print(param_type,industry)
-    if array_p[0] > 0.0:
-        if param_type == "map":
-            value_param =  dict(zip([f"y{year}" for year in planning_years],array_p))
-            map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
-            add_parameter_value(target_db, entity_name, "investment_cost", "Base", entity_byname, map_param)
-        elif param_type == "float":
-            add_parameter_value(target_db, entity_name, "investment_cost", "Base", entity_byname, array_p[0])
+    if industry in df.Industry.unique():
+        array_p = (df[(df.Industry==industry)][planning_years].values.flatten().round(2)*8760.0).tolist()
+        print(array_p)
+        param_type = "map" if not all(array_p[0] == i for i in array_p) else "float"
+        print(param_type,industry)
+        if array_p[0] > 0.0:
+            if param_type == "map":
+                value_param =  dict(zip([f"y{year}" for year in planning_years],array_p))
+                map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
+                add_parameter_value(target_db, entity_name, "investment_cost", "Base", entity_byname, map_param)
+            elif param_type == "float":
+                add_parameter_value(target_db, entity_name, "investment_cost", "Base", entity_byname, array_p[0])
 
     # fom
     entity_name = "technology__to_commodity"
     entity_byname = (industry,node)
     df = sheets["ind_process_routes_fom"]
-    array_p = (df[(df.Industry==industry)][planning_years].values.flatten().round(2)*8760.0).tolist()
-    param_type = "map" if not all(array_p[0] == i for i in array_p) else "float"
-    if array_p[0] > 0.0:
-        if param_type == "map":
-            value_param =  dict(zip([f"y{year}" for year in planning_years],array_p))
-            map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
-            add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, map_param)
-        elif param_type == "float":
-            add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, array_p[0])
+    if industry in df.Industry.unique():
+        array_p = (df[(df.Industry==industry)][planning_years].values.flatten().round(2)*8760.0).tolist()
+        param_type = "map" if not all(array_p[0] == i for i in array_p) else "float"
+        if array_p[0] > 0.0:
+            if param_type == "map":
+                value_param =  dict(zip([f"y{year}" for year in planning_years],array_p))
+                map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
+                add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, map_param)
+            elif param_type == "float":
+                add_parameter_value(target_db, entity_name, "fixed_cost", "Base", entity_byname, array_p[0])
 
 
     # co2_captured
-    df = sheets["ind_process_routes_co2_capture"]   
-    value_param = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0] for year in planning_years}
-    if value_param["y2030"] > 0.0:
-        entity_name = "technology__to_commodity"
-        entity_byname = (industry,"CO2")
-        add_entity(target_db, entity_name, entity_byname)
-        entity_name = "technology__to_commodity__to_commodity"
-        entity_byname = (industry,node,"CO2")
-        add_entity(target_db, entity_name, entity_byname)
-        map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
-        add_parameter_value(target_db, entity_name, "CO2_captured", "Base", entity_byname, np.array(list(value_param.values())).mean().round(3))
+    df = sheets["ind_process_routes_co2_capture"]  
+    if industry in df.Industry.unique(): 
+        value_param = {f"y{year}":df[(df.Industry==industry)][year].tolist()[0] for year in planning_years}
+        if value_param["y2030"] > 0.0:
+            entity_name = "technology__to_commodity"
+            entity_byname = (industry,"CO2")
+            add_entity(target_db, entity_name, entity_byname)
+            entity_name = "technology__to_commodity__to_commodity"
+            entity_byname = (industry,node,"CO2")
+            add_entity(target_db, entity_name, entity_byname)
+            map_param = {"type": "map", "index_type": "str", "index_name": "period", "data": value_param}
+            add_parameter_value(target_db, entity_name, "CO2_captured", "Base", entity_byname, np.array(list(value_param.values())).mean().round(3))
 
 def conversion_sectors(target_db,sheet,com_sheet,nodes):
 
@@ -97,6 +100,7 @@ def conversion_sectors(target_db,sheet,com_sheet,nodes):
                 entity_name = "technology"
                 entity_byname = (sheet.at[i,"Industry"],)
                 add_entity(target_db, entity_name, entity_byname)
+                add_parameter_value(target_db, "technology", "investment_method", "Base", entity_byname, ("not_allowed" if "reference" in sheet.at[i,"Industry"] else "no_limits"))
                 entity_name = "technology__to_commodity"
                 entity_byname = (sheet.at[i,"Industry"],sheet.at[i,"to_node"])
                 add_entity(target_db, entity_name, entity_byname)
@@ -179,7 +183,7 @@ def main():
 
     # Spine Inputs
     dbs_dict = {
-        "part1" : [sys.argv[1],"nuts3",
+        "part1" : [sys.argv[1],"nuts0",
                    ["cement","chemical-chlorine","chemical-olefins","chemical-PE","chemical-PEA",
                     "fertiliser-ammonia-NH3","glass-container","glass-fibre","glass-float",
                     "HC","steel-primary","steel-secondary","MeOH"]],

@@ -108,6 +108,13 @@
         ],
         [
             "technology",
+            "investment_method",
+            null,
+            null,
+            null
+        ],
+        [
+            "technology",
             "lifetime",
             null,
             null,

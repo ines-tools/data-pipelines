@@ -724,13 +724,6 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
                                     print(f"Repeated Entity {entity_class} {entity_name}, then not added")
                                     pass
       
-                        # Default Parameters
-                        if entity_class in config["sys"][db_name]["parameters"]["default"]:
-                            if entity_class_target in config["sys"][db_name]["parameters"]["default"][entity_class]:
-                                for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
-                                    entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in param_items[2]])
-                                    add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
-                        
                         # Fixed Parameters
                         if entity_class in config["sys"][db_name]["parameters"]["fixed"]:
                             if entity_class_target in config["sys"][db_name]["parameters"]["fixed"][entity_class]:
@@ -740,7 +733,7 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
                                     values_ = db_source.get_parameter_value_items(entity_class_name=entity_class,entity_byname=entity_names,parameter_definition_name=param_source)
                                     if values_:
                                         for value_ in values_:
-                                            value_param = param_list[param_source][1]*value_["parsed_value"] if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
+                                            value_param = (param_list[param_source][1]*value_["parsed_value"] if value_["type"] == "float" else value_["parsed_value"]) if value_["type"] != "map" else {"type":"map","index_type":"str","index_name":"period","data":{key:param_list[param_source][1]*item for key,item in dict(json.loads(value_["value"])["data"]).items()}}
                                             add_parameter_value(db_map,entity_class_target,param_list[param_source][0],value_["alternative_name"],entity_target_name,value_param)
                         
                         # Regional Parameter
