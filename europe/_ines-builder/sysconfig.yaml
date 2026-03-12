@@ -570,7 +570,7 @@ transport_sector:
         unit__to_node:
           - [capacity,1.0,[[1,2],[1]],{node_type: storage}]
     fixed:
-      commodity__vehicle:
+      commodity__vehicle__region:
         node:
           node_type: [node_type,1.0,[[2]]]
     dynamic:
