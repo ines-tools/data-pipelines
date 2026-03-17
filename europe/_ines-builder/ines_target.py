@@ -619,7 +619,13 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if (entity_names[0] in polygons["onshore_polygons"] or entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["node_type"] == "balance":               
+            condition_ = False
+            if (entity_names[0] in polygons["onshore_polygons"] and entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["node_type"] == "balance": 
+                condition_ = True
+            elif (entity_names[0] in polygons["onshore_polygons"] or entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["status"] and config["user"][entity_class_elements[2]][entity_names[2]]["node_type"] == "balance": 
+                if config["user"]["network"][entity_names[2]]["interconnection_out_model"]:
+                    condition_ = True
+            if condition_:              
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
@@ -937,7 +943,13 @@ def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, con
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if (entity_names[0] in polygons["onshore_polygons"] or entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance" and config["user"][entity_class_elements[1]][entity_names[1]]["status"]:               
+            condition_ = False
+            if (entity_names[0] in polygons["onshore_polygons"] and entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance": 
+                condition_ = True
+            elif (entity_names[0] in polygons["onshore_polygons"] or entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance": 
+                if config["user"]["network"][entity_names[1]]["interconnection_out_model"]:
+                    condition_ = True
+            if condition_: 
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:
@@ -1202,7 +1214,13 @@ def add_cargo_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
             entity_class_elements = (entity_class,) if len(entity["dimension_name_list"]) == 0 else entity["dimension_name_list"]
             entity_names          = (entity_name,) if len(entity["element_name_list"]) == 0 else entity["element_name_list"]
 
-            if (entity_names[0] in polygons["onshore_polygons"] or entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance":               
+            condition_ = False
+            if (entity_names[0] in polygons["onshore_polygons"] and entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance": 
+                condition_ = True
+            elif (entity_names[0] in polygons["onshore_polygons"] or entity_names[-1] in polygons["onshore_polygons"]) and config["user"]["network"][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["status"] and config["user"][entity_class_elements[1]][entity_names[1]]["node_type"] == "balance": 
+                if config["user"]["network"][entity_names[1]]["interconnection_out_model"]:
+                    condition_ = True
+            if condition_: 
                 for entity_class_target in config["sys"][db_name]["entities"][entity_class]:
                     if isinstance(config["sys"][db_name]["entities"][entity_class][entity_class_target],list):
                         for entity_target_building in config["sys"][db_name]["entities"][entity_class][entity_class_target]:

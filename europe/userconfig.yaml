@@ -86,8 +86,7 @@ global_constraints:
 
 # Use country code to model a specific country  and define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
-  #- Europe
-  - ES
+  - Europe
 
 # Sectors optimized
 commodity: 
@@ -136,17 +135,25 @@ commodity:
 
 network: 
   elec: 
-    status: False # True = it is modeled
+    status: True # True = it is modeled
+    # if true, the countries in the model are interconnected with their neighbors using an exogenous fixed price
+    # WARNING: it can consider the neighboring countries have unlimited capacity and it is more affordable to import everything
+    interconnection_out_model: False
   CH4: 
-    status: False
+    status: True
+    interconnection_out_model: False
   H2: 
-    status: False
+    status: True
+    interconnection_out_model: False
   MeOH: 
-    status: False
+    status: True
+    interconnection_out_model: False
   HC: 
-    status: False
+    status: True
+    interconnection_out_model: False
   bio: 
-    status: False
+    status: True
+    interconnection_out_model: False
 
 storage:
   battery-storage:
