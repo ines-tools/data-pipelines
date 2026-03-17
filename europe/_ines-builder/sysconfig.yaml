@@ -288,7 +288,10 @@ industrial_sector:
         - [[1],[3],[1],[2]]
   parameters:
     user: null
-    default: null
+    default:
+      commodity:
+        node:
+          - [flow_scaling_method,use_profile_directly,[[1]],[demand]]
     fixed:
       technology:
         unit:
@@ -336,7 +339,10 @@ other_industrial_sector:
         - [[1],[3],[1],[2]]
   parameters:
     user: null
-    default: null
+    default:
+      commodity:
+        node:
+          - [flow_scaling_method,use_profile_directly,[[1]],[demand]]
     fixed:
       technology:
         unit:
@@ -383,7 +389,7 @@ biomass_production:
           - [storage_retirement_method,not_retired,[[1]]]
           - [storage_investment_method,not_allowed,[[1]]]
           - [storage_state_fix,1.0,[[1]]]
-          - [storages_existing,1.0,[[1]]]
+          - [storages_capacity,1.0,[[1]]]
         node__link__node:
           - [efficiency,1.0,[[1],[1,2],[2]]]
     dynamic:
@@ -391,7 +397,7 @@ biomass_production:
         node__link__node:
           operational_cost: [operational_cost,[[1],[1,2],[2]],[average,{}],null,]
         node:
-          annual_production: [storage_capacity,[[1]],[area,{}],null]
+          annual_production: [storages_existing,[[1]],[area,{}],null]
 
 # gas sector modelling
 gas_sector:

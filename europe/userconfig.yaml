@@ -60,13 +60,16 @@ pipelines:
     target_resolution: PECD1
 
 model:
-    type :  brownfield # greenfied not included yet
-    operations_resolution : "1h"
-    planning_resolution : "365D" # it builds this optimization window for each planning year
+    type:  brownfield # greenfied not included yet
+    operations_resolution: "1h"
+    planning_resolution: "365D" # it builds this optimization window for each planning year
     planning_years: # options: 2030, 2040 and 2050 (parameters limitation)
       "2030": ["2030-01-01T00:00:00",10.0] # start datetime and years represented
       "2040": ["2041-01-01T00:00:00",10.0] # 2041 no leap year
       "2050": ["2050-01-01T00:00:00",10.0]
+    units:
+      energy: "GW" # GW or MW
+      cost: "Meuro" # Million euro or euro
 
 timeline:
   historical_alt : 

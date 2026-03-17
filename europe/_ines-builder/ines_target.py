@@ -41,6 +41,10 @@ def add_parameter_value(db_map : DatabaseMapping,class_name : str,parameter : st
     if error:
         raise RuntimeError(error)
 
+def add_or_update_parameter_value(db_map : DatabaseMapping, class_name : str,parameter : str,alternative : str,elements : tuple,value : any) -> None:
+    db_value, value_type = api.to_database(value)
+    db_map.add_or_update_parameter_value(entity_class_name=class_name,entity_byname=elements,parameter_definition_name=parameter,alternative_name=alternative,value=db_value,type=value_type)
+
 def add_alternative(db_map : DatabaseMapping,name_alternative : str) -> None:
     _, error = db_map.add_alternative_item(name=name_alternative)
     if error is not None:
@@ -729,7 +733,20 @@ def add_industrial_sector(db_map : DatabaseMapping, db_source : DatabaseMapping,
                                 except RuntimeError:
                                     print(f"Repeated Entity {entity_class} {entity_name}, then not added")
                                     pass
-      
+                        
+                        # Default Parameters
+                        if entity_class in config["sys"][db_name]["parameters"]["default"]:
+                            if entity_class_target in config["sys"][db_name]["parameters"]["default"][entity_class]:
+                                for param_items in config["sys"][db_name]["parameters"]["default"][entity_class][entity_class_target]:
+                                    entity_target_name = tuple(["__".join([entity_target_names[i-1] for i in k]) for k in entity_target_building])
+                                    if not param_items[3]:
+                                        add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
+                                    else:
+                                        for dict_parameter  in param_items[3]:
+                                            value_condition = db_source.get_parameter_value_item(entity_class_name = entity["entity_class_name"], parameter_definition_name = dict_parameter, entity_byname = entity_names)
+                                            if value_condition:
+                                                add_parameter_value(db_map,entity_class_target,param_items[0],"Base",entity_target_name,param_items[1])
+                        
                         # Fixed Parameters
                         if entity_class in config["sys"][db_name]["parameters"]["fixed"]:
                             if entity_class_target in config["sys"][db_name]["parameters"]["fixed"][entity_class]:
@@ -1308,7 +1325,9 @@ def coupling_spatial_resolutions(db_map : DatabaseMapping, config : dict):
 
 def add_policy_constraints(db_map : DatabaseMapping, config : dict):
 
-    co2_values = [config["user"]["global_constraints"]["co2_annual_budget"][year] for year in config["user"]["global_constraints"]["co2_annual_budget"]]
+    energy_units = config["user"]["model"]["units"]["energy"]
+    multiplier = 1e-3 if energy_units == "GW" else 1.0
+    co2_values = [config["user"]["global_constraints"]["co2_annual_budget"][year]*multiplier for year in config["user"]["global_constraints"]["co2_annual_budget"]]
     co2_years  = [f"y{year}" for year in config["user"]["global_constraints"]["co2_annual_budget"]]
     co2_budget = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(co2_years,co2_values))}
     # Atmosphere entity is created
@@ -1331,8 +1350,75 @@ def add_policy_constraints(db_map : DatabaseMapping, config : dict):
         add_parameter_value(db_map,entity_name,"storage_state_fix","Base",entity_byname,0.0)
         co2_storage = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(co2_years,[float(config["user"]["global_constraints"]["co2_annual_sequestration"]/1000) for _ in range(3)]))}
         add_parameter_value(db_map,entity_name,"storages_existing","Base",entity_byname,co2_storage)
-        add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,float(1000))
-              
+        add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,float(1000*multiplier))
+
+def units_modification(db_map : DatabaseMapping, config : dict):
+    energy_units = config["user"]["model"]["units"]["energy"]
+    cost_units = config["user"]["model"]["units"]["cost"]
+
+    energy_parameters = ["units_existing","links_existing","storages_existing","max_cumulative","units_max_cumulative","storages_max_cumulative","links_max_cumulative","units_fix_cumulative","storages_fix_cumulative","links_fix_cumulative"]
+    
+    if energy_units != "MW":
+        multiplier = (1e-3 if energy_units == "GW" else 1.0)
+        for energy_parameter in energy_parameters:
+            for parameter_dict in db_map.get_parameter_value_items(parameter_definition_name = energy_parameter):
+                if parameter_dict["type"]=="float":
+                    value_ = parameter_dict["parsed_value"] * multiplier
+                    add_or_update_parameter_value(db_map,parameter_dict["entity_class_name"],energy_parameter,parameter_dict["alternative_name"],parameter_dict["entity_byname"],value_)
+                elif parameter_dict["type"]=="map":
+                    map_table = convert_map_to_table(parameter_dict["parsed_value"])
+                    index_names = nested_index_names(parameter_dict["parsed_value"])
+                    data = pd.DataFrame(map_table, columns=index_names + ["value"]).set_index(index_names[0])["value"]
+                    keys = [pd.Timestamp(i.value).isoformat() if api.to_database(i)[1] == "date_time" else i for i in data.index.tolist()]
+                    vals = multiplier*np.fromiter(data.tolist(), dtype=float)
+                    value_ = {"type":"map","index_type":parameter_dict["index_type"],"index_name":parameter_dict["index_name"],"data":dict(zip(keys,vals))}
+                    add_or_update_parameter_value(db_map,parameter_dict["entity_class_name"],energy_parameter,parameter_dict["alternative_name"],parameter_dict["entity_byname"],value_)
+        
+        for parameter_dict in db_map.get_parameter_value_items(parameter_definition_name = "flow_profile"):
+            flow_annuals = db_map.get_parameter_value_items(entity_class_name = parameter_dict["entity_class_name"], entity_byname = parameter_dict["entity_byname"], parameter_definition_name = "flow_annual")
+            if flow_annuals:
+                for flow_annual in flow_annuals:
+                    if flow_annual["type"]=="float":
+                        value_ = flow_annual["parsed_value"] * multiplier
+                        add_or_update_parameter_value(db_map,flow_annual["entity_class_name"],"flow_annual",flow_annual["alternative_name"],flow_annual["entity_byname"],value_)
+                    elif flow_annual["type"]=="map":
+                        map_table = convert_map_to_table(flow_annual["parsed_value"])
+                        index_names = nested_index_names(flow_annual["parsed_value"])
+                        data = pd.DataFrame(map_table, columns=index_names + ["value"]).set_index(index_names[0])["value"]
+                        keys = [pd.Timestamp(i.value).isoformat() if api.to_database(i)[1] == "date_time" else i for i in data.index.tolist()]
+                        vals = multiplier*np.fromiter(data.tolist(), dtype=float)
+                        value_ = {"type":"map","index_type":flow_annual["index_type"],"index_name":flow_annual["index_name"],"data":dict(zip(keys,vals))}
+                        add_or_update_parameter_value(db_map,flow_annual["entity_class_name"],"flow_annual",flow_annual["alternative_name"],flow_annual["entity_byname"],value_)
+            else:
+                if parameter_dict["type"]=="float":
+                    value_ = parameter_dict["parsed_value"] * multiplier
+                    add_or_update_parameter_value(db_map,parameter_dict["entity_class_name"],"flow_profile",parameter_dict["alternative_name"],parameter_dict["entity_byname"],value_)
+                elif parameter_dict["type"]=="map":
+                    map_table = convert_map_to_table(parameter_dict["parsed_value"])
+                    index_names = nested_index_names(parameter_dict["parsed_value"])
+                    data = pd.DataFrame(map_table, columns=index_names + ["value"]).set_index(index_names[0])["value"]
+                    keys = [pd.Timestamp(i.value).isoformat() if api.to_database(i)[1] == "date_time" else i for i in data.index.tolist()]
+                    vals = multiplier*np.fromiter(data.tolist(), dtype=float)
+                    value_ = {"type":"map","index_type":parameter_dict["index_type"],"index_name":parameter_dict["index_name"],"data":dict(zip(keys,vals))}
+                    add_or_update_parameter_value(db_map,parameter_dict["entity_class_name"],"flow_profile",parameter_dict["alternative_name"],parameter_dict["entity_byname"],value_)
+
+    cost_parameters = ["investment_cost","fixed_cost","storage_invesment_cost","storage_fixed_cost","operational_cost","other_operational_cost","commodity_price"]
+    if cost_units != "euro":
+        multiplier = (1e-3 if cost_units == "euro" else 1.0)
+        for cost_parameter in cost_parameters:
+            for parameter_dict in db_map.get_parameter_value_items(parameter_definition_name = cost_parameter):
+                if parameter_dict["type"]=="float":
+                    value_ = parameter_dict["parsed_value"] * multiplier
+                    add_or_update_parameter_value(db_map,parameter_dict["entity_class_name"],cost_parameter,parameter_dict["alternative_name"],parameter_dict["entity_byname"],value_)
+                elif parameter_dict["type"]=="map":
+                    map_table = convert_map_to_table(parameter_dict["parsed_value"])
+                    index_names = nested_index_names(parameter_dict["parsed_value"])
+                    data = pd.DataFrame(map_table, columns=index_names + ["value"]).set_index(index_names[0])["value"]
+                    keys = [pd.Timestamp(i.value).isoformat() if api.to_database(i)[1] == "date_time" else i for i in data.index.tolist()]
+                    vals = multiplier*np.fromiter(data.tolist(), dtype=float)
+                    value_ = {"type":"map","index_type":parameter_dict["index_type"],"index_name":parameter_dict["index_name"],"data":dict(zip(keys,vals))}
+                    add_or_update_parameter_value(db_map,parameter_dict["entity_class_name"],cost_parameter,parameter_dict["alternative_name"],parameter_dict["entity_byname"],value_)
+
 def main():
 
     url_db_out = sys.argv[1]
@@ -1511,7 +1597,13 @@ def main():
         # Policy Constraints
         add_policy_constraints(db_map,config)
         print("policy_constraints")
-        db_map.commit_session("policy_constraints")
+        # Policy Constraints
+        units_modification(db_map,config)
+        print("units_modification")
+        try:
+            db_map.commit_session("units_modification")
+        except:
+            print("Error committing the units modification, likely you are using the same units as the source databases")
 
 if __name__ == "__main__":
     main()
