@@ -4,7 +4,7 @@
 pipelines:
   power_sector: 
     status: True             # include pipeline or not
-    source_resolution: PECD1 # Do not touch unless you rerun the corresponding pipeline producing data in that resolution
+    source_resolution: NUTS3 # Do not touch unless you rerun the corresponding pipeline producing data in that resolution
     target_resolution: PECD1 # Using the weighting factors from the documentation (configurable in sysconfig.yaml file)
   vre:
     status: True
@@ -40,7 +40,7 @@ pipelines:
     target_resolution: PECD1
   industrial_sector:
     status: True
-    source_resolution: PECD1
+    source_resolution: NUTS3
     target_resolution: PECD1
   other_industrial_sector:
     status: True
@@ -67,7 +67,7 @@ model:
       "2030": ["2030-01-01T00:00:00",10.0] # start datetime and years represented
       "2040": ["2041-01-01T00:00:00",10.0] # 2041 no leap year
       "2050": ["2050-01-01T00:00:00",10.0]
-    units:
+    units: # options: GW and Meuro, or MW and euro
       energy: "GW" # GW or MW
       cost: "Meuro" # Million euro or euro
 

@@ -191,29 +191,29 @@ hydro_systems:
     default:
       technology__to_commodity:
         unit:
-          - [investment_method,not_allowed,[[1]]]
-          - [retirement_method,not_retired,[[1]]]
+          - [investment_method,not_allowed,[[1]],[]]
+          - [retirement_method,not_retired,[[1]],[]]
         unit__to_node:
-          - [capacity,1.0,[[1],[2]]]
+          - [capacity,1.0,[[1],[2]],[]]
       technology__to_storage:
         unit:
-          - [investment_method,not_allowed,[[1]]]
-          - [retirement_method,not_retired,[[1]]]
+          - [investment_method,not_allowed,[[1]],[]]
+          - [retirement_method,not_retired,[[1]],[]]
         unit__to_node:
-          - [capacity,1.0,[[1],[2]]]
+          - [capacity,1.0,[[1],[2]],[]]
       storage:
         node:
-          - [node_type,storage,[[1]]]
-          - [storage_capacity,1.0,[[1]]]
-          - [storage_limit_method,lower_limit,[[1]]]
-          - [storage_state_fix_method,fix_start,[[1]]]
-          - [storage_state_binding_method,leap_over_within_period,[[1]]]
-          - [flow_scaling_method,use_profile_directly,[[1]]]
-          - [storage_investment_method,not_allowed,[[1]]]
-          - [storage_retirement_method,not_retired,[[1]]]
+          - [node_type,storage,[[1]],[]]
+          - [storage_capacity,1.0,[[1]],[]]
+          - [storage_limit_method,lower_limit,[[1]],[inflow]]
+          - [storage_state_fix_method,fix_start,[[1]],[]]
+          - [storage_state_binding_method,leap_over_within_period,[[1]],[]]
+          - [flow_scaling_method,use_profile_directly,[[1]],[]]
+          - [storage_investment_method,not_allowed,[[1]],[]]
+          - [storage_retirement_method,not_retired,[[1]],[]]
       storage__to_technology__to_commodity:
         unit_flow__unit_flow:
-          - [equality_ratio,1.0,[[2],[3],[1],[2]]]
+          - [equality_ratio,1.0,[[2],[3],[1],[2]],[]]
     fixed:
       technology__to_commodity:
         unit__to_node:
@@ -389,7 +389,7 @@ biomass_production:
           - [storage_retirement_method,not_retired,[[1]]]
           - [storage_investment_method,not_allowed,[[1]]]
           - [storage_state_fix,1.0,[[1]]]
-          - [storages_capacity,1.0,[[1]]]
+          - [storage_capacity,1.0,[[1]]]
         node__link__node:
           - [efficiency,1.0,[[1],[1,2],[2]]]
     dynamic:
@@ -447,7 +447,7 @@ gas_sector:
       storage:
         node:
           - [node_type,storage,[[1]]]
-          - [storage_limit_method,upper_limit,[[1]]]
+          # - [storage_limit_method,upper_limit,[[1]]]
           - [storage_state_binding_method,leap_over_within_period,[[1]]]
     fixed:
       technology:
