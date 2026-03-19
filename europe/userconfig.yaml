@@ -90,6 +90,7 @@ global_constraints:
 # Use country code to model a specific country  and define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
   - Europe
+  # - ES
 
 # Sectors optimized
 commodity: 
