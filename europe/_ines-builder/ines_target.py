@@ -553,13 +553,17 @@ def add_hydro(db_map : DatabaseMapping, db_source : DatabaseMapping, config : di
 
             for poly in polygons["onshore_polygons"]:
                 entity_target_names,definition_condition,poly_level = user_entity_condition(config,entity_class_elements,entity_names,poly,"on",polygons)
-
                 # checking hard-coding conditions
                 if "technology" in entity_class_elements and definition_condition == True:
                     for index_in_class in [i for i in range(len(entity_class_elements)) if entity_class_elements[i]=="technology"]:
-                        existing_dict = region_params.get("technology__to_commodity",{}).get("capacity",{}).get(entity_names[index_in_class],{})
+                        try:
+                            name_for_capacity = [i["name"] for i in db_source.get_entity_items(entity_class_name = "technology__to_commodity") if entity_names[index_in_class] in i["entity_byname"]][0]
+                            existing_dict = region_params.get("technology__to_commodity",{}).get("capacity",{}).get(name_for_capacity,{})
+                        except:
+                            name_for_capacity = [i["name"] for i in db_source.get_entity_items(entity_class_name = "technology__to_storage") if entity_names[index_in_class] in i["entity_byname"]][0]
+                            existing_dict = region_params.get("technology__to_storage",{}).get("capacity",{}).get(name_for_capacity,{})
                         if existing_dict:
-                            if sum(sum(existing_dict[poly][alternative]["data"].values()) for alternative in existing_dict[poly]) == 0.0:
+                            if sum(existing_dict[poly][alternative] for alternative in existing_dict[poly]) == 0.0:
                                 definition_condition *= False
                         else:
                             definition_condition *= False
@@ -568,7 +572,7 @@ def add_hydro(db_map : DatabaseMapping, db_source : DatabaseMapping, config : di
                     for index_in_class in [i for i in range(len(entity_class_elements)) if entity_class_elements[i]=="storage"]:
                         existing_dict = region_params["storage"]["storage_capacity"].get(entity_names[index_in_class],{})
                         if existing_dict:
-                            if sum(sum(existing_dict[poly][alternative]["data"].values()) for alternative in existing_dict[poly]) == 0.0:
+                            if sum(existing_dict[poly][alternative] for alternative in existing_dict[poly]) == 0.0:
                                 definition_condition *= False
                         else:
                             definition_condition *= False
