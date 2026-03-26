@@ -4,7 +4,7 @@
 pipelines:
   power_sector: 
     status: True             # include pipeline or not
-    source_resolution: NUTS3 # Do not touch unless you rerun the corresponding pipeline producing data in that resolution
+    source_resolution: PECD1 # Do not touch unless you rerun the corresponding pipeline producing data in that resolution
     target_resolution: PECD1 # Using the weighting factors from the documentation (configurable in sysconfig.yaml file)
   vre:
     status: True
@@ -40,7 +40,7 @@ pipelines:
     target_resolution: PECD1
   industrial_sector:
     status: True
-    source_resolution: NUTS3
+    source_resolution: PECD1
     target_resolution: PECD1
   other_industrial_sector:
     status: True
