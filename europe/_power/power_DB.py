@@ -29,9 +29,11 @@ Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the J
 - [x] add final validation check to warn if None values are being added to jaif
 - [x] check whether the script is compatible with the geojson file of the industrial study (only need to replace the geojson file and replace PECD1 to IC1 in the configuration file)
 - [x] reject existing power plants if they are not within areas specified by the geojson file
+- [ ] existing capacity = 0? -> remove relationship
 - [x] remove y2025 from parameter maps (part is assumptions file, part is reference year)
 - [x] check purging (and that there is no "unit" in the maps)
 - [x] the assumptions have constant values over the years, instead have an assumption of the growth/decline over the milestoneyears? No the data is in 2025 values, the inflation will automatically change the values over the years.
+- [ ] nuclear lifetime assume to be 80 years
 - [x] difference in cost between existing tech and new tech
     - For existing tech
         - 2020 cost in 2025 EUR
@@ -44,6 +46,8 @@ Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the J
         - [x] lifetime (currently only storage has one, not the connection, we should set the default the same?)
         - [x] cost (apparently we only provide costs for the connection, i.e. power, at the moment)
     - [x] "In the DEA catalogue, you can find different cost for energy and power regarding investment cost (both storage and storage-connection). I think fom cost only for energy (storage) and operational cost only for power (storage-connection)." (Alvaro has another example in his mail)
+    - [ ] storage lifetime from map to value
+
 
 Optional:
 - [ ] Currently, for some parameters that only require 1 value in jaif, new units use the first milestoneyear for its value  while in some instances it probably should use the average over the years.
@@ -65,7 +69,7 @@ import geopandas as gpd
 from shapely.geometry import Point
 from fuzzywuzzy.process import extractOne
 import spinedb_api as api
-from spinedb_api import purge, DatabaseMapping
+from spinedb_api import purge
 import warnings
 import yaml 
 
@@ -73,7 +77,7 @@ import yaml
 # MAIN
 ##########
 
-def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
+def add_scenario(db_map : api.DatabaseMapping,name_scenario : str) -> None:
     _, error = db_map.add_scenario_item(name=name_scenario)
     if error is not None:
         raise RuntimeError(error)
