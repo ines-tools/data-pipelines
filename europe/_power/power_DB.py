@@ -46,7 +46,7 @@ Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the J
         - [x] lifetime (currently only storage has one, not the connection, we should set the default the same?)
         - [x] cost (apparently we only provide costs for the connection, i.e. power, at the moment)
     - [x] "In the DEA catalogue, you can find different cost for energy and power regarding investment cost (both storage and storage-connection). I think fom cost only for energy (storage) and operational cost only for power (storage-connection)." (Alvaro has another example in his mail)
-    - [ ] storage lifetime from map to value
+    - [x] storage lifetime from map to value
 
 
 Optional:
@@ -986,7 +986,7 @@ def new_units(
                 )
 
                 storage_lifetime = search_data(
-                    unit, assumptions, unit_types, unit["technology"], years, "lifetime"
+                    unit, assumptions, unit_types, unit["technology"], [years[0]], "lifetime"
                 )
 
                 storage_operational_cost = search_data(
