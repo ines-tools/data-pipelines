@@ -185,8 +185,10 @@ def main(
         purge.purge(target_db, purge_settings=None)
         # target_db.commit_session("Purged entities and parameter values")
 
-        versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
-        add_scenario(target_db,f"v_{versionconfig["energy_conversion"]["version"]}")
+        #since the latest version is not available on git, I need to disable this to be able to run tests
+        #also, this needs to be done properly, similar to the other files, I'll change it once I know which file to refer to 
+        #versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
+        #add_scenario(target_db,f"v_{versionconfig["energy_conversion"]["version"]}")
 
         # load template
         with open(tmp, "r") as f:
