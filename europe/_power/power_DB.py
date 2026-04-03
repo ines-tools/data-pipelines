@@ -29,11 +29,11 @@ Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the J
 - [x] add final validation check to warn if None values are being added to jaif
 - [x] check whether the script is compatible with the geojson file of the industrial study (only need to replace the geojson file and replace PECD1 to IC1 in the configuration file)
 - [x] reject existing power plants if they are not within areas specified by the geojson file
-- [ ] existing capacity = 0? -> remove relationship
+- [x] existing capacity = 0? -> remove relationship
 - [x] remove y2025 from parameter maps (part is assumptions file, part is reference year)
 - [x] check purging (and that there is no "unit" in the maps)
 - [x] the assumptions have constant values over the years, instead have an assumption of the growth/decline over the milestoneyears? No the data is in 2025 values, the inflation will automatically change the values over the years.
-- [ ] nuclear lifetime assume to be 80 years
+- [x] nuclear lifetime assume to be 80 years
 - [x] difference in cost between existing tech and new tech
     - For existing tech
         - 2020 cost in 2025 EUR
@@ -806,6 +806,7 @@ def new_units(
                     unit["technology"],
                     [years[0]],
                     "lifetime",
+                    #prioritise_assumption=True
                 )
                 operational_cost_new = search_data(
                     unit,
