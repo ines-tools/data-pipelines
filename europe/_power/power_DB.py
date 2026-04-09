@@ -1188,21 +1188,24 @@ def aggregate_units(
         # original_unit = unit.copy()  # debugline
         # print(unit["Country"])  # debugline
         unit = map_ppm_jaif(unit)
-        if unit["capacity"]:
-            lifetime = search_data(
-                unit,
-                assumptions,
-                unit_types,
-                unit["technology"],
-                [baseyear],
-                "lifetime",
-                prioritise_assumption=True,
-            )
-            # lifetime = 50.0  # debugline
-            unit["capacity"] = decay_capacity(unit, lifetime, milestoneyears)
-            if sum(unit["capacity"].values()) <= 0.0:
-                # ignore the existing unit if it is not present in the milestone years
-                continue
+
+        if not unit["capacity"]:
+            # ignore the existing unit if it does not have a capacity
+            continue
+        unit["lifetime"] = search_data(
+            unit,
+            assumptions,
+            unit_types,
+            unit["technology"],
+            [baseyear],
+            "lifetime",
+            prioritise_assumption=True,
+        )
+        # unit["lifetime"] = 50.0  # debugline
+        unit["capacity"] = decay_capacity(unit, milestoneyears)
+        if sum(unit["capacity"].values()) <= 0.0:
+            # ignore the existing unit if it is not present in the milestone years
+            continue
         unit["region"] = get_region(unit, geomap)
         # print(unit["region"])  # debugline
 
@@ -1306,6 +1309,8 @@ def aggregate_units(
                         + " "
                         + str(unit["date_out"])
                         + " "
+                        + str(unit["lifetime"])
+                        + " "
                         + str(aggregated_unit[parameter])
                         + " "
                         + str(unit[parameter])
@@ -1346,7 +1351,7 @@ def get_region(unit, geomap):
     return region
 
 
-def decay_capacity(unit, lifetime, milestoneyears):  # baseyear
+def decay_capacity(unit, milestoneyears):  # baseyear
     capacity = {}  # {baseyear: float(unit["capacity"])}
     # try to use "date out"
     if unit["date_out"]:
@@ -1357,10 +1362,10 @@ def decay_capacity(unit, lifetime, milestoneyears):  # baseyear
             else:
                 capacity[milestoneyear] = 0.0
     # try to use "date in"
-    elif unit["date_in"] and lifetime:
+    elif unit["date_in"] and unit["lifetime"]:
         for milestoneyear in milestoneyears:
             if int(milestoneyear[1:]) < int(float(unit["date_in"])) + int(
-                float(lifetime)
+                float(unit["lifetime"])
             ):
                 capacity[milestoneyear] = float(unit["capacity"])
             else:
