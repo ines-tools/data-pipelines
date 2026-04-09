@@ -34,7 +34,7 @@ In Spine Toolbox, create a workflow with:
 [ECB inflation data](https://github.com/ines-tools/data-pipelines/blob/main/EU_historical_inflation_ECB.csv) for discounting.
 
 ## Assumptions
-There is some missing data in the data from PyPSA. Assumptions are used for that missing data. These assumptions are based on various sources. The assumptions and their sources are collected in a single assumptions file that makes a distinction between conversion technologies and storage. The distinction between existing and new units is only considered in the name with the suffix '-existing'.
+There is some missing data in the data from PyPSA. Assumptions are used for that missing data. These assumptions are based on various sources. The assumptions and their sources are collected in a single assumptions file that makes a distinction between conversion technologies and storage. For most parameters, the assumptions are prioritised over the underlying data to be able to control the data in a convenient way.
 
 ## Configuration files
 The script operates according to the configuration specified in "config.json".
