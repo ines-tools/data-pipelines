@@ -50,6 +50,7 @@ Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the J
 
 
 Optional:
+- [ ] search data can be rearranged to incorporate propose_assumption directly and first check whether the assumption is prioritised over the unit(_type)
 - [ ] Currently, for some parameters that only require 1 value in jaif, new units use the first milestoneyear for its value  while in some instances it probably should use the average over the years.
 - [ ] aggregate all units by type and use them as another data (arche)type (probably requires moving loading of files from existin/new units to main function)
 - [ ] allow for different values for different years in the assumption file.
@@ -1189,9 +1190,18 @@ def aggregate_units(
         # print(unit["Country"])  # debugline
         unit = map_ppm_jaif(unit)
 
+        unit["capacity"] = search_data(
+            unit,
+            assumptions,
+            unit_types,
+            unit["technology"],
+            [baseyear],
+            "capacity",
+        )
         if not unit["capacity"]:
             # ignore the existing unit if it does not have a capacity
             continue
+
         unit["lifetime"] = search_data(
             unit,
             assumptions,
@@ -1206,9 +1216,9 @@ def aggregate_units(
         if sum(unit["capacity"].values()) <= 0.0:
             # ignore the existing unit if it is not present in the milestone years
             continue
+
         unit["region"] = get_region(unit, geomap)
         # print(unit["region"])  # debugline
-
         """
         #region debugblock: Check if mapping worked for storage - ONLY for 'Other' fuel type
         if original_unit.get('Set') == 'Store' and original_unit.get('Fueltype') == 'Other':
@@ -1724,6 +1734,13 @@ def search_data(
     modifier=1.0,
     prioritise_assumption=False,
 ):
+    """
+    Order of operations:
+    1. check whether unit has a value
+    2. check whether unit_type has a value
+    3. format the data according to the years
+    3. check whether there is an assumption value and check whether it should be prioritised over the other data
+    """
     # if parameter in ["fixed_cost"]:
     #     pprint(f"unit: {unit}, unit_types: {unit_types}, tech: {unit_type_key}, year:{years}, inflation: {modifier}") #debugline
     if not data:
