@@ -806,7 +806,7 @@ def new_units(
                     unit["technology"],
                     [years[0]],
                     "lifetime",
-                    #prioritise_assumption=True
+                    prioritise_assumption=True
                 )
                 operational_cost_new = search_data(
                     unit,
@@ -1188,7 +1188,7 @@ def aggregate_units(
         # original_unit = unit.copy()  # debugline
         # print(unit["Country"])  # debugline
         unit = map_ppm_jaif(unit)
-        if "capacity" in unit:
+        if unit["capacity"]:
             lifetime = search_data(
                 unit,
                 assumptions,
@@ -1196,6 +1196,7 @@ def aggregate_units(
                 unit["technology"],
                 [baseyear],
                 "lifetime",
+                prioritise_assumption=True,
             )
             # lifetime = 50.0  # debugline
             unit["capacity"] = decay_capacity(unit, lifetime, milestoneyears)
