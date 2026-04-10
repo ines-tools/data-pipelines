@@ -87,7 +87,7 @@ global_constraints:
     "2050": 0.0
   co2_annual_sequestration: 200000000 # system level
   co2_sequestration_cost: 16 # €/ton CO2
-  Co2_transport_cost: 10 # €/ton CO2
+  co2_transport_cost: 10 # €/ton CO2
 
 # Use country code to model a specific country  and define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
