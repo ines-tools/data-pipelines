@@ -1355,15 +1355,20 @@ def coupling_spatial_resolutions(db_map : DatabaseMapping, config : dict):
 def add_policy_constraints(db_map : DatabaseMapping, config : dict):
 
     energy_units = config["user"]["model"]["units"]["energy"]
-    multiplier = 1e-3 if energy_units == "GW" else 1.0
-    co2_values = [config["user"]["global_constraints"]["co2_annual_budget"][year]*multiplier for year in config["user"]["global_constraints"]["co2_annual_budget"]]
+    co2_values = [config["user"]["global_constraints"]["co2_annual_budget"][year]/1000 for year in config["user"]["global_constraints"]["co2_annual_budget"]]
     co2_years  = [f"y{year}" for year in config["user"]["global_constraints"]["co2_annual_budget"]]
     co2_budget = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(co2_years,co2_values))}
     # Atmosphere entity is created
-    entity_name = "set"
+    entity_name = "node"
     entity_byname = ("atmosphere",)
-    add_entity(db_map,entity_name,entity_byname)
-    add_parameter_value(db_map,entity_name,"co2_max_cumulative","Base",entity_byname,co2_budget)
+    try:
+        add_entity(db_map,entity_name,entity_byname)
+        add_parameter_value(db_map,entity_name,"node_type","Base",entity_byname,"storage")
+    except:
+        print("WARNING: Node atmosphere already added")
+    add_parameter_value(db_map,entity_name,"storage_investment_method","Base",entity_byname,"not_allowed")
+    add_parameter_value(db_map,entity_name,"storages_existing","Base",entity_byname,co2_budget)
+    add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,float(1000))
 
     # co2 storage entity is created
     if not config["user"]["commodity"]["CO2"]["status"]:
@@ -1373,6 +1378,13 @@ def add_policy_constraints(db_map : DatabaseMapping, config : dict):
             add_entity(db_map,entity_name,entity_byname)
         except:
             pass
+        add_parameter_value(db_map,entity_name,"storage_state_fix_method","Base",entity_byname,"fix_start_and_horizon_end")
+        add_parameter_value(db_map,entity_name,"commodity_price","Base",entity_byname,config["user"]["global_constraints"]["co2_transport_cost"])
+
+        entity_name = "node"
+        entity_byname = ("CO2-storage",)
+        add_entity(db_map,entity_name,entity_byname)
+        add_parameter_value(db_map,entity_name,"node_type","Base",entity_byname,"storage")
         add_parameter_value(db_map,entity_name,"storage_investment_method","Base",entity_byname,"not_allowed")
         add_parameter_value(db_map,entity_name,"storage_retirement_method","Base",entity_byname,"not_retired")
         add_parameter_value(db_map,entity_name,"storage_state_fix_method","Base",entity_byname,"fix_start")
@@ -1380,6 +1392,27 @@ def add_policy_constraints(db_map : DatabaseMapping, config : dict):
         co2_storage = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(co2_years,[float(config["user"]["global_constraints"]["co2_annual_sequestration"]/1000) for _ in range(3)]))}
         add_parameter_value(db_map,entity_name,"storages_existing","Base",entity_byname,co2_storage)
         add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,float(1000))
+
+        entity_name = "unit"
+        entity_byname = ("CO2-injection",)
+        add_entity(db_map,entity_name,entity_byname)
+        entity_name = "node__to_unit"
+        entity_byname = ("CO2","CO2-injection")
+        add_entity(db_map,entity_name,entity_byname)
+        entity_name = "node__to_unit"
+        entity_byname = ("atmosphere","CO2-injection")
+        add_entity(db_map,entity_name,entity_byname)
+        entity_name = "unit__to_node"
+        entity_byname = ("CO2-injection","CO2-storage")
+        add_entity(db_map,entity_name,entity_byname)
+        add_parameter_value(db_map,entity_name,"other_operational_cost","Base",entity_byname,config["user"]["global_constraints"]["co2_sequestration_cost"])
+        entity_name = "unit_flow__unit_flow"
+        entity_byname = ("CO2-injection","CO2-storage","CO2","CO2-injection")
+        add_entity(db_map,entity_name,entity_byname)
+        add_parameter_value(db_map,entity_name,"equality_ratio","Base",entity_byname,1.0)
+        entity_byname = ("CO2-injection","CO2-storage","atmosphere","CO2-injection")
+        add_entity(db_map,entity_name,entity_byname)
+        add_parameter_value(db_map,entity_name,"equality_ratio","Base",entity_byname,1.0)
 
 def units_modification(db_map : DatabaseMapping, config : dict):
     energy_units = config["user"]["model"]["units"]["energy"]

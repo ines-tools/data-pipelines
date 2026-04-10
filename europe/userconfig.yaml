@@ -4,7 +4,7 @@
 pipelines:
   power_sector: 
     status: True             # include pipeline or not
-    source_resolution: PECD1 # Do not touch unless you rerun the corresponding pipeline producing data in that resolution
+    source_resolution: NUTS3 # Do not touch unless you rerun the corresponding pipeline producing data in that resolution
     target_resolution: PECD1 # Using the weighting factors from the documentation (configurable in sysconfig.yaml file)
   vre:
     status: True
@@ -82,15 +82,16 @@ timeline:
 
 global_constraints:
   co2_annual_budget:
-    "2030": 2200000000 # European level, if running a country-level model, then adjust this factor
-    "2040": 550000000  # European level
+    "2030": 2600000000 # European level, if running a country-level model, then adjust this factor
+    "2040": 580000000  # European level
     "2050": 0.0
   co2_annual_sequestration: 200000000 # system level
+  co2_sequestration_cost: 16 # €/ton CO2
+  Co2_transport_cost: 10 # €/ton CO2
 
 # Use country code to model a specific country  and define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
   - Europe
-  # - ES
 
 # Sectors optimized
 commodity: 
@@ -136,6 +137,9 @@ commodity:
   waste: 
     status: False
     node_type: commodity
+  atmosphere:
+    status: False
+    node_type: storage
 
 network: 
   elec: 
@@ -197,7 +201,7 @@ technology:
     status: False
     investment_method: "no_limits"
   CCGT:
-    status: False
+    status: True
     investment_method: "no_limits"
   CCGT-existing:
     status: True
@@ -373,7 +377,7 @@ technology:
     status: False
     investment_method: "not_allowed"
   bio-boiler:
-    status: True
+    status: False
     investment_method: "no_limits"
   bio-boiler-existing:
     status: True
@@ -382,7 +386,7 @@ technology:
     status: False
     investment_method: "not_allowed"
   oil-boiler:
-    status: True
+    status: False
     investment_method: "no_limits"
   oil-boiler-existing:
     status: True
@@ -451,7 +455,7 @@ technology:
     status: True
     investment_method: "not_allowed"
   gas-boiler:
-    status: True
+    status: False
     investment_method: "no_limits"
   gas-boiler-existing:
     status: True

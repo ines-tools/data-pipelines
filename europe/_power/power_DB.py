@@ -29,9 +29,11 @@ Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the J
 - [x] add final validation check to warn if None values are being added to jaif
 - [x] check whether the script is compatible with the geojson file of the industrial study (only need to replace the geojson file and replace PECD1 to IC1 in the configuration file)
 - [x] reject existing power plants if they are not within areas specified by the geojson file
+- [x] existing capacity = 0? -> remove relationship
 - [x] remove y2025 from parameter maps (part is assumptions file, part is reference year)
 - [x] check purging (and that there is no "unit" in the maps)
 - [x] the assumptions have constant values over the years, instead have an assumption of the growth/decline over the milestoneyears? No the data is in 2025 values, the inflation will automatically change the values over the years.
+- [x] nuclear lifetime assume to be 80 years
 - [x] difference in cost between existing tech and new tech
     - For existing tech
         - 2020 cost in 2025 EUR
@@ -44,6 +46,8 @@ Convert Power Plant Matching (ppm) and Technology Data Repository (tdr) to the J
         - [x] lifetime (currently only storage has one, not the connection, we should set the default the same?)
         - [x] cost (apparently we only provide costs for the connection, i.e. power, at the moment)
     - [x] "In the DEA catalogue, you can find different cost for energy and power regarding investment cost (both storage and storage-connection). I think fom cost only for energy (storage) and operational cost only for power (storage-connection)." (Alvaro has another example in his mail)
+    - [x] storage lifetime from map to value
+
 
 Optional:
 - [ ] Currently, for some parameters that only require 1 value in jaif, new units use the first milestoneyear for its value  while in some instances it probably should use the average over the years.
@@ -65,7 +69,7 @@ import geopandas as gpd
 from shapely.geometry import Point
 from fuzzywuzzy.process import extractOne
 import spinedb_api as api
-from spinedb_api import purge, DatabaseMapping
+from spinedb_api import purge
 import warnings
 import yaml 
 
@@ -73,7 +77,7 @@ import yaml
 # MAIN
 ##########
 
-def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
+def add_scenario(db_map : api.DatabaseMapping,name_scenario : str) -> None:
     _, error = db_map.add_scenario_item(name=name_scenario)
     if error is not None:
         raise RuntimeError(error)
@@ -181,8 +185,10 @@ def main(
         purge.purge(target_db, purge_settings=None)
         # target_db.commit_session("Purged entities and parameter values")
 
-        versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
-        add_scenario(target_db,f"v_{versionconfig["energy_conversion"]["version"]}")
+        #since the latest version is not available on git, I need to disable this to be able to run tests
+        #also, this needs to be done properly, similar to the other files, I'll change it once I know which file to refer to 
+        #versionconfig = yaml.safe_load(open(sys.argv[-1], "rb"))
+        #add_scenario(target_db,f"v_{versionconfig["energy_conversion"]["version"]}")
 
         # load template
         with open(tmp, "r") as f:
@@ -800,6 +806,7 @@ def new_units(
                     unit["technology"],
                     [years[0]],
                     "lifetime",
+                    prioritise_assumption=True
                 )
                 operational_cost_new = search_data(
                     unit,
@@ -980,7 +987,7 @@ def new_units(
                 )
 
                 storage_lifetime = search_data(
-                    unit, assumptions, unit_types, unit["technology"], years, "lifetime"
+                    unit, assumptions, unit_types, unit["technology"], [years[0]], "lifetime"
                 )
 
                 storage_operational_cost = search_data(
@@ -1181,6 +1188,21 @@ def aggregate_units(
         # original_unit = unit.copy()  # debugline
         # print(unit["Country"])  # debugline
         unit = map_ppm_jaif(unit)
+        if unit["capacity"]:
+            lifetime = search_data(
+                unit,
+                assumptions,
+                unit_types,
+                unit["technology"],
+                [baseyear],
+                "lifetime",
+                prioritise_assumption=True,
+            )
+            # lifetime = 50.0  # debugline
+            unit["capacity"] = decay_capacity(unit, lifetime, milestoneyears)
+            if sum(unit["capacity"].values()) <= 0.0:
+                # ignore the existing unit if it is not present in the milestone years
+                continue
         unit["region"] = get_region(unit, geomap)
         # print(unit["region"])  # debugline
 
@@ -1236,18 +1258,6 @@ def aggregate_units(
                     else:
                         aggregated_unit[parameter] = None
                 for parameter in cumulative_parameters:
-                    if parameter == "capacity":
-                        lifetime = search_data(
-                            unit,
-                            assumptions,
-                            unit_types,
-                            unit["technology"],
-                            [baseyear],
-                            "lifetime",
-                        )
-                        unit["capacity"] = decay_capacity(
-                            unit, lifetime, milestoneyears
-                        )
                     if unit[parameter]:
                         aggregated_unit[parameter] = deepcopy(unit[parameter])
                     else:
@@ -1286,19 +1296,22 @@ def aggregate_units(
                     elif unit[parameter]:
                         aggregated_unit[parameter] = float(unit[parameter])
                 for parameter in cumulative_parameters:
-                    if parameter == "capacity":
-                        lifetime = search_data(
-                            unit,
-                            assumptions,
-                            unit_types,
-                            unit["technology"],
-                            [baseyear],
-                            "lifetime",
-                        )
-                        unit["capacity"] = decay_capacity(
-                            unit, lifetime, milestoneyears
-                        )
-                    # else assume data is already in correct format
+                    """debuglines
+                    print(
+                        str(parameter)
+                        + " "
+                        + str(unit["technology"])
+                        + " "
+                        + str(unit["date_in"])
+                        + " "
+                        + str(unit["date_out"])
+                        + " "
+                        + str(aggregated_unit[parameter])
+                        + " "
+                        + str(unit[parameter])
+                        + " "
+                    )
+                    """
                     if aggregated_unit[parameter] and unit[parameter]:
                         for year in aggregated_unit[parameter].keys():
                             aggregated_unit[parameter][year] += unit[parameter][year]
@@ -1335,23 +1348,26 @@ def get_region(unit, geomap):
 
 def decay_capacity(unit, lifetime, milestoneyears):  # baseyear
     capacity = {}  # {baseyear: float(unit["capacity"])}
-    # try to use dateout
+    # try to use "date out"
     if unit["date_out"]:
         for milestoneyear in milestoneyears:
+            # convert milestoneyear string to number starting from 1 instead of 0 due to the format e.g. y2030
             if int(milestoneyear[1:]) < int(float(unit["date_out"])):
                 capacity[milestoneyear] = float(unit["capacity"])
             else:
                 capacity[milestoneyear] = 0.0
+    # try to use "date in"
     elif unit["date_in"] and lifetime:
         for milestoneyear in milestoneyears:
-            if int(milestoneyear[1:]) < int(float(unit["DateIn"])) + int(
+            if int(milestoneyear[1:]) < int(float(unit["date_in"])) + int(
                 float(lifetime)
             ):
                 capacity[milestoneyear] = float(unit["capacity"])
             else:
                 capacity[milestoneyear] = 0.0
+    # choose a random milestone year as the "date out" and also allow for a decommission year that is beyond the milestone years
     else:
-        randomyear = random.choice(milestoneyears)
+        randomyear = random.choice(milestoneyears + ["y9999"])
         for milestoneyear in milestoneyears:
             if int(milestoneyear[1:]) < int(randomyear[1:]):
                 capacity[milestoneyear] = float(unit["capacity"])
@@ -1486,11 +1502,11 @@ def map_ppm_jaif(unit_ppm):
     except:
         cap_ppm = None
     try:
-        datein_ppm = float("DateIn")
+        datein_ppm = float(unit_ppm["DateIn"])
     except:
         datein_ppm = None
     try:
-        dateout_ppm = float("DateOut")
+        dateout_ppm = float(unit_ppm["DateOut"])
     except:
         dateout_ppm = None
 

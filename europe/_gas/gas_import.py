@@ -52,6 +52,13 @@ def tech_conversion(target_db,sheet):
         if pd.notna(row.iloc[3]):
             # map_conv = {"type":"map","index_type":"str","index_name":"period","data":{"y2030":row.iloc[3],"y2040":row.iloc[4],"y2050":row.iloc[5]}}
             add_parameter_value(target_db,"commodity__to_technology__to_commodity","conversion_rate","Base",(from_node,tech,to_node),np.array([row.iloc[3],row.iloc[4],row.iloc[5]]).mean().round(3))
+    
+    # DAC connection to atmosphere
+    add_entity(target_db,"commodity",("atmosphere",))
+    add_entity(target_db,"commodity__to_technology",("atmosphere","DAC"))
+    add_entity(target_db, "commodity__to_technology__to_commodity", ("atmosphere","DAC","CO2"))
+    add_parameter_value(target_db,"commodity__to_technology__to_commodity","conversion_rate","Base",("atmosphere","DAC","CO2"),1.0)
+
     try:
         target_db.commit_session("Added tech conversion")
     except DBAPIError as e:
