@@ -151,7 +151,7 @@ vre:
           units_existing: [units_existing,[[1]],[area,{}],null]
       technology__to_commodity__region:
         unit__to_node:
-          profile_limit_upper: [profile_limit_upper,[[1],[2]],[potential,{existing: capacity}],null]
+          profile_limit_upper: [profile_limit_upper,[[1],[2]],[potential,{wind-on-existing: capacity_wind-on, solar-PV-existing: capacity_solar-PV, wind-off-FB-existing: capacity_FB, wind-on-SP: potential_wind-on, solar-PV-no-tracking: potential_solar-PV, solar-PV-tracking: potential_solar-PV, solar-PV-rooftop: potential_solar-PV, wind-off-FB-SP: potential_FB, wind-off-FO-SP: potential_FO}],null]
       technology_type__region:
         set:
           potential: [max_cumulative,[[1]],[area,{}],null]

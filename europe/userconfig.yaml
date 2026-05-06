@@ -195,7 +195,7 @@ technology:
     status: False
     investment_method: "no_limits"
   OCGT:
-    status: False
+    status: True
     investment_method: "no_limits"
   OCGT+CC:
     status: False
