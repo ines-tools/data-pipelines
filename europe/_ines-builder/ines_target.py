@@ -1389,7 +1389,10 @@ def add_policy_constraints(db_map : DatabaseMapping, config : dict):
         add_parameter_value(db_map,entity_name,"storage_retirement_method","Base",entity_byname,"not_retired")
         add_parameter_value(db_map,entity_name,"storage_state_fix_method","Base",entity_byname,"fix_start")
         add_parameter_value(db_map,entity_name,"storage_state_fix","Base",entity_byname,0.0)
-        co2_storage = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(co2_years,[float(config["user"]["global_constraints"]["co2_annual_sequestration"]/1000) for _ in range(3)]))}
+
+        cc_values = [config["user"]["global_constraints"]["co2_annual_sequestration"][year]/1000 for year in config["user"]["global_constraints"]["co2_annual_sequestration"]]
+        cc_years  = [f"y{year}" for year in config["user"]["global_constraints"]["co2_annual_sequestration"]]
+        co2_storage = {"type":"map","index_type":"str","index_name":"period","data":dict(zip(cc_years,cc_values))}
         add_parameter_value(db_map,entity_name,"storages_existing","Base",entity_byname,co2_storage)
         add_parameter_value(db_map,entity_name,"storage_capacity","Base",entity_byname,float(1000))
 

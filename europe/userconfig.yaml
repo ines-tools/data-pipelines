@@ -85,9 +85,12 @@ global_constraints:
     "2030": 2600000000 # European level, if running a country-level model, then adjust this factor
     "2040": 580000000  # European level
     "2050": 0.0
-  co2_annual_sequestration: 200000000 # system level
-  co2_sequestration_cost: 16 # €/ton CO2
-  co2_transport_cost: 10 # €/ton CO2
+  co2_annual_sequestration: 
+    "2030": 50000000  # system level
+    "2040": 280000000 # system level
+    "2050": 450000000 # system level
+  co2_sequestration_cost: 65 # €/ton CO2
+  co2_transport_cost: 40 # €/ton CO2
 
 # Use country code to model a specific country  and define Europe as country, then, the remaining countries are modeled following requirements
 countries : 
@@ -114,6 +117,9 @@ commodity:
     status: True
     node_type: balance
   MeOH: 
+    status: True
+    node_type: balance
+  NH3:
     status: True
     node_type: balance
   fossil-CH4: 
@@ -210,10 +216,10 @@ technology:
     status: True
     investment_method: "no_limits"
   OCGT-H2:
-    status: False
+    status: True
     investment_method: "no_limits"
   CCGT-H2:
-    status: False
+    status: True
     investment_method: "no_limits"
   wasteST:
     status: False
@@ -255,13 +261,13 @@ technology:
     status: False
     investment_method: "no_limits"
   wind-on-SP277-HH100:
-    status: False
+    status: True
     investment_method: "no_limits"
   wind-on-SP277-HH150: 
     status: False
     investment_method: "no_limits"
   wind-on-SP199-HH100:
-    status: True
+    status: False
     investment_method: "no_limits"
   wind-on-SP199-HH150:
     status: False
@@ -291,7 +297,7 @@ technology:
     status: False
     investment_method: "no_limits"
   fuelcell:
-    status: False
+    status: True
     investment_method: "no_limits"
   hydro-turbine:
     status: True
@@ -318,6 +324,9 @@ technology:
   SOEC: 
     status: False
     investment_method: "no_limits"
+  harber-bosch:
+    status: True
+    investment_method: "no_limits"
   gas-pyrolysis: 
     status: False
     investment_method: "no_limits"
@@ -328,7 +337,7 @@ technology:
     status: True
     investment_method: "no_limits"
   bio-diges-up+CC: 
-    status: False
+    status: True
     investment_method: "no_limits"
   bio-diges-metha: 
     status: False
@@ -377,7 +386,7 @@ technology:
     status: False
     investment_method: "not_allowed"
   bio-boiler:
-    status: False
+    status: True
     investment_method: "no_limits"
   bio-boiler-existing:
     status: True
@@ -455,7 +464,7 @@ technology:
     status: True
     investment_method: "not_allowed"
   gas-boiler:
-    status: False
+    status: True
     investment_method: "no_limits"
   gas-boiler-existing:
     status: True
@@ -772,9 +781,17 @@ vehicle:
     status: True
   int-aviation:
     status: True
-  maritime:
+  maritime-HC:
     status: True
-  int-maritime:
+  int-maritime-HC:
+    status: True
+  maritime-NH3:
+    status: True
+  int-maritime-NH3:
+    status: True
+  maritime-MeOH:
+    status: True
+  int-maritime-MeOH:
     status: True
   rail:
     status: True

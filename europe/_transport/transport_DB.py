@@ -136,7 +136,7 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range,cyears):
                         entity_byname = ("elec",vehicle+"-DR",region)
                         add_entity(target_db,entity_name,entity_byname)
 
-                        for flex_scenario in ["0","10","20"]:
+                        for flex_scenario in ["0","5","10"]:
                             for alternative_name in ["GA","DE"]:
                                 map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round((float(flex_scenario)/1e2)*data_flex_charging[year]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"Total Fleet"]*scenario_fleet.at[(region,vehicle,int(year),alternative_name),"electricity proportion"]/1e3,1) for year in df_index["year"].unique()}}
                                 add_parameter_value(target_db,entity_name,"power_capacity",alternative_name+f"_flex{flex_scenario}",entity_byname,map_profile)
@@ -166,7 +166,7 @@ def add_vehicle_timeseries(target_db,data,scenario_fleet,flex_range,cyears):
                     week_to_hourly("CH4",target_db,vehicle+"-LNG",data,"LNG consumption kg",LNG_factor,df_index,region,vehicle,profile,cyears,scenario_fleet,"LNG proportion")
                     week_to_hourly("HC",target_db,vehicle+"-LPG",data,"LPG consumption litres",LPG_factor,df_index,region,vehicle,profile,cyears,scenario_fleet,"LPG proportion")
 
-def add_nonroad_timeseries(target_db,data,cyears):
+def add_nonroad_timeseries(target_db,data,cyears,config):
 
     factor = 277777.78
     df_index = pd.DataFrame(data.keys(),columns=["region","year"])
@@ -178,9 +178,9 @@ def add_nonroad_timeseries(target_db,data,cyears):
 
         veh_headers = ["domestic-aviation_thermal_PJ","domestic-navigation_thermal_PJ","international-aviation_thermal_PJ","international-maritime-bunkers_thermal_PJ","rail_non_thermal_PJ","rail_thermal_PJ"]
         veh_types = ["aviation","maritime","int-aviation","int-maritime","rail","thermal-rail"]
-        veh_fuels = ["HC","HC","HC","HC","elec","HC"]
+
+
         veh_map = dict(zip(veh_headers,veh_types))
-        fuel_map = dict(zip(veh_types,veh_fuels))
         
         for key_df in veh_map.keys():
             veh_type = veh_map[key_df]
@@ -194,7 +194,7 @@ def add_nonroad_timeseries(target_db,data,cyears):
                     value_lists = [[value_array[ien]]*int(ven) for ien,ven in enumerate(np.concatenate((168*np.ones(52),24*np.ones(1))))]
                     output_array = np.array(sum(value_lists, [])).round(3)
                     output[year] = output_array/output_array.sum()*1000 if output_array.sum() > 0.0 else output_array
-                    annual_scale[year] = output_array.sum()/1000
+                    annual_scale[year] = config[veh_type]["correction_factor"][str(year)]*output_array.sum()/1000
                 if all(output[year].sum() > 0.0 for year in df_index["year"].unique()):
                     condition_ = True
             except:
@@ -202,27 +202,30 @@ def add_nonroad_timeseries(target_db,data,cyears):
 
             if condition_:
                 print(region,veh_type)
-                try:
-                    add_entity(target_db,"vehicle",(veh_type,))
-                except:
-                    pass
-                try:
-                    add_entity(target_db,"commodity__vehicle",(fuel_map[veh_type],veh_type))
-                    add_parameter_value(target_db,"commodity__vehicle","node_type","Base",(fuel_map[veh_type],veh_type),"balance")
-                except:
-                    pass
-                entity_name   = "commodity__vehicle__region"
-                entity_byname = (fuel_map[veh_type],veh_type,region)
-                add_entity(target_db,entity_name,entity_byname)
+                for vehicle_fuel in config[veh_type]["fuels"]:
+                    vehicle_type = veh_type+(f"-{vehicle_fuel}" if len(config[veh_type]["fuels"]) > 1 else "")
+                    try:
+                        add_entity(target_db,"vehicle",(vehicle_type,))
+                    except:
+                        pass
+                    try:
+                        add_entity(target_db,"commodity__vehicle",(vehicle_fuel,vehicle_type))
+                        add_parameter_value(target_db,"commodity__vehicle","node_type","Base",(vehicle_fuel,vehicle_type),"balance")
+                    except:
+                        pass
 
-                for year in df_index["year"].unique():
-                    if output[year].sum() > 0.0:
-                        year_selected = year
-                map_fixed_flow_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(-1.0*output[year_selected].round(3),cyears)}
-                add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_fixed_flow_profile)
+                    entity_name   = "commodity__vehicle__region"
+                    entity_byname = (vehicle_fuel,vehicle_type,region)
+                    add_entity(target_db,entity_name,entity_byname)
 
-                map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(annual_scale[year],1) for year in df_index["year"].unique()}}
-                add_parameter_value(target_db,entity_name,"scale_demand","Base",entity_byname,map_profile)
+                    for year in df_index["year"].unique():
+                        if output[year].sum() > 0.0:
+                            year_selected = year
+                    map_fixed_flow_profile = {"type":"map","index_type":"str","index_name":"t","data":profile_historical_wy(-1.0*output[year_selected].round(3),cyears)}
+                    add_parameter_value(target_db,entity_name,"flow_profile","Base",entity_byname,map_fixed_flow_profile)
+
+                    map_profile = {"type":"map","index_type":"str","index_name":"period","data":{f"y{year}":round(annual_scale[year]*config[veh_type]["fuels"][vehicle_fuel][str(year)],1) for year in df_index["year"].unique()}}
+                    add_parameter_value(target_db,entity_name,"scale_demand","Base",entity_byname,map_profile)
 
 def add_scenario(db_map : DatabaseMapping,name_scenario : str) -> None:
     _, error = db_map.add_scenario_item(name=name_scenario)
@@ -276,8 +279,10 @@ def main():
         add_entity(target_db,"commodity",("H2",))
         add_entity(target_db,"commodity",("HC",))
         add_entity(target_db,"commodity",("CH4",))
+        add_entity(target_db,"commodity",("NH3",))
+        add_entity(target_db,"commodity",("MeOH",))
 
-        flex_range = ["0","10","20"]
+        flex_range = ["0","5","10"]
         add_alternative(target_db,"Base")
         for alternative_name in ["GA","DE"]:
             add_alternative(target_db,alternative_name)
@@ -301,9 +306,10 @@ def main():
         elements = file.split("\\")[-1].split(".")[0].split("_")
         data[(elements[0],elements[1])] = pd.read_csv(file,index_col=0)
 
+    nonroad_config = yaml.safe_load(open("non_road_config.yml", "rb"))
     with DatabaseMapping(url_db_out) as target_db:
 
-        add_nonroad_timeseries(target_db,data,weather_years)
+        add_nonroad_timeseries(target_db,data,weather_years,nonroad_config)
         print("parameters added for nonroad transport")        
         target_db.commit_session("parameters_added")
 
