@@ -679,7 +679,8 @@ def add_power_transmission(db_map : DatabaseMapping, db_source : DatabaseMapping
                                 add_entity(db_map,entity_class_target,entity_target_name)
                                 if entity_class_target == "node":
                                     if entity_names[entity_target_building[0][1]-1] not in polygons["onshore_polygons"]:
-                                        add_parameter_value(db_map,"node","node_type","Base",entity_target_name,"commodity")
+                                        add_parameter_value(db_map,"node","node_type","Base",entity_target_name,"storage")
+                                        add_parameter_value(db_map,"node","storage_state_binding_method","Base",entity_target_name,"leap_over_within_period")
                             except:
                                 print(f"Repeated Entity {entity_class} {entity_name}, then not added")
                                 pass
@@ -1015,7 +1016,8 @@ def add_gas_pipelines(db_map : DatabaseMapping, db_source : DatabaseMapping, con
                                 add_entity(db_map,entity_class_target,entity_target_name)
                                 if entity_class_target == "node":
                                     if entity_names[entity_target_building[0][1]-1] not in polygons["onshore_polygons"]:
-                                        add_parameter_value(db_map,"node","node_type","Base",entity_target_name,"commodity")
+                                        add_parameter_value(db_map,"node","node_type","Base",entity_target_name,"storage")
+                                        add_parameter_value(db_map,"node","storage_state_binding_method","Base",entity_target_name,"leap_over_within_period")
                             except:
                                 print(f"Repeated Entity {entity_class} {entity_name}, then not added")
                                 pass
@@ -1286,7 +1288,8 @@ def add_cargo_sector(db_map : DatabaseMapping, db_source : DatabaseMapping, conf
                                 add_entity(db_map,entity_class_target,entity_target_name)
                                 if entity_class_target == "node":
                                     if entity_names[entity_target_building[0][1]-1] not in polygons["onshore_polygons"]:
-                                        add_parameter_value(db_map,"node","node_type","Base",entity_target_name,"commodity")
+                                        add_parameter_value(db_map,"node","node_type","Base",entity_target_name,"storage")
+                                        add_parameter_value(db_map,"node","storage_state_binding_method","Base",entity_target_name,"leap_over_within_period")
                             except:
                                 print(f"Repeated Entity {entity_class} {entity_name}, then not added")
                                 pass
