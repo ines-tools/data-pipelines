@@ -1388,7 +1388,7 @@ def add_policy_constraints(db_map : DatabaseMapping, config : dict):
         entity_byname = ("CO2-storage",)
         add_entity(db_map,entity_name,entity_byname)
         add_parameter_value(db_map,entity_name,"node_type","Base",entity_byname,"storage")
-        add_parameter_value(db_map,entity_name,"storage_retirement_method","Base",entity_byname,"not_retired")
+        add_parameter_value(db_map,entity_name,"storage_investment_method","Base",entity_byname,"no_limits")
         add_parameter_value(db_map,entity_name,"storage_state_fix_method","Base",entity_byname,"fix_start")
         add_parameter_value(db_map,entity_name,"storage_state_fix","Base",entity_byname,0.0)
 
